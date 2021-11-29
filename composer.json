@@ -1,0 +1,39 @@
+{
+    "name": "shabayek/laravel-payment",
+    "description": "Laravel Package For Payment Methods",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Esmail Shabayek",
+            "email": "esmail.shabayek@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "illuminate/contracts": "^8.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.0",
+        "phpunit/phpunit": "^9.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Shabayek\\Payment\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Shabayek\\Payment\\Tests\\": "tests"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Shabayek\\Payment\\Providers\\PaymentServiceProvider"
+            ]
+        }
+    }
+}
