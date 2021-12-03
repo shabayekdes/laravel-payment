@@ -239,7 +239,7 @@ return [
             "icon" => 'images/payment_methods/visa_paytabs.png',
             'credentials' => [
                 'base_url' => 'https://secure-egypt.paytabs.com/',
-                'callback_url' => env('PAYTABS_CALLBACK_URL'),//'/api/customer/pay/paytabs/callback',
+                'callback_url' => env('PAYTABS_CALLBACK_URL'),
                 'server_key' => env('PAYTABS_SERVER_KEY'),
                 'profile_id' => env('PAYTABS_PROFILE_ID')
             ],
