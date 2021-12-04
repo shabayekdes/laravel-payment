@@ -4,11 +4,12 @@ namespace Shabayek\Payment;
 
 use InvalidArgumentException;
 use Illuminate\Support\Manager;
+use Shabayek\Payment\Drivers\PaymobMethod;
 use Illuminate\Contracts\Foundation\Application;
 
 /**
  * PaymentManager class
- * @package Shabayek\Payment
+ * @package Shabayek\Payment\PaymentManager
  */
 class PaymentManager extends Manager
 {
@@ -88,11 +89,11 @@ class PaymentManager extends Manager
      * Create paymob method instance.
      *
      * @param array $config
-     * @return void
+     * @return PaymobMethod
      */
     private function createPaymobMethod(array $config)
     {
-        return 'Paymob Method';
+        return new PaymobMethod($config);
     }
 
     /**
