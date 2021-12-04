@@ -4,6 +4,7 @@ namespace Shabayek\Payment;
 
 use InvalidArgumentException;
 use Illuminate\Support\Manager;
+use Shabayek\Payment\Drivers\CodMethod;
 use Shabayek\Payment\Drivers\PaymobMethod;
 use Illuminate\Contracts\Foundation\Application;
 
@@ -84,7 +85,16 @@ class PaymentManager extends Manager
             throw new InvalidArgumentException("Driver [{$config['driver']}] is not supported.");
         }
     }
-
+    /**
+     * Create cod method instance.
+     *
+     * @param array $config
+     * @return CodMethod
+     */
+    private function createCodMethod(array $config)
+    {
+        return new CodMethod($config);
+    }
     /**
      * Create paymob method instance.
      *
