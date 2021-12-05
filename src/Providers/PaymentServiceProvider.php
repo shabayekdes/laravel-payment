@@ -18,6 +18,8 @@ class PaymentServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->mergeConfigFrom(__DIR__.'/../../config/payment.php', 'payment');
+
         $this->app->bind('payment', function () {
             return new PaymentManager($this->app);
         });
