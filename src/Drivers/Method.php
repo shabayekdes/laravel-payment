@@ -28,7 +28,6 @@ abstract class Method
     public function __construct(Array $config)
     {
         $this->config = $config;
-        $this->setCredentials($config['credentials']);
     }
     /**
      * Set credentials of payment methods.
