@@ -2,6 +2,7 @@
 
 namespace Shabayek\Payment\Drivers;
 
+use GuzzleHttp\Client;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 
 /**
@@ -11,6 +12,12 @@ use Shabayek\Payment\Contracts\PaymentMethodContract;
 class PaymobMethod extends Method implements PaymentMethodContract
 {
     /**
+     * Payping Client.
+     *
+     * @var object
+     */
+    protected $client;
+    /**
      * PaymobMethod constructor.
      *
      * @param Array $config
@@ -18,6 +25,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
     public function __construct(array $config)
     {
         parent::__construct($config);
+        $this->client = new Client();
     }
     /**
      * Set credentials of paymob payment
@@ -40,7 +48,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
      */
     public function purchase()
     {
-        // code here
+        $token = $this->getAuthenticationToken();
     }
 
     /**
@@ -51,5 +59,23 @@ class PaymobMethod extends Method implements PaymentMethodContract
     public function pay()
     {
         // code here
+    }
+    /**
+     * Authentication Request
+     *
+     * @return void
+     */
+    private function getAuthenticationToken()
+    {
+        try {
+            $response = $this->client->request('POST', "{$this->url}auth/tokens", [
+                'api_key' => $this->authApiKey
+            ]);
+
+            $result = $response->json();
+            return $result['token'];
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
