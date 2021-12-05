@@ -6,6 +6,7 @@ use Shabayek\Payment\Facade\Payment;
 use Shabayek\Payment\PaymentManager;
 use Shabayek\Payment\Tests\TestCase;
 use Shabayek\Payment\Drivers\CodMethod;
+use Shabayek\Payment\Drivers\PaymobMethod;
 
 /**
  * Class PaymentManagerTest
@@ -26,6 +27,14 @@ class PaymentManagerTest extends TestCase
         $payment = Payment::store($method_id);
 
         $this->assertInstanceOf(CodMethod::class, $payment);
+    }
+    /** @test */
+    public function a_payment_facade_return_paymob_method_instance(): void
+    {
+        $method_id = 2;
+        $payment = Payment::store($method_id);
+
+        $this->assertInstanceOf(PaymobMethod::class, $payment);
     }
     /** @test */
     public function a_payment_facade_invalid_exception_if_method_not_found(): void
