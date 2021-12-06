@@ -56,8 +56,10 @@ class PaymobMethod extends Method implements PaymentMethodContract
     {
         $token = $this->getAuthenticationToken();
         $orderCreation = $this->orderCreation($token);
-    }
+        $paymentKey = $this->paymentKeyRequest($token, $orderCreation['id']);
 
+        return "{$this->url}acceptance/iframes/{$this->iframeID}?payment_token={$paymentKey}";
+    }
     /**
      * Complete payment
      *
@@ -70,7 +72,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
     /**
      * Authentication Request
      *
-     * @return void
+     * @return string
      */
     private function getAuthenticationToken()
     {
@@ -100,7 +102,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
             'delivery_needed' => false,
             'merchant_order_id' => $this->transaction_id . "-" . rand(10000, 99999),
             'merchant_id' => $this->merchantID,
-            'amount_cents' => (int) $this->mount,
+            'amount_cents' => (int) $this->mount * 100,
             'currency' => "EGP",
             'items' => $this->items,
             'shipping_data' => [
@@ -108,13 +110,56 @@ class PaymobMethod extends Method implements PaymentMethodContract
                 "last_name" => $this->customer['last_name'],
                 "email" => $this->customer['email'],
                 "phone_number" => $this->customer['phone'],
-            ],
+            ]
         ];
         try {
-            $response = $this->client->request('POST', $this->url . 'ecommerce/orders', ['body' => $postData]);
+            $response = $this->client->post("{$this->url}ecommerce/orders", [
+                'body' => json_encode($postData)
+            ]);
             return json_encode($response->getBody());
         } catch (\Exception $e) {
             throw new \Exception("Order not created success in paymob #" . $e->getMessage());
+        }
+    }
+    /**
+     * Get payment key request
+     *
+     * @param int $orderPayId
+     * @return string
+     */
+    private function paymentKeyRequest($token, $orderPayId)
+    {
+        $postData = [
+            'auth_token' => $token,
+            'amount_cents' => (int) $this->mount * 100,
+            'expiration' => 3600,
+            'order_id' => $orderPayId,
+            'currency' => "EGP",
+            'integration_id' => $this->integrationID,
+            'billing_data' => [
+                "first_name" => $this->customer['first_name'],
+                "last_name" => $this->customer['last_name'] ?? 'NA',
+                "phone_number" => $this->customer['phone'],
+                "email" => $this->customer['email'],
+                "apartment" => $this->address['apartment'] ?? "NA",
+                "floor" => $this->address['floor'] ?? "NA",
+                "city" => $this->address['city'] ?? "NA",
+                "state" => $this->address['state'] ?? "NA",
+                "street" => $this->address['street'] ?? "NA",
+                "building" => $this->address['building'] ?? "NA",
+                "country" => "EG",
+            ],
+        ];
+
+        try {
+            $response = $this->client->post("{$this->url}acceptance/payment_keys", [
+                'body' => json_encode($postData)
+            ]);
+
+            $result = json_decode($response->getBody(), true);
+            return $result['token'];
+        } catch (\Exception $e) {
+            throw new \Exception("Payment key request not created success in paymob #" . $e->getMessage());
         }
     }
 }

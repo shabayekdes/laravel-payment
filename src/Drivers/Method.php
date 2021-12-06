@@ -110,7 +110,7 @@ abstract class Method
      */
     public function address(AddressContract $address)
     {
-        $this->address = $address;
+        $this->address = $address->addressDetails();
 
         return $this;
     }
