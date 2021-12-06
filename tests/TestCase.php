@@ -51,4 +51,19 @@ class TestCase extends BaseTestCase
         $app->bootstrapWith([LoadEnvironmentVariables::class]);
         parent::getEnvironmentSetUp($app);
     }
+    /**
+     * Change accessible for any method in class
+     *
+     * @param object $obj
+     * @param string $name
+     * @param array $args
+     * @return void
+     */
+    protected function callMethod($obj, $name, array $args = [])
+    {
+        $class = new \ReflectionClass($obj);
+        $method = $class->getMethod($name);
+        $method->setAccessible(true);
+        return $method->invokeArgs($obj, $args);
+    }
 }
