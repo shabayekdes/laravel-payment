@@ -2,8 +2,10 @@
 
 namespace Shabayek\Payment\Tests;
 
+use Orchestra\Testbench\Foundation\Application;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use Shabayek\Payment\Providers\PaymentServiceProvider;
+use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
 
 /**
  * TestCase class
@@ -12,6 +14,8 @@ use Shabayek\Payment\Providers\PaymentServiceProvider;
  */
 class TestCase extends BaseTestCase
 {
+    // protected $loadEnvironmentVariables = true;
+
     /**
      * Setup test cases
      *
@@ -42,6 +46,9 @@ class TestCase extends BaseTestCase
      */
     protected function getEnvironmentSetUp($app)
     {
-      // perform environment setup
+        // make sure, our .env file is loaded
+        $app->useEnvironmentPath(__DIR__.'/..');
+        $app->bootstrapWith([LoadEnvironmentVariables::class]);
+        parent::getEnvironmentSetUp($app);
     }
 }
