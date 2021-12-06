@@ -25,7 +25,13 @@ class PaymobMethod extends Method implements PaymentMethodContract
     public function __construct(array $config)
     {
         parent::__construct($config);
-        $this->client = new Client();
+        $this->setCredentials($config['credentials']);
+        $this->client = new Client([
+            'headers' => [
+                'Content-Type' => 'application/json',
+                // 'Accept' => 'application/json',
+            ],
+        ]);
     }
     /**
      * Set credentials of paymob payment
@@ -49,6 +55,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
     public function purchase()
     {
         $token = $this->getAuthenticationToken();
+        $orderCreation = $this->orderCreation($token);
     }
 
     /**
@@ -67,15 +74,47 @@ class PaymobMethod extends Method implements PaymentMethodContract
      */
     private function getAuthenticationToken()
     {
+        $postData = ['api_key' => $this->authApiKey];
+
         try {
-            $response = $this->client->request('POST', "{$this->url}auth/tokens", [
-                'api_key' => $this->authApiKey
+            $response = $this->client->post("{$this->url}auth/tokens", [
+                'body' => json_encode($postData)
             ]);
 
-            $result = $response->json();
+            $result = json_decode($response->getBody(), true);
             return $result['token'];
         } catch (\Exception $e) {
             return false;
+        }
+    }
+    /**
+     * Order registration API
+     *
+     * @param string $token
+     * @return object
+     */
+    private function orderCreation($token)
+    {
+        $postData = [
+            'auth_token' => $token,
+            'delivery_needed' => false,
+            'merchant_order_id' => $this->transaction_id . "-" . rand(10000, 99999),
+            'merchant_id' => $this->merchantID,
+            'amount_cents' => (int) $this->mount,
+            'currency' => "EGP",
+            'items' => $this->items,
+            'shipping_data' => [
+                "first_name" => $this->customer['first_name'],
+                "last_name" => $this->customer['last_name'],
+                "email" => $this->customer['email'],
+                "phone_number" => $this->customer['phone'],
+            ],
+        ];
+        try {
+            $response = $this->client->request('POST', $this->url . 'ecommerce/orders', ['body' => $postData]);
+            return json_encode($response->getBody());
+        } catch (\Exception $e) {
+            throw new \Exception("Order not created success in paymob #" . $e->getMessage());
         }
     }
 }
