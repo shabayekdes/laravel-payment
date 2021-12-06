@@ -2,6 +2,9 @@
 
 namespace Shabayek\Payment\Drivers;
 
+use Shabayek\Payment\Contracts\AddressContract;
+use Shabayek\Payment\Contracts\CustomerContract;
+
 /**
  * Method abstract class
  * @package Shabayek\Payment\Drivers
@@ -14,6 +17,30 @@ abstract class Method
      * @var int|float
      */
     protected $amount = 0;
+    /**
+     * Transaction id
+     *
+     * @var int
+     */
+    protected $transaction_id;
+    /**
+     * Customer details
+     *
+     * @var CustomerContract
+     */
+    protected $customer;
+    /**
+     * Address details
+     *
+     * @var AddressContract
+     */
+    protected $address;
+    /**
+     * Items details
+     *
+     * @var array
+     */
+    public $items = [];
     /**
      * payment config
      *
@@ -48,6 +75,54 @@ abstract class Method
             throw new \Exception('Amount value should be a number (integer or float).');
         }
         $this->amount = $amount;
+
+        return $this;
+    }
+    /**
+     * Set transaction id.
+     *
+     * @param $transaction
+     * @return $this
+     */
+    public function transaction($transaction)
+    {
+        $this->transaction_id = $transaction;
+
+        return $this;
+    }
+    /**
+     * Set customer details.
+     *
+     * @param CustomerContract $customer
+     * @return void
+     */
+    public function customer(CustomerContract $customer)
+    {
+        $this->customer = $customer->customerDetails();
+
+        return $this;
+    }
+    /**
+     * Set address details.
+     *
+     * @param AddressContract $address
+     * @return void
+     */
+    public function address(AddressContract $address)
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+    /**
+     * Set items
+     *
+     * @param array $item
+     * @return void
+     */
+    public function items(array $item)
+    {
+        $this->items[] = $item;
 
         return $this;
     }
