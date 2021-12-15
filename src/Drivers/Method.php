@@ -103,6 +103,23 @@ abstract class Method
         return $this;
     }
     /**
+     * Get customer details.
+     *
+     * @param string|null $property
+     * @return void
+     */
+    public function getCustomerDetails($property = null)
+    {
+        if ($this->customer == null) {
+            throw new \InvalidArgumentException('Customer details not set.');
+        }
+
+        if ($property) {
+            return $this->customer[$property] ?? 'NA';
+        }
+        return $this->customer;
+    }
+    /**
      * Set address details.
      *
      * @param AddressContract $address

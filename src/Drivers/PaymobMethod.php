@@ -120,22 +120,22 @@ class PaymobMethod extends Method implements PaymentMethodContract
      */
     private function orderCreation($token)
     {
-        $postData = [
-            'auth_token' => $token,
-            'delivery_needed' => false,
-            'merchant_order_id' => $this->transaction_id . "-" . rand(10000, 99999),
-            'merchant_id' => $this->merchantID,
-            'amount_cents' => (int) $this->mount * 100,
-            'currency' => "EGP",
-            'items' => $this->items,
-            'shipping_data' => [
-                "first_name" => $this->customer['first_name'],
-                "last_name" => $this->customer['last_name'],
-                "email" => $this->customer['email'],
-                "phone_number" => $this->customer['phone'],
-            ]
-        ];
         try {
+            $postData = [
+                'auth_token' => $token,
+                'delivery_needed' => false,
+                'merchant_order_id' => $this->transaction_id . "-" . rand(10000, 99999),
+                'merchant_id' => $this->merchantID,
+                'amount_cents' => (int) $this->amount * 100,
+                'currency' => "EGP",
+                'items' => $this->items,
+                'shipping_data' => [
+                    "first_name" => $this->getCustomerDetails('first_name'),
+                    "last_name" => $this->getCustomerDetails('last_name'),
+                    "email" => $this->getCustomerDetails('email'),
+                    "phone_number" => $this->getCustomerDetails('phone'),
+                ]
+            ];
             $response = Http::post("{$this->url}ecommerce/orders", $postData);
 
             return $response->json();
