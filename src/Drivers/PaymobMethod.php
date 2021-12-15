@@ -3,6 +3,7 @@
 namespace Shabayek\Payment\Drivers;
 
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 
 /**
@@ -12,12 +13,6 @@ use Shabayek\Payment\Contracts\PaymentMethodContract;
 class PaymobMethod extends Method implements PaymentMethodContract
 {
     /**
-     * Payping Client.
-     *
-     * @var object
-     */
-    protected $client;
-    /**
      * PaymobMethod constructor.
      *
      * @param Array $config
@@ -26,12 +21,6 @@ class PaymobMethod extends Method implements PaymentMethodContract
     {
         parent::__construct($config);
         $this->setCredentials($config['credentials']);
-        $this->client = new Client([
-            'headers' => [
-                'Content-Type' => 'application/json',
-                // 'Accept' => 'application/json',
-            ],
-        ]);
     }
     /**
      * Set credentials of paymob payment
@@ -115,11 +104,9 @@ class PaymobMethod extends Method implements PaymentMethodContract
         $postData = ['api_key' => $this->authApiKey];
 
         try {
-            $response = $this->client->post("{$this->url}auth/tokens", [
-                'body' => json_encode($postData)
-            ]);
+            $response = Http::post("{$this->url}auth/tokens", $postData);
 
-            $result = json_decode($response->getBody(), true);
+            $result = $response->json();
             return $result['token'];
         } catch (\Exception $e) {
             return false;
@@ -149,10 +136,9 @@ class PaymobMethod extends Method implements PaymentMethodContract
             ]
         ];
         try {
-            $response = $this->client->post("{$this->url}ecommerce/orders", [
-                'body' => json_encode($postData)
-            ]);
-            return json_encode($response->getBody());
+            $response = Http::post("{$this->url}ecommerce/orders", $postData);
+
+            return $response->json();
         } catch (\Exception $e) {
             throw new \Exception("Order not created success in paymob #" . $e->getMessage());
         }
@@ -188,11 +174,9 @@ class PaymobMethod extends Method implements PaymentMethodContract
         ];
 
         try {
-            $response = $this->client->post("{$this->url}acceptance/payment_keys", [
-                'body' => json_encode($postData)
-            ]);
+            $response = Http::post("{$this->url}acceptance/payment_keys", $postData);
 
-            $result = json_decode($response->getBody(), true);
+            $result = $response->json();
             return $result['token'];
         } catch (\Exception $e) {
             throw new \Exception("Payment key request not created success in paymob #" . $e->getMessage());
@@ -317,14 +301,9 @@ class PaymobMethod extends Method implements PaymentMethodContract
     {
         try {
             $token = $this->Authentication();
-            $response = $this->client->get("{$this->url}acceptance/transactions/{$id}", [
-                'headers' => [
-                    'authorization' => $token
-                ]
-            ]);
+            $response = Http::withToken($token)->get("{$this->url}acceptance/transactions/{$id}");
 
-            $result = json_decode($response->getBody(), true);
-            return $result;
+            return $response->json();
         } catch (\Exception $e) {
             throw new \Exception("Get order data failed in paymob #" . $e->getMessage());
         }
