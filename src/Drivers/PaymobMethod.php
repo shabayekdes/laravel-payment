@@ -3,6 +3,7 @@
 namespace Shabayek\Payment\Drivers;
 
 use GuzzleHttp\Client;
+use Illuminate\Support\Arr;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 
 /**
@@ -65,9 +66,18 @@ class PaymobMethod extends Method implements PaymentMethodContract
      *
      * @return array
      */
-    public function pay()
+    public function pay($requestData)
     {
-        // code here
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // The request is using the POST method
+            $callback = $this->processesCallback($requestData['obj']);
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            // The request is using the POST method
+            $callback = $this->processesCallback($requestData['obj']);
+        }
+        
     }
     /**
      * Authentication Request
@@ -161,5 +171,114 @@ class PaymobMethod extends Method implements PaymentMethodContract
         } catch (\Exception $e) {
             throw new \Exception("Payment key request not created success in paymob #" . $e->getMessage());
         }
+    }
+       /**
+     * Record processes callback - POST request
+     *
+     * @param array $requestData
+     * @return array
+     */
+    private function processesCallback($requestData): array
+    {
+        $hmacKeys = [
+            "amount_cents",
+            "created_at",
+            "currency",
+            "error_occured",
+            "has_parent_transaction",
+            "id",
+            "integration_id",
+            "is_3d_secure",
+            "is_auth",
+            "is_capture",
+            "is_refunded",
+            "is_standalone_payment",
+            "is_voided",
+            "order.id",
+            "owner",
+            "pending",
+            "source_data.pan",
+            "source_data.sub_type",
+            "source_data.type",
+            "success"
+        ];
+        $hmac = $this->calculateHmac($requestData, $hmacKeys);
+        if ($hmac != $requestData['hmac']) {
+            throw new Exception('HMAC is not valid');
+        }
+
+        $transaction_status = $requestData['success'] ?? false;
+
+        return [
+            'payment_order_id' => $requestData['order']['id'],
+            'payment_transaction_id' => $requestData['id'],
+            'status' => $transaction_status === true
+        ];
+    }
+    /**
+     * Record response callback - GET request
+     *
+     * @param array $requestData
+     * @return array
+     */
+    private function responseCallBack($requestData)
+    {
+        $hmacKeys = [
+            "amount_cents",
+            "created_at",
+            "currency",
+            "error_occured",
+            "has_parent_transaction",
+            "id",
+            "integration_id",
+            "is_3d_secure",
+            "is_auth",
+            "is_capture",
+            "is_refunded",
+            "is_standalone_payment",
+            "is_voided",
+            "order",
+            "owner",
+            "pending",
+            "source_data_pan",
+            "source_data_sub_type",
+            "source_data_type",
+            "success"
+        ];
+        $hmac = $this->calculateHmac($requestData, $hmacKeys);
+        if ($hmac != $requestData['hmac']) {
+            throw new Exception('HMAC is not valid');
+        }
+
+        $transaction_status = $requestData['success'];
+        return [
+            'paymob_order_id' => $requestData['order'],
+            'payment_transaction_id' => $requestData['id'],
+            'status' => $transaction_status === "true"
+        ];
+    }
+
+    /**
+     * HMAC Calculation
+     *
+     * @param array $requestData
+     * @param array $hmacKeys
+     * @return string
+     */
+    private function calculateHmac(array $requestData, array $hmacKeys): string
+    {
+        $requestValues = [];
+        foreach ($hmacKeys as $key) {
+            $value = $requestData[$key];
+            if ($value === true) {
+                $value = "true";
+            } elseif ($value === false) {
+                $value = "false";
+            }
+            $requestValues[] = $value;
+        }
+
+        $sig = hash_hmac('sha512', implode('', $requestValues), $this->hmacHash);
+        return $sig;
     }
 }
