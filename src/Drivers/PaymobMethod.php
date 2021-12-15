@@ -128,7 +128,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
                 'merchant_id' => $this->merchantID,
                 'amount_cents' => (int) $this->amount * 100,
                 'currency' => "EGP",
-                'items' => $this->items,
+                'items' => $this->getItems(),
                 'shipping_data' => [
                     "first_name" => $this->getCustomerDetails('first_name'),
                     "last_name" => $this->getCustomerDetails('last_name'),

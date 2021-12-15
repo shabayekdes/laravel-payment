@@ -93,12 +93,18 @@ abstract class Method
     /**
      * Set customer details.
      *
-     * @param CustomerContract $customer
+     * @param CustomerContract|array $customer
      * @return void
      */
-    public function customer(CustomerContract $customer)
+    public function customer($customer)
     {
-        $this->customer = $customer->customerDetails();
+        if (is_array($customer)) {
+            $this->customer = $customer;
+        }
+
+        if ($customer instanceof CustomerContract) {
+            $this->customer = $customer->customerDetails();
+        }
 
         return $this;
     }
@@ -118,6 +124,19 @@ abstract class Method
             return $this->customer[$property] ?? 'NA';
         }
         return $this->customer;
+    }
+    /**
+     * Get items.
+     *
+     * @return array
+     */
+    public function getItems()
+    {
+        if (empty($this->items)) {
+            throw new \Exception('Items not set.');
+        }
+
+        return $this->items;
     }
     /**
      * Set address details.
