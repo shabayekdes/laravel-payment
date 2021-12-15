@@ -1,11 +1,22 @@
 {
     "name": "shabayek/laravel-payment",
     "description": "Laravel Package For Payment Methods",
+    "keywords": [
+        "laravel",
+        "payment",
+        "gateway",
+        "paymob",
+        "cod",
+        "method"
+    ],
+    "homepage": "https://github.com/shabayekdes/laravel-payment",
     "license": "MIT",
     "authors": [
         {
             "name": "Esmail Shabayek",
-            "email": "esmail.shabayek@gmail.com"
+            "email": "esmail.shabayek@gmail.com",
+            "homepage": "https://github.com/shabayekdes",
+            "role": "Developer"
         }
     ],
     "require": {
@@ -27,9 +38,6 @@
             "Shabayek\\Payment\\Tests\\": "tests"
         }
     },
-    "config": {
-        "sort-packages": true
-    },
     "scripts": {
         "test": "vendor/bin/phpunit",
         "test-f": "vendor/bin/phpunit --filter",
@@ -43,5 +51,12 @@
                 "Shabayek\\Payment\\Providers\\PaymentServiceProvider"
             ]
         }
-    }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
