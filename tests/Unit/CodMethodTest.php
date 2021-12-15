@@ -33,7 +33,7 @@ class CodMethodTest extends TestCase
     {
         $method_id = 1;
         $payment = Payment::store($method_id);
-        $pay = $payment->pay();
+        $pay = $payment->pay([]);
 
         $this->assertCount(3, $pay);
         $this->assertArrayHasKey('success', $pay);
@@ -43,7 +43,7 @@ class CodMethodTest extends TestCase
     {
         $method_id = 1;
         $payment = Payment::store($method_id);
-        $pay = $payment->pay();
+        $pay = $payment->pay([]);
 
         $this->assertArrayHasKey('success', $pay);
         $this->assertTrue($pay['success']);
