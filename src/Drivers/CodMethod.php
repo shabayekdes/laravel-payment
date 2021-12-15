@@ -39,7 +39,7 @@ class CodMethod extends Method implements PaymentMethodContract
      *
      * @return array
      */
-    public function pay()
+    public function pay($requestData)
     {
         return [
             'success' => true,

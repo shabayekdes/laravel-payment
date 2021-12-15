@@ -16,5 +16,5 @@ interface PaymentMethodContract
      *
      * @return array
      */
-    public function pay();
+    public function pay($requestData);
 }
