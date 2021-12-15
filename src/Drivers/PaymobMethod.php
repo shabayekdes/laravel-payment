@@ -3,7 +3,6 @@
 namespace Shabayek\Payment\Drivers;
 
 use GuzzleHttp\Client;
-use Illuminate\Support\Arr;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 
 /**
@@ -74,10 +73,37 @@ class PaymobMethod extends Method implements PaymentMethodContract
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            // The request is using the POST method
-            $callback = $this->processesCallback($requestData['obj']);
+            // The request is using the GET method
+            $callback = $this->responseCallBack($requestData);
         }
-        
+
+        $isSuccess = false;
+        try {
+            if ($callback['transaction_status']) {
+                $downPaymentInfo = [];
+                if ($this->isInstallment()) {
+                    $orderData = $this->getOrderData($callback['paymob_order_id']);
+
+                    $downPaymentInfo = $this->calculateInstallmentFees($orderData);
+                }
+
+                $callback['items'] = $this->items;
+                $callback['down_payment_info'] = $downPaymentInfo;
+
+                $isSuccess = true;
+                $message = "Success";
+            } else {
+                $message = "Transaction did not completed";
+            }
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+        }
+
+        return [
+            'success' => $isSuccess,
+            'message' => $message,
+            'data' => $isSuccess ? $callback : []
+        ];
     }
     /**
      * Authentication Request
@@ -280,5 +306,64 @@ class PaymobMethod extends Method implements PaymentMethodContract
 
         $sig = hash_hmac('sha512', implode('', $requestValues), $this->hmacHash);
         return $sig;
+    }
+    /**
+     * Get order detials
+     *
+     * @param [type] $id
+     * @return void|object
+     */
+    private function getOrderData($id)
+    {
+        try {
+            $token = $this->Authentication();
+            $response = $this->client->get("{$this->url}acceptance/transactions/{$id}", [
+                'headers' => [
+                    'authorization' => $token
+                ]
+            ]);
+
+            $result = json_decode($response->getBody(), true);
+            return $result;
+        } catch (\Exception $e) {
+            throw new \Exception("Get order data failed in paymob #" . $e->getMessage());
+        }
+        return [];
+    }
+    /**
+     * Calculate the installment fees.
+     *
+     * @param [type] $orderDetials
+     * @return array
+     */
+    private function calculateInstallmentFees($orderDetials)
+    {
+        $result = [];
+
+        $driver = $this->config['driver'];
+
+        switch ($driver) {
+            case "valu":
+                $result['down_payment'] = data_get($orderDetials, 'data.down_payment') ?? 0;
+                $result['admin_fees'] = 0; // $orderDetials->data->purchase_fees ?? 0; ##Change happened in valu response
+                break;
+            case "shahry":
+                $result['down_payment'] = data_get($orderDetials, 'data.shahry_order.down_payment') ?? 0;
+                $result['admin_fees'] = data_get($orderDetials, 'data.shahry_order.administrative_fees') ?? 0;
+                break;
+            case "souhoola":
+                $result['down_payment'] = data_get($orderDetials, 'data.installment_info.downpaymentValue') ?? 0;
+                $result['admin_fees'] = data_get($orderDetials, 'data.installment_info.adminFees') ?? 0;
+                break;
+            case "get_go":
+                $result['down_payment'] = data_get($orderDetials, 'data.down_payment') ?? 0;
+                $result['admin_fees'] = 0;
+                break;
+            default:
+                $result['down_payment'] = 0;
+                $result['admin_fees'] = 0;
+                break;
+        }
+        return $result;
     }
 }
