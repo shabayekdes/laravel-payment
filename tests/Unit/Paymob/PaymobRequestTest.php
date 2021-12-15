@@ -14,7 +14,7 @@ use Shabayek\Payment\Tests\TestCase;
 class PaymobRequestTest extends TestCase
 {
     /** @test*/
-    public function test_authication_token_in_paymob_method()
+    public function test_authication_token()
     {
         Http::fake([
             // Stub a JSON response for paymob endpoints...
@@ -30,7 +30,7 @@ class PaymobRequestTest extends TestCase
         $this->assertEquals(gettype($token), 'string');
     }
     /** @test*/
-    public function test_create_order_without_set_customer_details_in_paymob_method()
+    public function test_create_order_without_set_customer_details()
     {
         $this->expectException(\Exception::class);
 
@@ -46,7 +46,7 @@ class PaymobRequestTest extends TestCase
         $order = $this->callMethod($payment, 'orderCreation', [$token]);
     }
     /** @test*/
-    public function test_create_order_without_items_details_in_paymob_method()
+    public function test_create_order_without_items_details()
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage("Items not set.");
@@ -66,7 +66,7 @@ class PaymobRequestTest extends TestCase
     }
 
     /** @test*/
-    public function test_create_order_success_in_paymob_method()
+    public function test_create_order_success()
     {
         $order_id = rand(1, 100);
         Http::fake([
@@ -86,7 +86,47 @@ class PaymobRequestTest extends TestCase
         $this->assertTrue(isset($order['id']));
         $this->assertEquals($order_id, $order['id']);
     }
+    /** @test*/
+    public function test_payment_keys_without_address()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("Address details not set.");
 
+        Http::fake([
+            // Stub a JSON response for paymob endpoints...
+            'https://accept.paymobsolutions.com/api/*' => Http::response([], 200),
+        ]);
+
+        $method_id = 2;
+        $payment = Payment::store($method_id);
+
+        $payment->customer($this->customer());
+
+        $token = Str::random(512);
+        $order_id = rand(1, 100);
+        $this->callMethod($payment, 'paymentKeyRequest', [$token, $order_id]);
+    }
+    /** @test*/
+    public function test_payment_keys_success()
+    {
+        $payment_key = Str::random(512);
+        Http::fake([
+            // Stub a JSON response for paymob endpoints...
+            'https://accept.paymobsolutions.com/api/*' => Http::response(['token' => $payment_key], 200),
+        ]);
+
+        $method_id = 2;
+        $payment = Payment::store($method_id);
+
+        $payment->customer($this->customer());
+        $payment->address($this->address());
+
+        $token = Str::random(512);
+        $order_id = rand(1, 100);
+        $token = $this->callMethod($payment, 'paymentKeyRequest', [$token, $order_id]);
+
+        $this->assertEquals($token, $payment_key);
+    }
     /**
      * Get customer fake data
      * 
@@ -113,6 +153,18 @@ class PaymobRequestTest extends TestCase
             "description" => "Product description",
             "amount_cents" => 15000,
             "quantity" => 1
+        ];
+    }
+
+    private function address(): array
+    {
+        return [
+            'floor' => '1',
+            'street' => 'Test street',
+            'city' => 'Test city',
+            'state' => 'Test state',
+            'apartment' => 'Test apartment',
+            'building' => 'Test building'
         ];
     }
 }
