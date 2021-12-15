@@ -26,21 +26,21 @@ abstract class Method
     /**
      * Customer details
      *
-     * @var CustomerContract
+     * @var CustomerContract|array
      */
-    protected $customer;
+    private $customer;
     /**
      * Address details
      *
-     * @var AddressContract
+     * @var AddressContract|array
      */
-    protected $address;
+    private $address;
     /**
      * Items details
      *
      * @var array
      */
-    public $items = [];
+    private $items = [];
     /**
      * payment config
      *
@@ -126,6 +126,23 @@ abstract class Method
         return $this->customer;
     }
     /**
+     * Get customer details.
+     *
+     * @param string|null $property
+     * @return void
+     */
+    public function getAddressDetails($property = null)
+    {
+        if ($this->address == null) {
+            throw new \InvalidArgumentException('Address details not set.');
+        }
+
+        if ($property) {
+            return $this->address[$property] ?? 'NA';
+        }
+        return $this->address;
+    }
+    /**
      * Get items.
      *
      * @return array
@@ -141,12 +158,18 @@ abstract class Method
     /**
      * Set address details.
      *
-     * @param AddressContract $address
+     * @param AddressContract|array $address
      * @return void
      */
-    public function address(AddressContract $address)
+    public function address($address)
     {
-        $this->address = $address->addressDetails();
+        if (is_array($address)) {
+            $this->address = $address;
+        }
+
+        if ($address instanceof AddressContract) {
+            $this->address = $address->addressDetails();
+        }
 
         return $this;
     }

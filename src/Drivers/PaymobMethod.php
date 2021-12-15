@@ -151,29 +151,29 @@ class PaymobMethod extends Method implements PaymentMethodContract
      */
     private function paymentKeyRequest($token, $orderPayId)
     {
-        $postData = [
-            'auth_token' => $token,
-            'amount_cents' => (int) $this->mount * 100,
-            'expiration' => 3600,
-            'order_id' => $orderPayId,
-            'currency' => "EGP",
-            'integration_id' => $this->integrationID,
-            'billing_data' => [
-                "first_name" => $this->customer['first_name'],
-                "last_name" => $this->customer['last_name'] ?? 'NA',
-                "phone_number" => $this->customer['phone'],
-                "email" => $this->customer['email'],
-                "apartment" => $this->address['apartment'] ?? "NA",
-                "floor" => $this->address['floor'] ?? "NA",
-                "city" => $this->address['city'] ?? "NA",
-                "state" => $this->address['state'] ?? "NA",
-                "street" => $this->address['street'] ?? "NA",
-                "building" => $this->address['building'] ?? "NA",
-                "country" => "EG",
-            ],
-        ];
-
         try {
+            $postData = [
+                'auth_token' => $token,
+                'amount_cents' => (int) $this->amount * 100,
+                'expiration' => 3600,
+                'order_id' => $orderPayId,
+                'currency' => "EGP",
+                'integration_id' => $this->integrationID,
+                'billing_data' => [
+                    "first_name" => $this->getCustomerDetails('first_name'),
+                    "last_name" => $this->getCustomerDetails('last_name'),
+                    "email" => $this->getCustomerDetails('email'),
+                    "phone_number" => $this->getCustomerDetails('phone'),
+                    "apartment" => $this->getAddressDetails('apartment'),
+                    "floor" => $this->getAddressDetails('floor'),
+                    "city" => $this->getAddressDetails('city'),
+                    "state" => $this->getAddressDetails('state'),
+                    "street" => $this->getAddressDetails('street'),
+                    "building" => $this->getAddressDetails('building'),
+                    "country" => "EG",
+                ],
+            ];
+    
             $response = Http::post("{$this->url}acceptance/payment_keys", $postData);
 
             $result = $response->json();
