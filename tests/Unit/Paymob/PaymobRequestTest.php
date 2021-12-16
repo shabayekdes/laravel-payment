@@ -129,7 +129,7 @@ class PaymobRequestTest extends TestCase
     }
     /**
      * Get customer fake data
-     * 
+     *
      * @return array
      */
     private function customer(): array
