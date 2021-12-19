@@ -2,7 +2,9 @@
 
 namespace Shabayek\Payment\Drivers;
 
-use GuzzleHttp\Client;
+use Exception;
+use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 
@@ -50,20 +52,21 @@ class PaymobMethod extends Method implements PaymentMethodContract
         return "{$this->url}acceptance/iframes/{$this->iframeID}?payment_token={$paymentKey}";
     }
     /**
-     * Complete payment
+     * Pay with payment method.
      *
+     * @param Request $request
      * @return array
      */
-    public function pay($requestData)
+    public function pay(Request $request)
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($request->isMethod('post')) {
             // The request is using the POST method
-            $callback = $this->processesCallback($requestData['obj']);
+            $callback = $this->processesCallback($request->get('obj'));
         }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        if ($request->isMethod('get')) {
             // The request is using the GET method
-            $callback = $this->responseCallBack($requestData);
+            $callback = $this->responseCallBack($request->all());
         }
 
         $isSuccess = false;
@@ -139,8 +142,8 @@ class PaymobMethod extends Method implements PaymentMethodContract
             $response = Http::post("{$this->url}ecommerce/orders", $postData);
 
             return $response->json();
-        } catch (\Exception $e) {
-            throw new \Exception("Order not created success in paymob #" . $e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception("Order not created success in paymob #" . $e->getMessage());
         }
     }
     /**
@@ -178,14 +181,15 @@ class PaymobMethod extends Method implements PaymentMethodContract
 
             $result = $response->json();
             return $result['token'];
-        } catch (\Exception $e) {
-            throw new \Exception("Payment key request not created success in paymob #" . $e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception("Payment key request not created success in paymob #" . $e->getMessage());
         }
     }
        /**
      * Record processes callback - POST request
      *
      * @param array $requestData
+     * @throws Exception
      * @return array
      */
     private function processesCallback($requestData): array
@@ -217,11 +221,11 @@ class PaymobMethod extends Method implements PaymentMethodContract
             throw new Exception('HMAC is not valid');
         }
 
-        $transaction_status = $requestData['success'] ?? false;
+        $transaction_status = $requestData['obj']['success'] ?? false;
 
         return [
-            'payment_order_id' => $requestData['order']['id'],
-            'payment_transaction_id' => $requestData['id'],
+            'payment_order_id' => $requestData['obj']['order']['id'],
+            'payment_transaction_id' => $requestData['obj']['id'],
             'status' => $transaction_status === true
         ];
     }
@@ -279,7 +283,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
     {
         $requestValues = [];
         foreach ($hmacKeys as $key) {
-            $value = $requestData[$key];
+            $value = Arr::get($requestData, $key);
             if ($value === true) {
                 $value = "true";
             } elseif ($value === false) {
@@ -288,8 +292,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
             $requestValues[] = $value;
         }
 
-        $sig = hash_hmac('sha512', implode('', $requestValues), $this->hmacHash);
-        return $sig;
+        return hash_hmac('sha512', implode('', $requestValues), $this->hmacHash);
     }
     /**
      * Get order detials
@@ -304,8 +307,8 @@ class PaymobMethod extends Method implements PaymentMethodContract
             $response = Http::withToken($token)->get("{$this->url}acceptance/transactions/{$id}");
 
             return $response->json();
-        } catch (\Exception $e) {
-            throw new \Exception("Get order data failed in paymob #" . $e->getMessage());
+        } catch (Exception $e) {
+            throw new Exception("Get order data failed in paymob #" . $e->getMessage());
         }
         return [];
     }
