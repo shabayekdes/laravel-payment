@@ -2,6 +2,7 @@
 
 namespace Shabayek\Payment\Tests\Unit;
 
+use Illuminate\Http\Request;
 use Shabayek\Payment\Facade\Payment;
 use Shabayek\Payment\Tests\TestCase;
 
@@ -33,7 +34,8 @@ class CodMethodTest extends TestCase
     {
         $method_id = 1;
         $payment = Payment::store($method_id);
-        $pay = $payment->pay([]);
+        $mockRequest = new Request();
+        $pay = $payment->pay($mockRequest);
 
         $this->assertCount(3, $pay);
         $this->assertArrayHasKey('success', $pay);
@@ -43,7 +45,8 @@ class CodMethodTest extends TestCase
     {
         $method_id = 1;
         $payment = Payment::store($method_id);
-        $pay = $payment->pay([]);
+        $mockRequest = new Request();
+        $pay = $payment->pay($mockRequest);
 
         $this->assertArrayHasKey('success', $pay);
         $this->assertTrue($pay['success']);
