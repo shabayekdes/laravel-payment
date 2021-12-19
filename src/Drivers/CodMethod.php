@@ -2,19 +2,12 @@
 
 namespace Shabayek\Payment\Drivers;
 
+use Illuminate\Http\Request;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 
 class CodMethod extends Method implements PaymentMethodContract
 {
-    /**
-     * COD Method constructor.
-     *
-     * @param Array $config
-     */
-    public function __construct(array $config)
-    {
-        parent::__construct($config);
-    }
+
     /**
      * Set credentials of payment methods.
      *
@@ -35,11 +28,12 @@ class CodMethod extends Method implements PaymentMethodContract
         return null;
     }
     /**
-     * Complete payment
+     * Pay with payment method.
      *
+     * @param Request $request
      * @return array
      */
-    public function pay($requestData)
+    public function pay(Request $request)
     {
         return [
             'success' => true,

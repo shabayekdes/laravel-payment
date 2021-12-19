@@ -2,6 +2,8 @@
 
 namespace Shabayek\Payment\Contracts;
 
+use Illuminate\Http\Request;
+
 interface PaymentMethodContract
 {
     /**
@@ -14,7 +16,8 @@ interface PaymentMethodContract
     /**
      * Pay with payment method.
      *
+     * @param Request $request
      * @return array
      */
-    public function pay($requestData);
+    public function pay(Request $request);
 }
