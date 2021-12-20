@@ -139,7 +139,7 @@ class PaymobRequestTest extends TestCase
         $requestData = PaymobCallback::processesCallback();
         $processesCallback = $this->callMethod($payment, 'processesCallback', [$requestData]);
 
-        $this->assertTrue($processesCallback['status']);
+        $this->assertTrue($processesCallback['transaction_status']);
         $this->assertArrayHasKey('payment_order_id', $processesCallback);
         $this->assertArrayHasKey('payment_transaction_id', $processesCallback);
     }
@@ -153,11 +153,28 @@ class PaymobRequestTest extends TestCase
         $requestData = PaymobCallback::responseCallback();
         $processesCallback = $this->callMethod($payment, 'responseCallBack', [$requestData]);
 
-        $this->assertTrue($processesCallback['status']);
+        $this->assertTrue($processesCallback['transaction_status']);
         $this->assertArrayHasKey('payment_order_id', $processesCallback);
         $this->assertArrayHasKey('payment_transaction_id', $processesCallback);
     }
+    /** @test*/
+    public function test_paymob_get_order_data_api_success()
+    {
+        $requestData = PaymobCallback::processesCallback();
+        Http::fake([
+            // Stub a JSON response for paymob endpoints...
+            'https://accept.paymobsolutions.com/api/auth/tokens' => Http::response(['token' => Str::random(512)], 200),
+            // Stub a JSON response for paymob endpoints...
+            'https://accept.paymobsolutions.com/api/acceptance/transactions/1' => Http::response($requestData['obj'], 200),
+        ]);
 
+        $method_id = 2;
+        $payment = Payment::store($method_id);
+
+        $order = $this->callMethod($payment, 'getOrderData', [1]);
+
+        $this->assertEquals($order, $requestData['obj']);
+    }
     /**
      * Get customer fake data
      *
