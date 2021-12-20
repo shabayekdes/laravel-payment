@@ -111,6 +111,60 @@ class PaymobMethodFeature extends TestCase
         $this->assertArrayHasKey('payment_order_id', $paymentCallback['data']);
         $this->assertArrayHasKey('payment_transaction_id', $paymentCallback['data']);
     }
+
+    /** @test*/
+    public function test_installment_payment_pay_fail_return_from_post_request_with_paymob()
+    {
+        config()->set('payment.stores.2.credentials.hmac_hash', 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R');
+        config()->set('payment.stores.2.is_installment', true);
+
+        Http::fake([
+            // Stub a JSON response for paymob endpoints...
+            'https://accept.paymobsolutions.com/api/auth/tokens' => Http::response(['token' => Str::random(512)], 200),
+        ]);
+
+        $method_id = 2;
+        $payment = Payment::store($method_id);
+
+        $fakeRequest = new Request();
+        $fakeRequest->setMethod('POST');
+
+        $requestData = PaymobCallback::processesCallback();
+        $fakeRequest->request->add($requestData);
+
+        $paymentCallback = $payment->pay($fakeRequest);
+
+        $this->assertFalse($paymentCallback['success']);
+        $this->assertEquals('Get order data failed in paymob # incorrect credentials', $paymentCallback['message']);
+
+    }
+    /** @test*/
+    public function test_installment_payment_pay_success_return_from_post_request_with_paymob()
+    {
+        config()->set('payment.stores.2.credentials.hmac_hash', 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R');
+        config()->set('payment.stores.2.is_installment', true);
+
+        $requestData = PaymobCallback::processesCallback();
+        Http::fake([
+            // Stub a JSON response for paymob endpoints...
+            'https://accept.paymobsolutions.com/api/auth/tokens' => Http::response(['token' => Str::random(512)], 200),
+            // Stub a JSON response for paymob endpoints...
+            "https://accept.paymobsolutions.com/api/acceptance/transactions/{$requestData['obj']['order']['id']}" => Http::response($requestData['obj'], 200),
+        ]);
+
+        $method_id = 2;
+        $payment = Payment::store($method_id);
+
+        $fakeRequest = new Request();
+        $fakeRequest->setMethod('POST');
+
+        $requestData = PaymobCallback::processesCallback();
+        $fakeRequest->request->add($requestData);
+
+        $paymentCallback = $payment->pay($fakeRequest);
+
+        $this->assertTrue($paymentCallback['success']);
+    }
     /**
      * Get customer fake data
      *
