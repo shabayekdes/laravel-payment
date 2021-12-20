@@ -3,10 +3,12 @@
 namespace Shabayek\Payment\Tests\Feature\Paymob;
 
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Facade\Payment;
 use Shabayek\Payment\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
+use Shabayek\Payment\Tests\Helper\Paymob\PaymobCallback;
 
 /**
  * Class PaymobMethodFeature
@@ -69,7 +71,46 @@ class PaymobMethodFeature extends TestCase
 
         $this->assertEquals($arr[4], $iframe);
     }
+    /** @test*/
+    public function test_payment_pay_success_return_from_post_request_with_paymob()
+    {
+        config()->set('payment.stores.2.credentials.hmac_hash', 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R');
 
+        $method_id = 2;
+        $payment = Payment::store($method_id);
+
+        $fakeRequest = new Request();
+        $fakeRequest->setMethod('POST');
+
+        $requestData = PaymobCallback::processesCallback();
+        $fakeRequest->request->add($requestData);
+
+        $paymentCallback = $payment->pay($fakeRequest);
+
+        $this->assertTrue($paymentCallback['success']);
+        $this->assertArrayHasKey('payment_order_id', $paymentCallback['data']);
+        $this->assertArrayHasKey('payment_transaction_id', $paymentCallback['data']);
+    }
+    /** @test*/
+    public function test_payment_pay_success_return_from_get_request_with_paymob()
+    {
+        config()->set('payment.stores.2.credentials.hmac_hash', 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R');
+
+        $method_id = 2;
+        $payment = Payment::store($method_id);
+
+        $fakeRequest = new Request();
+        $fakeRequest->setMethod('GET');
+
+        $requestData = PaymobCallback::responseCallback();
+        $fakeRequest->replace($requestData);
+
+        $paymentCallback = $payment->pay($fakeRequest);
+
+        $this->assertTrue($paymentCallback['success']);
+        $this->assertArrayHasKey('payment_order_id', $paymentCallback['data']);
+        $this->assertArrayHasKey('payment_transaction_id', $paymentCallback['data']);
+    }
     /**
      * Get customer fake data
      *
