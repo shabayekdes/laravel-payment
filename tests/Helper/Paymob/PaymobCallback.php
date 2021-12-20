@@ -208,4 +208,45 @@ class PaymobCallback
             "hmac" => "7dc8cda513fe5119adb7b7737bb50251ea41d45ad19a191ded419ea3dc3af358f81f714e24d670329784278feb689eb8eca946897e2b48dd2de57fab1e5c38e0"
         ];
     }
+    /**
+     * Return the processes paymob callback
+     *
+     * @return array
+     */
+    public static function responseCallback()
+    {
+        return [
+            "owner" => "4708",
+            "txn_response_code" => "AUTHENTICATION_FAILED",
+            "source_data_sub_type" => "MasterCard",
+            "is_standalone_payment" => "true",
+            "profile_id" => "4217",
+            "order" => "24827227",
+            "source_data_type" => "card",
+            "created_at" => "2021-12-09T17:10:06.099493",
+            "has_parent_transaction" => "false",
+            "refunded_amount_cents" => "0",
+            "is_refunded" => "false",
+            "merchant_order_id" => "23790-69578",
+            "is_3d_secure" => "true",
+            "success" => "true",
+            "is_refund" => "false",
+            "acq_response_code" => "-",
+            "data_message" => "AUTHENTICATION_FAILED",
+            "captured_amount" => "0",
+            "pending" => "false",
+            "is_void" => "false",
+            "error_occured" => "false",
+            "currency" => "EGP",
+            "is_auth" => "false",
+            "integration_id" => "6746",
+            "amount_cents" => "102797",
+            "is_voided" => "false",
+            "source_data_pan" => "0008",
+            "merchant_commission" => "0",
+            "is_capture" => "false",
+            "hmac" => "91718408c8962be7b17b8397e993668677f3949345b887e228d61a3eed1003ebfca18297589c544670257787a89e4ffd89b6a91ae1bab346cfe8186b5eb342f6",
+            "id" => "19766521"
+         ];
+    }
 }

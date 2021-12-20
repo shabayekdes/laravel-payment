@@ -143,6 +143,20 @@ class PaymobRequestTest extends TestCase
         $this->assertArrayHasKey('payment_order_id', $processesCallback);
         $this->assertArrayHasKey('payment_transaction_id', $processesCallback);
     }
+    /** @test*/
+    public function test_paymob_response_callback_success()
+    {
+        config()->set('payment.stores.2.credentials.hmac_hash', 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R');
+        $method_id = 2;
+        $payment = Payment::store($method_id);
+
+        $requestData = PaymobCallback::responseCallback();
+        $processesCallback = $this->callMethod($payment, 'responseCallBack', [$requestData]);
+
+        $this->assertTrue($processesCallback['status']);
+        $this->assertArrayHasKey('payment_order_id', $processesCallback);
+        $this->assertArrayHasKey('payment_transaction_id', $processesCallback);
+    }
 
     /**
      * Get customer fake data
