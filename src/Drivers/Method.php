@@ -52,7 +52,7 @@ abstract class Method
      *
      * @param Array $config
      */
-    public function __construct(Array $config)
+    public function __construct(array $config)
     {
         $this->config = $config;
     }

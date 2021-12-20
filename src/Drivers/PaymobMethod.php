@@ -185,7 +185,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
             throw new Exception("Payment key request not created success in paymob #" . $e->getMessage());
         }
     }
-       /**
+    /**
      * Record processes callback - POST request
      *
      * @param array $requestData
@@ -266,7 +266,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
 
         $transaction_status = $requestData['success'];
         return [
-            'paymob_order_id' => $requestData['order'],
+            'payment_order_id' => $requestData['order'],
             'payment_transaction_id' => $requestData['id'],
             'status' => $transaction_status === "true"
         ];
