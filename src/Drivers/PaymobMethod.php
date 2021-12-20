@@ -61,9 +61,8 @@ class PaymobMethod extends Method implements PaymentMethodContract
     {
         if ($request->isMethod('post')) {
             // The request is using the POST method
-            $callback = $this->processesCallback($request->get('obj'));
+            $callback = $this->processesCallback($request->all());
         }
-
         if ($request->isMethod('get')) {
             // The request is using the GET method
             $callback = $this->responseCallBack($request->all());
@@ -74,12 +73,10 @@ class PaymobMethod extends Method implements PaymentMethodContract
             if ($callback['transaction_status']) {
                 $downPaymentInfo = [];
                 if ($this->isInstallment()) {
-                    $orderData = $this->getOrderData($callback['paymob_order_id']);
+                    $orderData = $this->getOrderData($callback['payment_order_id']);
 
                     $downPaymentInfo = $this->calculateInstallmentFees($orderData);
                 }
-
-                $callback['items'] = $this->items;
                 $callback['down_payment_info'] = $downPaymentInfo;
 
                 $isSuccess = true;
@@ -226,7 +223,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
         return [
             'payment_order_id' => $requestData['obj']['order']['id'],
             'payment_transaction_id' => $requestData['obj']['id'],
-            'status' => $transaction_status === true
+            'transaction_status' => $transaction_status === true
         ];
     }
     /**
@@ -268,7 +265,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
         return [
             'payment_order_id' => $requestData['order'],
             'payment_transaction_id' => $requestData['id'],
-            'status' => $transaction_status === "true"
+            'transaction_status' => $transaction_status === "true"
         ];
     }
 
