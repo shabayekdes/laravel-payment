@@ -107,10 +107,15 @@ class PaymobMethod extends Method implements PaymentMethodContract
             $response = Http::post("{$this->url}auth/tokens", $postData);
 
             $result = $response->json();
-            return $result['token'];
+
+            if ($response->ok()) {
+                return $result['token'];
+            }
+            $error = "Api key not found";
         } catch (\Exception $e) {
-            return false;
+            $error = $e->getMessage();
         }
+        throw new Exception("Authentication failed in paymob # " . $error);
     }
     /**
      * Order registration API
