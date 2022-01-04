@@ -31,12 +31,13 @@ class PaymobMethod extends Method implements PaymentMethodContract
      */
     protected function setCredentials($credentials)
     {
+        foreach ($credentials as $key => $value) {
+            if (empty($value)) {
+                throw new Exception("Paymob payment credentials ($key) are not set");
+            }
+            $this->$key = $value;
+        }
         $this->url = "https://accept.paymobsolutions.com/api/";
-        $this->iframeID = $credentials['iframe_id'];
-        $this->integrationID = $credentials['integration_id'];
-        $this->authApiKey = $credentials['api_key'];
-        $this->merchantID = $credentials['merchant_id'];
-        $this->hmacHash = $credentials['hmac_hash'];
     }
     /**
      * Get redirect payement url
@@ -49,7 +50,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
         $orderCreation = $this->orderCreation($token);
         $paymentKey = $this->paymentKeyRequest($token, $orderCreation['id']);
 
-        return "{$this->url}acceptance/iframes/{$this->iframeID}?payment_token={$paymentKey}";
+        return "{$this->url}acceptance/iframes/{$this->iframe_id}?payment_token={$paymentKey}";
     }
     /**
      * Pay with payment method.
@@ -101,14 +102,14 @@ class PaymobMethod extends Method implements PaymentMethodContract
      */
     private function getAuthenticationToken()
     {
-        $postData = ['api_key' => $this->authApiKey];
+        $postData = ['api_key' => $this->api_key];
 
         try {
             $response = Http::post("{$this->url}auth/tokens", $postData);
 
             $result = $response->json();
 
-            if ($response->ok()) {
+            if ($response->successful()) {
                 return $result['token'];
             }
             $error = "Api key not found";
@@ -130,7 +131,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
                 'auth_token' => $token,
                 'delivery_needed' => false,
                 'merchant_order_id' => $this->transaction_id . "-" . rand(10000, 99999),
-                'merchant_id' => $this->merchantID,
+                'merchant_id' => $this->merchant_id,
                 'amount_cents' => (int) $this->amount * 100,
                 'currency' => "EGP",
                 'items' => $this->getItems(),
@@ -142,11 +143,14 @@ class PaymobMethod extends Method implements PaymentMethodContract
                 ]
             ];
             $response = Http::post("{$this->url}ecommerce/orders", $postData);
-
-            return $response->json();
+            if ($response->successful()) {
+                return $response->json();
+            }
+            $error = "Order creation failed";
         } catch (Exception $e) {
-            throw new Exception("Order not created success in paymob #" . $e->getMessage());
+            $error = $e->getMessage();
         }
+        throw new Exception("Order not created success in paymob # " . $error);
     }
     /**
      * Get payment key request
@@ -163,7 +167,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
                 'expiration' => 3600,
                 'order_id' => $orderPayId,
                 'currency' => "EGP",
-                'integration_id' => $this->integrationID,
+                'integration_id' => $this->integration_id,
                 'billing_data' => [
                     "first_name" => $this->getCustomerDetails('first_name'),
                     "last_name" => $this->getCustomerDetails('last_name'),
@@ -294,7 +298,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
             $requestValues[] = $value;
         }
 
-        return hash_hmac('sha512', implode('', $requestValues), $this->hmacHash);
+        return hash_hmac('sha512', implode('', $requestValues), $this->hmac_hash);
     }
     /**
      * Get order detials
