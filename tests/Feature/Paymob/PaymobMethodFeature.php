@@ -16,6 +16,21 @@ use Shabayek\Payment\Tests\Helper\Paymob\PaymobCallback;
  */
 class PaymobMethodFeature extends TestCase
 {
+    /**
+     * Setup test cases
+     *
+     * @return void
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+        // additional setup
+        config()->set('payment.stores.2.credentials.api_key', 'test');
+        config()->set('payment.stores.2.credentials.hmac_hash', 'test');
+        config()->set('payment.stores.2.credentials.merchant_id', 'test');
+        config()->set('payment.stores.2.credentials.iframe_id', 'test');
+        config()->set('payment.stores.2.credentials.integration_id', 'test');
+    }
     /** @test*/
     public function test_payment_token_in_return_purchase_url_with_paymob()
     {
@@ -136,7 +151,6 @@ class PaymobMethodFeature extends TestCase
 
         $this->assertFalse($paymentCallback['success']);
         $this->assertEquals('Get order data failed in paymob # incorrect credentials', $paymentCallback['message']);
-
     }
     /** @test*/
     public function test_installment_payment_pay_success_return_from_post_request_with_paymob()

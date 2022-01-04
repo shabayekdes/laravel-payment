@@ -14,6 +14,21 @@ use Shabayek\Payment\Drivers\PaymobMethod;
  */
 class PaymentManagerTest extends TestCase
 {
+    /**
+     * Setup test cases
+     *
+     * @return void
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+        // additional setup
+        config()->set('payment.stores.2.credentials.api_key', 'test');
+        config()->set('payment.stores.2.credentials.hmac_hash', 'test');
+        config()->set('payment.stores.2.credentials.merchant_id', 'test');
+        config()->set('payment.stores.2.credentials.iframe_id', 'test');
+        config()->set('payment.stores.2.credentials.integration_id', 'test');
+    }
     /** @test */
     public function a_payment_facade_is_register(): void
     {

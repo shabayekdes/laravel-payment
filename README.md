@@ -1,5 +1,5 @@
 # Laravel Payment Methods
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger) [![Packagist version](https://img.shields.io/packagist/v/shabayek/laravel-payment)](https://packagist.org/packages/shabayek/laravel-payment) [![mit](https://img.shields.io/apm/l/laravel)](https://packagist.org/packages/shabayek/laravel-payment)
+[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger) [![Packagist version](https://img.shields.io/packagist/v/shabayek/laravel-payment)](https://packagist.org/packages/shabayek/laravel-payment) [![mit](https://img.shields.io/apm/l/laravel)](https://packagist.org/packages/shabayek/laravel-payment) ![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/shabayek/laravel-payment) ![Packagist Downloads](https://img.shields.io/packagist/dt/shabayek/laravel-payment)
 
 Laravel payment package handle all payment methods.
 
@@ -52,6 +52,19 @@ class User extends Authenticatable implements CustomerContract
 }
 ```
 
+- You can insert user model object that implements **CustomerContract** or array 
+
+```php
+    $payment->customer($user);
+    // OR array
+    $payment->customer([
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'email' => 'test@test.com',
+        'phone' => '09123456789',
+    ]);
+```
+
 - Implement address details contracts on address model
 
 ```php
@@ -77,6 +90,32 @@ class Address extends Model implements AddressContract
         ]
     }
 }
+```
+
+- You enter address model object that implements **AddressContract** array of data
+```php
+    $payment->address($address);
+    // OR array
+    $payment->address([
+        "apartment" => "803",
+        "floor" => "42",
+        "street" => "Ethan Land",
+        "building" => "8028",
+        "postal_code" => "01898",
+        "city" => "Jaskolskiburgh",
+        "country" => "CR",
+        "state" => "Utah"
+    ]);
+```
+
+- Add items with loop array of data items
+```php
+    $payment->items([
+        "name" => "ASC1515",
+        "amount_cents" => "500000",
+        "description" => "Smart Watch",
+        "quantity" => "1"
+    ]);
 ```
 
 - Check the payment is online to get pay url
