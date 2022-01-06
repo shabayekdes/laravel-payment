@@ -55,7 +55,7 @@ class PaymentManagerTest extends TestCase
     public function a_payment_facade_invalid_exception_if_method_not_found(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        
+
         $method_id = 0;
         $payment = Payment::store($method_id);
     }
@@ -78,5 +78,6 @@ class PaymentManagerTest extends TestCase
         $amount = $property->getValue($payment);
 
         $this->assertEquals($items['amount_cents'], $amount);
+        $this->assertFalse(true);
     }
 }
