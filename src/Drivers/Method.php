@@ -65,6 +65,8 @@ abstract class Method
     /**
      * Set the amount of transaction.
      *
+     * @deprecated v0.5
+     * 
      * @param $amount
      * @return $this
      * @throws \Exception
@@ -182,6 +184,7 @@ abstract class Method
     public function items(array $item)
     {
         $this->items[] = $item;
+        $this->amount += $item['amount_cents'];
 
         return $this;
     }
