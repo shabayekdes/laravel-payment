@@ -182,7 +182,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
                     "country" => "EG",
                 ],
             ];
-    
+
             $response = Http::post("{$this->url}acceptance/payment_keys", $postData);
 
             $result = $response->json();
@@ -311,7 +311,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
         try {
             $token = $this->getAuthenticationToken();
             $response = Http::withToken($token)->get("{$this->url}acceptance/transactions/{$id}");
-            
+
             $result = $response->json();
 
             if ($response->ok() && isset($result['success']) && $result['success'] === true) {
