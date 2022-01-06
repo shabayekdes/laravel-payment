@@ -57,7 +57,7 @@ class TestCase extends BaseTestCase
      * @param object $obj
      * @param string $name
      * @param array $args
-     * @return void
+     * @return mixed
      */
     protected function callMethod($obj, $name, array $args = [])
     {
