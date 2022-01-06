@@ -78,6 +78,5 @@ class PaymentManagerTest extends TestCase
         $amount = $property->getValue($payment);
 
         $this->assertEquals($items['amount_cents'], $amount);
-        $this->assertFalse(true);
     }
 }
