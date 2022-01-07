@@ -20,7 +20,7 @@ class PaymentServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../../config/payment.php', 'payment');
 
-        $this->app->bind('payment', function () {
+        $this->app->singleton('payment', function () {
             return new PaymentManager($this->app);
         });
     }

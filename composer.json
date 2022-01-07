@@ -46,7 +46,10 @@
         "laravel": {
             "providers": [
                 "Shabayek\\Payment\\Providers\\PaymentServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Payment": "Shabayek\\Payment\\Facade"
+            }
         }
     },
     "config": {
