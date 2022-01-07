@@ -20,7 +20,7 @@
         }
     ],
     "require": {
-        "php": "^7.4|^8.0",
+        "php": "^7.3|^7.4|^8.0",
         "guzzlehttp/guzzle": "^7.4",
         "illuminate/contracts": "^8.0"
     },
@@ -40,16 +40,16 @@
     },
     "scripts": {
         "test": "vendor/bin/phpunit",
-        "test-f": "vendor/bin/phpunit --filter",
-        "post-autoload-dump": [
-            "@php ./vendor/bin/testbench package:discover --ansi"
-        ]
+        "test-f": "vendor/bin/phpunit --filter"
     },
     "extra": {
         "laravel": {
             "providers": [
                 "Shabayek\\Payment\\Providers\\PaymentServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Payment": "Shabayek\\Payment\\Facade"
+            }
         }
     },
     "config": {

@@ -66,9 +66,9 @@ abstract class Method
      * Set the amount of transaction.
      *
      * @deprecated v0.5
-     * 
+     *
      * @param $amount
-     * @return $this
+     * @return self
      * @throws \Exception
      */
     public function amount($amount)
@@ -84,7 +84,7 @@ abstract class Method
      * Set transaction id.
      *
      * @param $transaction
-     * @return $this
+     * @return self
      */
     public function transaction($transaction)
     {
@@ -96,7 +96,7 @@ abstract class Method
      * Set customer details.
      *
      * @param CustomerContract|array $customer
-     * @return void
+     * @return self
      */
     public function customer($customer)
     {
@@ -114,7 +114,7 @@ abstract class Method
      * Get customer details.
      *
      * @param string|null $property
-     * @return void
+     * @return array|string
      */
     public function getCustomerDetails($property = null)
     {
@@ -131,7 +131,7 @@ abstract class Method
      * Get customer details.
      *
      * @param string|null $property
-     * @return void
+     * @return array|string
      */
     public function getAddressDetails($property = null)
     {
@@ -161,7 +161,7 @@ abstract class Method
      * Set address details.
      *
      * @param AddressContract|array $address
-     * @return void
+     * @return self
      */
     public function address($address)
     {
@@ -179,31 +179,37 @@ abstract class Method
      * Set items
      *
      * @param array $item
-     * @return void
+     * @return self
      */
     public function items(array $item)
     {
         $this->items[] = $item;
-        $this->amount += $item['amount_cents'];
+        $this->amount += isset($item['amount_cents']) ? $item['amount_cents'] : 0;
 
         return $this;
     }
     /**
-     * @return mixed
+     * Get is online boolean value
+     *
+     * @return bool
      */
     public function isOnline()
     {
         return $this->config['is_online'];
     }
     /**
-     * @return mixed
+     * Get is active boolean value
+     *
+     * @return bool
      */
     protected function isActive()
     {
         return $this->config['is_active'];
     }
     /**
-     * @return mixed
+     * Get is installment payment boolean value
+     *
+     * @return bool
      */
     public function isInstallment()
     {

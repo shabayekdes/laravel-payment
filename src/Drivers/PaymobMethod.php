@@ -14,6 +14,13 @@ use Shabayek\Payment\Contracts\PaymentMethodContract;
  */
 class PaymobMethod extends Method implements PaymentMethodContract
 {
+    private $url;
+    private $iframe_id;
+    private $api_key;
+    private $merchant_id;
+    private $integration_id;
+    private $hmac_hash;
+
     /**
      * PaymobMethod constructor.
      *
