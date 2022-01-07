@@ -79,4 +79,24 @@ class PaymentManagerTest extends TestCase
 
         $this->assertEquals($items['amount_cents'], $amount);
     }
+    /** @test */
+    public function it_can_add_to_items_without_amount()
+    {
+        $payment = Payment::store(2);
+        $items = [
+            "name" => "ASC1515",
+            "amount_cents" => 500000,
+            "description" => "Smart Watch",
+            "quantity" => "1"
+        ];
+        $payment->items($items);
+
+        $reflector = new \ReflectionClass(PaymobMethod::class);
+        $property = $reflector->getProperty('amount');
+        $property->setAccessible(true);
+
+        $amount = $property->getValue($payment);
+
+        $this->assertEquals($items['amount_cents'], $amount);
+    }
 }

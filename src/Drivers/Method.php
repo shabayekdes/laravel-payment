@@ -184,7 +184,7 @@ abstract class Method
     public function items(array $item)
     {
         $this->items[] = $item;
-        $this->amount += $item['amount_cents'];
+        $this->amount += isset($item['amount_cents']) ? $item['amount_cents'] : 0;
 
         return $this;
     }
