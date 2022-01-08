@@ -27,7 +27,7 @@ class CodMethodTest extends TestCase
         $method_id = 1;
         $payment = Payment::store($method_id);
 
-        $this->assertNull($payment->purchase());
+        $this->assertEmpty($payment->purchase());
     }
     /** @test*/
     public function test_cod_method_should_pay_function_return_array_of_data()

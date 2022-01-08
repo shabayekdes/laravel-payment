@@ -11,7 +11,7 @@ interface PaymentMethodContract
      *
      * @return string
      */
-    public function purchase();
+    public function purchase(): string;
 
     /**
      * Pay with payment method.
@@ -19,5 +19,13 @@ interface PaymentMethodContract
      * @param Request $request
      * @return array
      */
-    public function pay(Request $request);
+    public function pay(Request $request): array;
+
+    /**
+     * Verify if payment status from gateway
+     *
+     * @param int $payment_order_id
+     * @return array
+     */
+    public function verify(int $payment_order_id): array;
 }
