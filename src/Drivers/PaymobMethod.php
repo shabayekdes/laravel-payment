@@ -385,7 +385,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
      *
      * @param  int  $payment_order_id
      * @param  string  $token
-     * @return void
+     * @return array
      */
     private function retrieveTransactionByOrder($payment_order_id, $token)
     {

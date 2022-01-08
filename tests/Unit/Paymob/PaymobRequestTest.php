@@ -199,6 +199,27 @@ class PaymobRequestTest extends TestCase
         $this->assertEquals($order, $requestData['obj']);
     }
 
+    /** @test */
+    public function test_verify_payment_status_is_successfully_from_paymob_gateway()
+    {
+        $requestData = PaymobCallback::processesCallback();
+
+        Http::fake([
+            // Stub a JSON response for paymob endpoints...
+            'https://accept.paymobsolutions.com/api/auth/tokens' => Http::response(['token' => Str::random(512)], 200),
+            // Stub a JSON response for paymob endpoints...
+            'ecommerce/orders/transaction_inquiry' => Http::response($requestData['obj'], 200),
+        ]);
+
+        $method_id = 2;
+        $paymob_order_id = 24826928;
+
+        $payment_status = Payment::store($method_id)->verify($paymob_order_id);
+
+        $this->assertTrue($payment_status['success']);
+        $this->assertEquals($paymob_order_id, $payment_status['data']['payment_order_id']);
+    }
+
     /**
      * Get customer fake data.
      *
