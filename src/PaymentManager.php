@@ -30,8 +30,7 @@ class PaymentManager extends Manager
     /**
      * Create a new payment manager instance.
      *
-     * @param Application $app
-     *
+     * @param  Application  $app
      * @return void
      */
     public function __construct($app)
@@ -42,7 +41,7 @@ class PaymentManager extends Manager
     /**
      * Get a payment store instance by name, wrapped in a repository.
      *
-     * @param int|null $name
+     * @param  int|null  $name
      */
     public function store(int $id = null)
     {
@@ -55,7 +54,6 @@ class PaymentManager extends Manager
      * Attempt to get the store from the local payment.
      *
      * @param $id
-     *
      * @return mixed
      */
     protected function get($id)
@@ -67,7 +65,6 @@ class PaymentManager extends Manager
      * Resolve the given store.
      *
      * @param $id
-     *
      * @return mixed
      */
     protected function resolve($id)
@@ -90,8 +87,7 @@ class PaymentManager extends Manager
     /**
      * Create cod method instance.
      *
-     * @param array $config
-     *
+     * @param  array  $config
      * @return CodMethod
      */
     private function createCodMethod(array $config)
@@ -102,8 +98,7 @@ class PaymentManager extends Manager
     /**
      * Create paymob method instance.
      *
-     * @param array $config
-     *
+     * @param  array  $config
      * @return PaymobMethod
      */
     private function createPaymobMethod(array $config)
@@ -115,7 +110,6 @@ class PaymentManager extends Manager
      * Get the payment connection configuration.
      *
      * @param $id
-     *
      * @return array
      */
     protected function getConfig($id)

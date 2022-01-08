@@ -30,7 +30,6 @@ class TestCase extends BaseTestCase
      * Get package serivce providers.
      *
      * @param [type] $app
-     *
      * @return void
      */
     protected function getPackageProviders($app)
@@ -44,7 +43,6 @@ class TestCase extends BaseTestCase
      * Get environment set up.
      *
      * @param [type] $app
-     *
      * @return void
      */
     protected function getEnvironmentSetUp($app)
@@ -58,10 +56,9 @@ class TestCase extends BaseTestCase
     /**
      * Change accessible for any method in class.
      *
-     * @param object $obj
-     * @param string $name
-     * @param array  $args
-     *
+     * @param  object  $obj
+     * @param  string  $name
+     * @param  array  $args
      * @return mixed
      */
     protected function callMethod($obj, $name, array $args = [])

@@ -50,7 +50,7 @@ abstract class Method
     /**
      * Method constructor.
      *
-     * @param array $config
+     * @param  array  $config
      */
     public function __construct(array $config)
     {
@@ -70,14 +70,13 @@ abstract class Method
      * @deprecated v0.5
      *
      * @param $amount
+     * @return self
      *
      * @throws \Exception
-     *
-     * @return self
      */
     public function amount($amount)
     {
-        if (!is_numeric($amount)) {
+        if (! is_numeric($amount)) {
             throw new \Exception('Amount value should be a number (integer or float).');
         }
         $this->amount = $amount;
@@ -89,7 +88,6 @@ abstract class Method
      * Set transaction id.
      *
      * @param $transaction
-     *
      * @return self
      */
     public function transaction($transaction)
@@ -102,8 +100,7 @@ abstract class Method
     /**
      * Set customer details.
      *
-     * @param CustomerContract|array $customer
-     *
+     * @param  CustomerContract|array  $customer
      * @return self
      */
     public function customer($customer)
@@ -122,8 +119,7 @@ abstract class Method
     /**
      * Get customer details.
      *
-     * @param string|null $property
-     *
+     * @param  string|null  $property
      * @return array|string
      */
     public function getCustomerDetails($property = null)
@@ -142,8 +138,7 @@ abstract class Method
     /**
      * Get customer details.
      *
-     * @param string|null $property
-     *
+     * @param  string|null  $property
      * @return array|string
      */
     public function getAddressDetails($property = null)
@@ -176,8 +171,7 @@ abstract class Method
     /**
      * Set address details.
      *
-     * @param AddressContract|array $address
-     *
+     * @param  AddressContract|array  $address
      * @return self
      */
     public function address($address)
@@ -196,8 +190,7 @@ abstract class Method
     /**
      * Set items.
      *
-     * @param array $item
-     *
+     * @param  array  $item
      * @return self
      */
     public function items(array $item)
