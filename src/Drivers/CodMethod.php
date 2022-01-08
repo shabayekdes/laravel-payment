@@ -7,7 +7,6 @@ use Shabayek\Payment\Contracts\PaymentMethodContract;
 
 class CodMethod extends Method implements PaymentMethodContract
 {
-
     /**
      * Set credentials of payment methods.
      *
@@ -19,7 +18,7 @@ class CodMethod extends Method implements PaymentMethodContract
     }
 
     /**
-     * Get redirect payement url
+     * Get redirect payement url.
      *
      * @return void
      */
@@ -27,18 +26,20 @@ class CodMethod extends Method implements PaymentMethodContract
     {
         return null;
     }
+
     /**
      * Pay with payment method.
      *
      * @param Request $request
+     *
      * @return array
      */
     public function pay(Request $request)
     {
         return [
             'success' => true,
-            'message' => "Cod payment completed successfully",
-            'data' => []
+            'message' => 'Cod payment completed successfully',
+            'data'    => [],
         ];
     }
 }
