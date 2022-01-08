@@ -7,7 +7,8 @@ use Shabayek\Payment\Facade\Payment;
 use Shabayek\Payment\Tests\TestCase;
 
 /**
- * Class CodMethodTest
+ * Class CodMethodTest.
+ *
  * @test
  */
 class CodMethodTest extends TestCase
@@ -21,6 +22,7 @@ class CodMethodTest extends TestCase
         $this->assertTrue(method_exists($payment, 'purchase'));
         $this->assertTrue(method_exists($payment, 'pay'));
     }
+
     /** @test*/
     public function test_cod_method_purchase_should_return_null_value()
     {
@@ -29,6 +31,7 @@ class CodMethodTest extends TestCase
 
         $this->assertEmpty($payment->purchase());
     }
+
     /** @test*/
     public function test_cod_method_should_pay_function_return_array_of_data()
     {
@@ -40,6 +43,7 @@ class CodMethodTest extends TestCase
         $this->assertCount(3, $pay);
         $this->assertArrayHasKey('success', $pay);
     }
+
     /** @test*/
     public function test_cod_method_should_pay_function_return_success()
     {

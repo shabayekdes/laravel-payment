@@ -3,14 +3,13 @@
 namespace Shabayek\Payment\Drivers;
 
 use Exception;
-use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 
 /**
- * PaymobMethod class
- * @package Shabayek\Payment\Drivers\PaymobMethod
+ * PaymobMethod class.
  */
 class PaymobMethod extends Method implements PaymentMethodContract
 {
@@ -24,15 +23,16 @@ class PaymobMethod extends Method implements PaymentMethodContract
     /**
      * PaymobMethod constructor.
      *
-     * @param Array $config
+     * @param array $config
      */
     public function __construct(array $config)
     {
         parent::__construct($config);
         $this->setCredentials($config['credentials']);
     }
+
     /**
-     * Set credentials of paymob payment
+     * Set credentials of paymob payment.
      *
      * @return void
      */
@@ -44,10 +44,11 @@ class PaymobMethod extends Method implements PaymentMethodContract
             }
             $this->$key = $value;
         }
-        $this->url = "https://accept.paymobsolutions.com/api/";
+        $this->url = 'https://accept.paymobsolutions.com/api/';
     }
+
     /**
-     * Purchase with paymant mwthod and get redirect url
+     * Purchase with paymant mwthod and get redirect url.
      *
      * @return string
      */
@@ -59,10 +60,12 @@ class PaymobMethod extends Method implements PaymentMethodContract
 
         return "{$this->url}acceptance/iframes/{$this->iframe_id}?payment_token={$paymentKey}";
     }
+
     /**
      * Pay with payment method.
      *
      * @param Request $request
+     *
      * @return array
      */
     public function pay(Request $request): array
@@ -77,6 +80,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
         }
 
         $isSuccess = false;
+
         try {
             if ($callback['transaction_status']) {
                 $downPaymentInfo = [];
@@ -88,9 +92,9 @@ class PaymobMethod extends Method implements PaymentMethodContract
                 $callback['down_payment_info'] = $downPaymentInfo;
 
                 $isSuccess = true;
-                $message = "Success";
+                $message = 'Success';
             } else {
-                $message = "Transaction did not completed";
+                $message = 'Transaction did not completed';
             }
         } catch (Exception $e) {
             $message = $e->getMessage();
@@ -99,10 +103,12 @@ class PaymobMethod extends Method implements PaymentMethodContract
         return [
             'success' => $isSuccess,
             'message' => $message,
-            'data' => $isSuccess ? $callback : []
+            'data'    => $isSuccess ? $callback : [],
         ];
     }
+
     /**
+<<<<<<< HEAD
      * Verify if payment status from gateway
      *
      * @param int $payment_order_id
@@ -137,6 +143,9 @@ class PaymobMethod extends Method implements PaymentMethodContract
     }
     /**
      * Authentication Request
+=======
+     * Authentication Request.
+>>>>>>> 59a31b11f08aec24902f5d50d3c2354391ff52c6
      *
      * @return string
      */
@@ -152,115 +161,125 @@ class PaymobMethod extends Method implements PaymentMethodContract
             if ($response->successful()) {
                 return $result['token'];
             }
-            $error = "Api key not found";
+            $error = 'Api key not found';
         } catch (\Exception $e) {
             $error = $e->getMessage();
         }
-        throw new Exception("Authentication failed in paymob # " . $error);
+
+        throw new Exception('Authentication failed in paymob # '.$error);
     }
+
     /**
-     * Order registration API
+     * Order registration API.
      *
      * @param string $token
+     *
      * @return object
      */
     private function orderCreation($token)
     {
         try {
             $postData = [
-                'auth_token' => $token,
-                'delivery_needed' => false,
-                'merchant_order_id' => $this->transaction_id . "-" . rand(10000, 99999),
-                'merchant_id' => $this->merchant_id,
-                'amount_cents' => (int) $this->amount * 100,
-                'currency' => "EGP",
-                'items' => $this->getItems(),
-                'shipping_data' => [
-                    "first_name" => $this->getCustomerDetails('first_name'),
-                    "last_name" => $this->getCustomerDetails('last_name'),
-                    "email" => $this->getCustomerDetails('email'),
-                    "phone_number" => $this->getCustomerDetails('phone'),
-                ]
+                'auth_token'        => $token,
+                'delivery_needed'   => false,
+                'merchant_order_id' => $this->transaction_id.'-'.rand(10000, 99999),
+                'merchant_id'       => $this->merchant_id,
+                'amount_cents'      => (int) $this->amount * 100,
+                'currency'          => 'EGP',
+                'items'             => $this->getItems(),
+                'shipping_data'     => [
+                    'first_name'   => $this->getCustomerDetails('first_name'),
+                    'last_name'    => $this->getCustomerDetails('last_name'),
+                    'email'        => $this->getCustomerDetails('email'),
+                    'phone_number' => $this->getCustomerDetails('phone'),
+                ],
             ];
             $response = Http::post("{$this->url}ecommerce/orders", $postData);
             if ($response->successful()) {
                 return $response->json();
             }
-            $error = "Order creation failed";
+            $error = 'Order creation failed';
         } catch (Exception $e) {
             $error = $e->getMessage();
         }
-        throw new Exception("Order not created success in paymob # " . $error);
+
+        throw new Exception('Order not created success in paymob # '.$error);
     }
+
     /**
-     * Get payment key request
+     * Get payment key request.
      *
      * @param int $orderPayId
+     *
      * @return string
      */
     private function paymentKeyRequest($token, $orderPayId)
     {
         try {
             $postData = [
-                'auth_token' => $token,
-                'amount_cents' => (int) $this->amount * 100,
-                'expiration' => 3600,
-                'order_id' => $orderPayId,
-                'currency' => "EGP",
+                'auth_token'     => $token,
+                'amount_cents'   => (int) $this->amount * 100,
+                'expiration'     => 3600,
+                'order_id'       => $orderPayId,
+                'currency'       => 'EGP',
                 'integration_id' => $this->integration_id,
-                'billing_data' => [
-                    "first_name" => $this->getCustomerDetails('first_name'),
-                    "last_name" => $this->getCustomerDetails('last_name'),
-                    "email" => $this->getCustomerDetails('email'),
-                    "phone_number" => $this->getCustomerDetails('phone'),
-                    "apartment" => $this->getAddressDetails('apartment'),
-                    "floor" => $this->getAddressDetails('floor'),
-                    "city" => $this->getAddressDetails('city'),
-                    "state" => $this->getAddressDetails('state'),
-                    "street" => $this->getAddressDetails('street'),
-                    "building" => $this->getAddressDetails('building'),
-                    "country" => "EG",
+                'billing_data'   => [
+                    'first_name'   => $this->getCustomerDetails('first_name'),
+                    'last_name'    => $this->getCustomerDetails('last_name'),
+                    'email'        => $this->getCustomerDetails('email'),
+                    'phone_number' => $this->getCustomerDetails('phone'),
+                    'apartment'    => $this->getAddressDetails('apartment'),
+                    'floor'        => $this->getAddressDetails('floor'),
+                    'city'         => $this->getAddressDetails('city'),
+                    'state'        => $this->getAddressDetails('state'),
+                    'street'       => $this->getAddressDetails('street'),
+                    'building'     => $this->getAddressDetails('building'),
+                    'country'      => 'EG',
                 ],
             ];
 
             $response = Http::post("{$this->url}acceptance/payment_keys", $postData);
 
             $result = $response->json();
+
             return $result['token'];
         } catch (Exception $e) {
-            throw new Exception("Payment key request not created success in paymob #" . $e->getMessage());
+            throw new Exception('Payment key request not created success in paymob #'.$e->getMessage());
         }
     }
+
     /**
-     * Record processes callback - POST request
+     * Record processes callback - POST request.
      *
      * @param array $requestData
+     *
      * @throws Exception
+     *
      * @return array
      */
     private function processesCallback($requestData): array
     {
         $hmacKeys = [
-            "amount_cents",
-            "created_at",
-            "currency",
-            "error_occured",
-            "has_parent_transaction",
-            "id",
-            "integration_id",
-            "is_3d_secure",
-            "is_auth",
-            "is_capture",
-            "is_refunded",
-            "is_standalone_payment",
-            "is_voided",
-            "order.id",
-            "owner",
-            "pending",
-            "source_data.pan",
-            "source_data.sub_type",
-            "source_data.type",
-            "success"
+            'amount_cents',
+            'created_at',
+            'currency',
+            'error_occured',
+            'has_parent_transaction',
+            'id',
+            'integration_id',
+            'is_3d_secure',
+            'is_auth',
+            'is_capture',
+            'is_refunded',
+            'is_standalone_payment',
+            'is_voided',
+            'order.id',
+            'owner',
+            'pending',
+            'source_data.pan',
+            'source_data.sub_type',
+            'source_data.type',
+            'success',
         ];
         $hmac = $this->calculateHmac($requestData, $hmacKeys);
         if ($hmac != $requestData['hmac']) {
@@ -270,40 +289,42 @@ class PaymobMethod extends Method implements PaymentMethodContract
         $transaction_status = $requestData['obj']['success'] ?? false;
 
         return [
-            'payment_order_id' => $requestData['obj']['order']['id'],
+            'payment_order_id'       => $requestData['obj']['order']['id'],
             'payment_transaction_id' => $requestData['obj']['id'],
-            'transaction_status' => $transaction_status === true
+            'transaction_status'     => $transaction_status === true,
         ];
     }
+
     /**
-     * Record response callback - GET request
+     * Record response callback - GET request.
      *
      * @param array $requestData
+     *
      * @return array
      */
     private function responseCallBack($requestData)
     {
         $hmacKeys = [
-            "amount_cents",
-            "created_at",
-            "currency",
-            "error_occured",
-            "has_parent_transaction",
-            "id",
-            "integration_id",
-            "is_3d_secure",
-            "is_auth",
-            "is_capture",
-            "is_refunded",
-            "is_standalone_payment",
-            "is_voided",
-            "order",
-            "owner",
-            "pending",
-            "source_data_pan",
-            "source_data_sub_type",
-            "source_data_type",
-            "success"
+            'amount_cents',
+            'created_at',
+            'currency',
+            'error_occured',
+            'has_parent_transaction',
+            'id',
+            'integration_id',
+            'is_3d_secure',
+            'is_auth',
+            'is_capture',
+            'is_refunded',
+            'is_standalone_payment',
+            'is_voided',
+            'order',
+            'owner',
+            'pending',
+            'source_data_pan',
+            'source_data_sub_type',
+            'source_data_type',
+            'success',
         ];
         $hmac = $this->calculateHmac($requestData, $hmacKeys);
         if ($hmac != $requestData['hmac']) {
@@ -311,18 +332,20 @@ class PaymobMethod extends Method implements PaymentMethodContract
         }
 
         $transaction_status = $requestData['success'];
+
         return [
-            'payment_order_id' => $requestData['order'],
+            'payment_order_id'       => $requestData['order'],
             'payment_transaction_id' => $requestData['id'],
-            'transaction_status' => $transaction_status === "true"
+            'transaction_status'     => $transaction_status === 'true',
         ];
     }
 
     /**
-     * HMAC Calculation
+     * HMAC Calculation.
      *
      * @param array $requestData
      * @param array $hmacKeys
+     *
      * @return string
      */
     private function calculateHmac(array $requestData, array $hmacKeys): string
@@ -331,19 +354,21 @@ class PaymobMethod extends Method implements PaymentMethodContract
         foreach ($hmacKeys as $key) {
             $value = Arr::get($requestData, $key);
             if ($value === true) {
-                $value = "true";
+                $value = 'true';
             } elseif ($value === false) {
-                $value = "false";
+                $value = 'false';
             }
             $requestValues[] = $value;
         }
 
         return hash_hmac('sha512', implode('', $requestValues), $this->hmac_hash);
     }
+
     /**
-     * Get order detials
+     * Get order detials.
      *
      * @param int $id
+     *
      * @return void|object
      */
     private function getOrderData($id)
@@ -360,10 +385,12 @@ class PaymobMethod extends Method implements PaymentMethodContract
 
             throw new Exception($result['detail'] ?? 'Order not found');
         } catch (Exception $e) {
-            throw new Exception("Get order data failed in paymob # " . $e->getMessage());
+            throw new Exception('Get order data failed in paymob # '.$e->getMessage());
         }
+
         return [];
     }
+
     /**
      * Retrieve transaction by order from paymob
      *
@@ -391,6 +418,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
      * Calculate the installment fees.
      *
      * @param [type] $orderDetials
+     *
      * @return array
      */
     private function calculateInstallmentFees($orderDetials)
@@ -400,19 +428,19 @@ class PaymobMethod extends Method implements PaymentMethodContract
         $driver = $this->config['driver'];
 
         switch ($driver) {
-            case "valu":
+            case 'valu':
                 $result['down_payment'] = data_get($orderDetials, 'data.down_payment') ?? 0;
                 $result['admin_fees'] = 0; // $orderDetials->data->purchase_fees ?? 0; ##Change happened in valu response
                 break;
-            case "shahry":
+            case 'shahry':
                 $result['down_payment'] = data_get($orderDetials, 'data.shahry_order.down_payment') ?? 0;
                 $result['admin_fees'] = data_get($orderDetials, 'data.shahry_order.administrative_fees') ?? 0;
                 break;
-            case "souhoola":
+            case 'souhoola':
                 $result['down_payment'] = data_get($orderDetials, 'data.installment_info.downpaymentValue') ?? 0;
                 $result['admin_fees'] = data_get($orderDetials, 'data.installment_info.adminFees') ?? 0;
                 break;
-            case "get_go":
+            case 'get_go':
                 $result['down_payment'] = data_get($orderDetials, 'data.down_payment') ?? 0;
                 $result['admin_fees'] = 0;
                 break;
@@ -421,6 +449,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
                 $result['admin_fees'] = 0;
                 break;
         }
+
         return $result;
     }
 }
