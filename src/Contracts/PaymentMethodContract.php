@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 interface PaymentMethodContract
 {
     /**
-     * Purchase with paymant mwthod and get redirect url
+     * Purchase with paymant mwthod and get redirect url.
      *
      * @return string
      */
@@ -17,6 +17,7 @@ interface PaymentMethodContract
      * Pay with payment method.
      *
      * @param Request $request
+     *
      * @return array
      */
     public function pay(Request $request);

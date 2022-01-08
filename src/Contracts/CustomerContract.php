@@ -3,9 +3,9 @@
 namespace Shabayek\Payment\Contracts;
 
 /**
- * CustomerContract interface
+ * CustomerContract interface.
+ *
  * @author Esmail Shabayek <esmail.shabayek@gmail.com>
- * @package Shabayek\Payment\Contracts\CustomerContract
  */
 interface CustomerContract
 {
