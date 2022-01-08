@@ -24,14 +24,13 @@ class CodMethod extends Method implements PaymentMethodContract
      */
     public function purchase(): string
     {
-        return "";
+        return '';
     }
 
     /**
      * Pay with payment method.
      *
-     * @param Request $request
-     *
+     * @param  Request  $request
      * @return array
      */
     public function pay(Request $request): array
@@ -42,18 +41,19 @@ class CodMethod extends Method implements PaymentMethodContract
             'data'    => [],
         ];
     }
+
     /**
-     * Verify if payment status from gateway
+     * Verify if payment status from gateway.
      *
-     * @param int $payment_order_id
+     * @param  int  $payment_order_id
      * @return array
      */
     public function verify(int $payment_order_id): array
     {
         return [
             'success' => true,
-            'message' => "Verify payment status successfully",
-            'data' => []
+            'message' => 'Verify payment status successfully',
+            'data' => [],
         ];
     }
 }

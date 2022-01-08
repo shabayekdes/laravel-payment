@@ -23,7 +23,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
     /**
      * PaymobMethod constructor.
      *
-     * @param array $config
+     * @param  array  $config
      */
     public function __construct(array $config)
     {
@@ -64,8 +64,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
     /**
      * Pay with payment method.
      *
-     * @param Request $request
-     *
+     * @param  Request  $request
      * @return array
      */
     public function pay(Request $request): array
@@ -108,16 +107,15 @@ class PaymobMethod extends Method implements PaymentMethodContract
     }
 
     /**
-     * Verify if payment status from gateway
+     * Verify if payment status from gateway.
      *
-     * @param int $payment_order_id
+     * @param  int  $payment_order_id
      * @return array
      */
     public function verify(int $payment_order_id): array
     {
         $token = $this->getAuthenticationToken();
         $response = $this->retrieveTransactionByOrder($payment_order_id, $token);
-
 
         $isSuccess = $response['success'];
         if (isset($response['success']) && $response['success']) {
@@ -136,10 +134,11 @@ class PaymobMethod extends Method implements PaymentMethodContract
 
         return [
             'success' => $isSuccess,
-            'message' => "Verify payment status successfully",
-            'data' => $isSuccess ? $callback : []
+            'message' => 'Verify payment status successfully',
+            'data' => $isSuccess ? $callback : [],
         ];
     }
+
     /**
      * Authentication Request.
      *
@@ -168,8 +167,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
     /**
      * Order registration API.
      *
-     * @param string $token
-     *
+     * @param  string  $token
      * @return object
      */
     private function orderCreation($token)
@@ -205,8 +203,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
     /**
      * Get payment key request.
      *
-     * @param int $orderPayId
-     *
+     * @param  int  $orderPayId
      * @return string
      */
     private function paymentKeyRequest($token, $orderPayId)
@@ -247,11 +244,10 @@ class PaymobMethod extends Method implements PaymentMethodContract
     /**
      * Record processes callback - POST request.
      *
-     * @param array $requestData
+     * @param  array  $requestData
+     * @return array
      *
      * @throws Exception
-     *
-     * @return array
      */
     private function processesCallback($requestData): array
     {
@@ -294,8 +290,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
     /**
      * Record response callback - GET request.
      *
-     * @param array $requestData
-     *
+     * @param  array  $requestData
      * @return array
      */
     private function responseCallBack($requestData)
@@ -339,9 +334,8 @@ class PaymobMethod extends Method implements PaymentMethodContract
     /**
      * HMAC Calculation.
      *
-     * @param array $requestData
-     * @param array $hmacKeys
-     *
+     * @param  array  $requestData
+     * @param  array  $hmacKeys
      * @return string
      */
     private function calculateHmac(array $requestData, array $hmacKeys): string
@@ -363,8 +357,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
     /**
      * Get order detials.
      *
-     * @param int $id
-     *
+     * @param  int  $id
      * @return void|object
      */
     private function getOrderData($id)
@@ -388,33 +381,34 @@ class PaymobMethod extends Method implements PaymentMethodContract
     }
 
     /**
-     * Retrieve transaction by order from paymob
+     * Retrieve transaction by order from paymob.
      *
-     * @param int $payment_order_id
-     * @param string $token
+     * @param  int  $payment_order_id
+     * @param  string  $token
      * @return void
      */
     private function retrieveTransactionByOrder($payment_order_id, $token)
     {
-        $host = $this->url . 'ecommerce/orders/transaction_inquiry';
+        $host = $this->url.'ecommerce/orders/transaction_inquiry';
         $requestBody = [
-            "auth_token" => $token,
-            "order_id" => $payment_order_id
+            'auth_token' => $token,
+            'order_id' => $payment_order_id,
         ];
         $response = Http::post($host, $requestBody);
         if ($response->ok()) {
             return $response->json();
         }
+
         return [
             'success' => false,
-            'message' => $response->json()['detail'] ?? 'Transaction not found'
+            'message' => $response->json()['detail'] ?? 'Transaction not found',
         ];
     }
+
     /**
      * Calculate the installment fees.
      *
      * @param [type] $orderDetials
-     *
      * @return array
      */
     private function calculateInstallmentFees($orderDetials)
