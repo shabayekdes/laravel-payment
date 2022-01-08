@@ -2,22 +2,23 @@
 
 namespace Shabayek\Payment\Tests\Feature\Paymob;
 
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Shabayek\Payment\Facade\Payment;
-use Shabayek\Payment\Tests\TestCase;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+use Shabayek\Payment\Facade\Payment;
 use Shabayek\Payment\Tests\Helper\Paymob\PaymobCallback;
+use Shabayek\Payment\Tests\TestCase;
 
 /**
- * Class PaymobMethodFeature
+ * Class PaymobMethodFeature.
+ *
  * @test
  */
 class PaymobMethodFeature extends TestCase
 {
     /**
-     * Setup test cases
+     * Setup test cases.
      *
      * @return void
      */
@@ -31,6 +32,7 @@ class PaymobMethodFeature extends TestCase
         config()->set('payment.stores.2.credentials.iframe_id', 'test');
         config()->set('payment.stores.2.credentials.integration_id', 'test');
     }
+
     /** @test*/
     public function test_payment_token_in_return_purchase_url_with_paymob()
     {
@@ -38,8 +40,8 @@ class PaymobMethodFeature extends TestCase
         $payment_key = Str::random(512);
         Http::fake([
             // Stub a JSON response for paymob endpoints...
-            'https://accept.paymobsolutions.com/api/auth/tokens' => Http::response(['token' => Str::random(512)], 200),
-            'https://accept.paymobsolutions.com/api/ecommerce/orders' => Http::response(['id' => $order_id], 200),
+            'https://accept.paymobsolutions.com/api/auth/tokens'             => Http::response(['token' => Str::random(512)], 200),
+            'https://accept.paymobsolutions.com/api/ecommerce/orders'        => Http::response(['id' => $order_id], 200),
             'https://accept.paymobsolutions.com/api/acceptance/payment_keys' => Http::response(['token' => $payment_key], 200),
         ]);
 
@@ -55,9 +57,9 @@ class PaymobMethodFeature extends TestCase
         $parts = parse_url($payUrl, PHP_URL_QUERY);
         parse_str($parts, $query);
 
-
         $this->assertEquals($query['payment_token'], $payment_key);
     }
+
     /** @test*/
     public function test_iframe_in_return_purchase_url_with_paymob()
     {
@@ -67,8 +69,8 @@ class PaymobMethodFeature extends TestCase
         $payment_key = Str::random(512);
         Http::fake([
             // Stub a JSON response for paymob endpoints...
-            'https://accept.paymobsolutions.com/api/auth/tokens' => Http::response(['token' => Str::random(512)], 200),
-            'https://accept.paymobsolutions.com/api/ecommerce/orders' => Http::response(['id' => $order_id], 200),
+            'https://accept.paymobsolutions.com/api/auth/tokens'             => Http::response(['token' => Str::random(512)], 200),
+            'https://accept.paymobsolutions.com/api/ecommerce/orders'        => Http::response(['id' => $order_id], 200),
             'https://accept.paymobsolutions.com/api/acceptance/payment_keys' => Http::response(['token' => $payment_key], 200),
         ]);
 
@@ -86,6 +88,7 @@ class PaymobMethodFeature extends TestCase
 
         $this->assertEquals($arr[4], $iframe);
     }
+
     /** @test*/
     public function test_payment_pay_success_return_from_post_request_with_paymob()
     {
@@ -106,6 +109,7 @@ class PaymobMethodFeature extends TestCase
         $this->assertArrayHasKey('payment_order_id', $paymentCallback['data']);
         $this->assertArrayHasKey('payment_transaction_id', $paymentCallback['data']);
     }
+
     /** @test*/
     public function test_payment_pay_success_return_from_get_request_with_paymob()
     {
@@ -152,6 +156,7 @@ class PaymobMethodFeature extends TestCase
         $this->assertFalse($paymentCallback['success']);
         $this->assertEquals('Get order data failed in paymob # incorrect credentials', $paymentCallback['message']);
     }
+
     /** @test*/
     public function test_installment_payment_pay_success_return_from_post_request_with_paymob()
     {
@@ -179,8 +184,9 @@ class PaymobMethodFeature extends TestCase
 
         $this->assertTrue($paymentCallback['success']);
     }
+
     /**
-     * Get customer fake data
+     * Get customer fake data.
      *
      * @return array
      */
@@ -188,35 +194,36 @@ class PaymobMethodFeature extends TestCase
     {
         return [
             'first_name' => 'John',
-            'last_name' => 'Doe',
-            'phone' => '+989120000000',
-            'email' => 'customer@test.com',
+            'last_name'  => 'Doe',
+            'phone'      => '+989120000000',
+            'email'      => 'customer@test.com',
         ];
     }
+
     /**
-     * Get items fake data
+     * Get items fake data.
      *
      * @return array
      */
     private function items(): array
     {
         return [
-            "name" => "Product name",
-            "description" => "Product description",
-            "amount_cents" => 15000,
-            "quantity" => 1
+            'name'         => 'Product name',
+            'description'  => 'Product description',
+            'amount_cents' => 15000,
+            'quantity'     => 1,
         ];
     }
 
     private function address(): array
     {
         return [
-            'floor' => '1',
-            'street' => 'Test street',
-            'city' => 'Test city',
-            'state' => 'Test state',
+            'floor'     => '1',
+            'street'    => 'Test street',
+            'city'      => 'Test city',
+            'state'     => 'Test state',
             'apartment' => 'Test apartment',
-            'building' => 'Test building'
+            'building'  => 'Test building',
         ];
     }
 }

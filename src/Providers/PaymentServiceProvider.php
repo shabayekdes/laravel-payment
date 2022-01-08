@@ -2,12 +2,11 @@
 
 namespace Shabayek\Payment\Providers;
 
-use Shabayek\Payment\PaymentManager;
 use Illuminate\Support\ServiceProvider;
+use Shabayek\Payment\PaymentManager;
 
 /**
- * PaymentServiceProvider class
- * @package Shabayek\Payment\Providers
+ * PaymentServiceProvider class.
  */
 class PaymentServiceProvider extends ServiceProvider
 {
