@@ -1,7 +1,7 @@
 # Laravel Payment Methods
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger) [![Packagist version](https://img.shields.io/packagist/v/shabayek/laravel-payment)](https://packagist.org/packages/shabayek/laravel-payment) [![mit](https://img.shields.io/apm/l/laravel)](https://packagist.org/packages/shabayek/laravel-payment) ![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/shabayek/laravel-payment) ![Packagist Downloads](https://img.shields.io/packagist/dt/shabayek/laravel-payment)
+[![Build Status](https://github.styleci.io/repos/421966331/shield?style=flat&branch=develop)](https://github.styleci.io/repos/421966331) [![Packagist version](https://img.shields.io/packagist/v/shabayek/laravel-payment)](https://packagist.org/packages/shabayek/laravel-payment) [![mit](https://img.shields.io/apm/l/laravel)](https://packagist.org/packages/shabayek/laravel-payment) ![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/shabayek/laravel-payment) ![Packagist Downloads](https://img.shields.io/packagist/dt/shabayek/laravel-payment)
 
-Laravel payment package handle all payment methods.
+This is a Laravel Package for Payment Gateway Integration. It has a clear and consistent API, is fully unit tested, and even comes with an example application to get you started.
 
 > Note this package under development Don't use it in production.
 
@@ -18,14 +18,6 @@ composer require shabayek/laravel-payment
 ```bash
 php artisan vendor:publish --provider="Shabayek\Payment\PaymentServiceProvider" --tag=config
 ```
-
-- Initiate a payment with the following code:
-
-```php
-$method_id = 1; // payment method id from the config file
-$payment = Payment::store($method_id);
-```
-
 
 - Implement customer details contracts on user model
 
@@ -50,19 +42,6 @@ class User extends Authenticatable implements CustomerContract
         ]
     }
 }
-```
-
-- You can insert user model object that implements **CustomerContract** or array 
-
-```php
-    $payment->customer($user);
-    // OR array
-    $payment->customer([
-        'first_name' => 'John',
-        'last_name' => 'Doe',
-        'email' => 'test@test.com',
-        'phone' => '09123456789',
-    ]);
 ```
 
 - Implement address details contracts on address model
@@ -90,6 +69,26 @@ class Address extends Model implements AddressContract
         ]
     }
 }
+```
+
+- Initiate a payment with the following code:
+
+```php
+$method_id = 1; // payment method id from the config file
+$payment = Payment::store($method_id);
+```
+
+- You can insert user model object that implements **CustomerContract** or array 
+
+```php
+    $payment->customer($user);
+    // OR array
+    $payment->customer([
+        'first_name' => 'John',
+        'last_name' => 'Doe',
+        'email' => 'test@test.com',
+        'phone' => '09123456789',
+    ]);
 ```
 
 - You enter address model object that implements **AddressContract** array of data
@@ -138,3 +137,13 @@ $payment = $payment->pay($request);
 //     'data' => []
 // ];
 ```
+
+- Check the payment status
+```php
+$method_id = 1; // payment method id from the config file
+$payment_order_id = 111; // payment order id
+$payment_status = Payment::store($method_id)->verify($payment_order_id);
+```
+## License
+
+The Laravel payment methods package is open-sourced software licensed under the [MIT license](https://github.com/shabayekdes/laravel-payment/blob/main/LICENSE).

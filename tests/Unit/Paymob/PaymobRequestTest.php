@@ -2,20 +2,21 @@
 
 namespace Shabayek\Payment\Tests\Unit\Paymob;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Shabayek\Payment\Facade\Payment;
-use Shabayek\Payment\Tests\TestCase;
 use Shabayek\Payment\Tests\Helper\Paymob\PaymobCallback;
+use Shabayek\Payment\Tests\TestCase;
 
 /**
- * Class PaymobMethodTest
+ * Class PaymobMethodTest.
+ *
  * @test
  */
 class PaymobRequestTest extends TestCase
 {
     /**
-     * Setup test cases
+     * Setup test cases.
      *
      * @return void
      */
@@ -29,6 +30,7 @@ class PaymobRequestTest extends TestCase
         config()->set('payment.stores.2.credentials.iframe_id', 'test');
         config()->set('payment.stores.2.credentials.integration_id', 'test');
     }
+
     /** @test*/
     public function test_authication_token()
     {
@@ -45,6 +47,7 @@ class PaymobRequestTest extends TestCase
         $this->assertNotEquals(false, $token);
         $this->assertEquals(gettype($token), 'string');
     }
+
     /** @test*/
     public function test_create_order_without_set_customer_details()
     {
@@ -61,11 +64,12 @@ class PaymobRequestTest extends TestCase
         $token = Str::random(512);
         $order = $this->callMethod($payment, 'orderCreation', [$token]);
     }
+
     /** @test*/
     public function test_create_order_without_items_details()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("Items not set.");
+        $this->expectExceptionMessage('Items not set.');
 
         Http::fake([
             // Stub a JSON response for paymob endpoints...
@@ -102,11 +106,12 @@ class PaymobRequestTest extends TestCase
         $this->assertTrue(isset($order['id']));
         $this->assertEquals($order_id, $order['id']);
     }
+
     /** @test*/
     public function test_payment_keys_without_address()
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("Address details not set.");
+        $this->expectExceptionMessage('Address details not set.');
 
         Http::fake([
             // Stub a JSON response for paymob endpoints...
@@ -122,6 +127,7 @@ class PaymobRequestTest extends TestCase
         $order_id = rand(1, 100);
         $this->callMethod($payment, 'paymentKeyRequest', [$token, $order_id]);
     }
+
     /** @test*/
     public function test_payment_keys_success()
     {
@@ -158,6 +164,7 @@ class PaymobRequestTest extends TestCase
         $this->assertArrayHasKey('payment_order_id', $processesCallback);
         $this->assertArrayHasKey('payment_transaction_id', $processesCallback);
     }
+
     /** @test*/
     public function test_paymob_response_callback_success()
     {
@@ -172,6 +179,7 @@ class PaymobRequestTest extends TestCase
         $this->assertArrayHasKey('payment_order_id', $processesCallback);
         $this->assertArrayHasKey('payment_transaction_id', $processesCallback);
     }
+
     /** @test*/
     public function test_paymob_get_order_data_api_success()
     {
@@ -190,8 +198,30 @@ class PaymobRequestTest extends TestCase
 
         $this->assertEquals($order, $requestData['obj']);
     }
+
+    /** @test */
+    public function test_verify_payment_status_is_successfully_from_paymob_gateway()
+    {
+        $requestData = PaymobCallback::processesCallback();
+
+        Http::fake([
+            // Stub a JSON response for paymob endpoints...
+            'https://accept.paymobsolutions.com/api/auth/tokens' => Http::response(['token' => Str::random(512)], 200),
+            // Stub a JSON response for paymob endpoints...
+            'ecommerce/orders/transaction_inquiry' => Http::response($requestData['obj'], 200),
+        ]);
+
+        $method_id = 2;
+        $paymob_order_id = 24826928;
+
+        $payment_status = Payment::store($method_id)->verify($paymob_order_id);
+
+        $this->assertTrue($payment_status['success']);
+        $this->assertEquals($paymob_order_id, $payment_status['data']['payment_order_id']);
+    }
+
     /**
-     * Get customer fake data
+     * Get customer fake data.
      *
      * @return array
      */
@@ -199,35 +229,36 @@ class PaymobRequestTest extends TestCase
     {
         return [
             'first_name' => 'John',
-            'last_name' => 'Doe',
-            'phone' => '+989120000000',
-            'email' => 'customer@test.com',
+            'last_name'  => 'Doe',
+            'phone'      => '+989120000000',
+            'email'      => 'customer@test.com',
         ];
     }
+
     /**
-     * Get items fake data
+     * Get items fake data.
      *
      * @return array
      */
     private function items(): array
     {
         return [
-            "name" => "Product name",
-            "description" => "Product description",
-            "amount_cents" => 15000,
-            "quantity" => 1
+            'name'         => 'Product name',
+            'description'  => 'Product description',
+            'amount_cents' => 15000,
+            'quantity'     => 1,
         ];
     }
 
     private function address(): array
     {
         return [
-            'floor' => '1',
-            'street' => 'Test street',
-            'city' => 'Test city',
-            'state' => 'Test state',
+            'floor'     => '1',
+            'street'    => 'Test street',
+            'city'      => 'Test city',
+            'state'     => 'Test state',
             'apartment' => 'Test apartment',
-            'building' => 'Test building'
+            'building'  => 'Test building',
         ];
     }
 }

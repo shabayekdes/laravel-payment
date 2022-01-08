@@ -6,62 +6,64 @@ use Shabayek\Payment\Contracts\AddressContract;
 use Shabayek\Payment\Contracts\CustomerContract;
 
 /**
- * Method abstract class
- * @package Shabayek\Payment\Drivers
+ * Method abstract class.
  */
 abstract class Method
 {
     /**
-     * Amount
+     * Amount.
      *
      * @var int|float
      */
     protected $amount = 0;
     /**
-     * Transaction id
+     * Transaction id.
      *
      * @var int
      */
     protected $transaction_id;
     /**
-     * Customer details
+     * Customer details.
      *
      * @var CustomerContract|array
      */
     private $customer;
     /**
-     * Address details
+     * Address details.
      *
      * @var AddressContract|array
      */
     private $address;
     /**
-     * Items details
+     * Items details.
      *
      * @var array
      */
     private $items = [];
     /**
-     * payment config
+     * payment config.
      *
      * @var array
      */
     public $config = [];
+
     /**
      * Method constructor.
      *
-     * @param Array $config
+     * @param  array  $config
      */
     public function __construct(array $config)
     {
         $this->config = $config;
     }
+
     /**
      * Set credentials of payment methods.
      *
      * @return void
      */
     abstract protected function setCredentials($credentials);
+
     /**
      * Set the amount of transaction.
      *
@@ -69,17 +71,19 @@ abstract class Method
      *
      * @param $amount
      * @return self
+     *
      * @throws \Exception
      */
     public function amount($amount)
     {
-        if (!is_numeric($amount)) {
+        if (! is_numeric($amount)) {
             throw new \Exception('Amount value should be a number (integer or float).');
         }
         $this->amount = $amount;
 
         return $this;
     }
+
     /**
      * Set transaction id.
      *
@@ -92,10 +96,11 @@ abstract class Method
 
         return $this;
     }
+
     /**
      * Set customer details.
      *
-     * @param CustomerContract|array $customer
+     * @param  CustomerContract|array  $customer
      * @return self
      */
     public function customer($customer)
@@ -110,10 +115,11 @@ abstract class Method
 
         return $this;
     }
+
     /**
      * Get customer details.
      *
-     * @param string|null $property
+     * @param  string|null  $property
      * @return array|string
      */
     public function getCustomerDetails($property = null)
@@ -125,12 +131,14 @@ abstract class Method
         if ($property) {
             return $this->customer[$property] ?? 'NA';
         }
+
         return $this->customer;
     }
+
     /**
      * Get customer details.
      *
-     * @param string|null $property
+     * @param  string|null  $property
      * @return array|string
      */
     public function getAddressDetails($property = null)
@@ -142,8 +150,10 @@ abstract class Method
         if ($property) {
             return $this->address[$property] ?? 'NA';
         }
+
         return $this->address;
     }
+
     /**
      * Get items.
      *
@@ -157,10 +167,11 @@ abstract class Method
 
         return $this->items;
     }
+
     /**
      * Set address details.
      *
-     * @param AddressContract|array $address
+     * @param  AddressContract|array  $address
      * @return self
      */
     public function address($address)
@@ -175,10 +186,11 @@ abstract class Method
 
         return $this;
     }
+
     /**
-     * Set items
+     * Set items.
      *
-     * @param array $item
+     * @param  array  $item
      * @return self
      */
     public function items(array $item)
@@ -188,8 +200,9 @@ abstract class Method
 
         return $this;
     }
+
     /**
-     * Get is online boolean value
+     * Get is online boolean value.
      *
      * @return bool
      */
@@ -197,8 +210,9 @@ abstract class Method
     {
         return $this->config['is_online'];
     }
+
     /**
-     * Get is active boolean value
+     * Get is active boolean value.
      *
      * @return bool
      */
@@ -206,8 +220,9 @@ abstract class Method
     {
         return $this->config['is_active'];
     }
+
     /**
-     * Get is installment payment boolean value
+     * Get is installment payment boolean value.
      *
      * @return bool
      */

@@ -2,30 +2,30 @@
 
 namespace Shabayek\Payment\Tests;
 
-use Orchestra\Testbench\Foundation\Application;
+use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use Shabayek\Payment\Providers\PaymentServiceProvider;
-use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
 
 /**
- * TestCase class
+ * TestCase class.
+ *
  * @author Esmail Shabayek
- * @package Shabayek\Payment\Tests
  */
 class TestCase extends BaseTestCase
 {
     // protected $loadEnvironmentVariables = true;
 
     /**
-     * Setup test cases
+     * Setup test cases.
      *
      * @return void
      */
     public function setUp(): void
     {
         parent::setUp();
-      // additional setup
+        // additional setup
     }
+
     /**
      * Get package serivce providers.
      *
@@ -38,6 +38,7 @@ class TestCase extends BaseTestCase
             PaymentServiceProvider::class,
         ];
     }
+
     /**
      * Get environment set up.
      *
@@ -51,12 +52,13 @@ class TestCase extends BaseTestCase
         $app->bootstrapWith([LoadEnvironmentVariables::class]);
         parent::getEnvironmentSetUp($app);
     }
+
     /**
-     * Change accessible for any method in class
+     * Change accessible for any method in class.
      *
-     * @param object $obj
-     * @param string $name
-     * @param array $args
+     * @param  object  $obj
+     * @param  string  $name
+     * @param  array  $args
      * @return mixed
      */
     protected function callMethod($obj, $name, array $args = [])
@@ -64,6 +66,7 @@ class TestCase extends BaseTestCase
         $class = new \ReflectionClass($obj);
         $method = $class->getMethod($name);
         $method->setAccessible(true);
+
         return $method->invokeArgs($obj, $args);
     }
 }
