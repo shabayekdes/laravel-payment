@@ -47,11 +47,11 @@ class PaymobMethod extends Method implements PaymentMethodContract
         $this->url = "https://accept.paymobsolutions.com/api/";
     }
     /**
-     * Get redirect payement url
+     * Purchase with paymant mwthod and get redirect url
      *
-     * @return void
+     * @return string
      */
-    public function purchase()
+    public function purchase(): string
     {
         $token = $this->getAuthenticationToken();
         $orderCreation = $this->orderCreation($token);
@@ -65,7 +65,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
      * @param Request $request
      * @return array
      */
-    public function pay(Request $request)
+    public function pay(Request $request): array
     {
         if ($request->isMethod('post')) {
             // The request is using the POST method
@@ -99,6 +99,39 @@ class PaymobMethod extends Method implements PaymentMethodContract
         return [
             'success' => $isSuccess,
             'message' => $message,
+            'data' => $isSuccess ? $callback : []
+        ];
+    }
+    /**
+     * Verify if payment status from gateway
+     *
+     * @param int $payment_order_id
+     * @return array
+     */
+    public function verify(int $payment_order_id): array
+    {
+        $token = $this->getAuthenticationToken();
+        $response = $this->retrieveTransactionByOrder($payment_order_id, $token);
+
+
+        $isSuccess = $response['success'];
+        if (isset($response['success']) && $response['success']) {
+            $downPaymentInfo = [];
+            if ($this->isInstallment()) {
+                $downPaymentInfo = $this->calculateInstallmentFees($response);
+            }
+
+            $callback = [
+                'payment_order_id' => $response['order']['id'],
+                'payment_transaction_id' => $response['id'],
+                'transaction_status' => $response['success'],
+                'down_payment_info' => $downPaymentInfo,
+            ];
+        }
+
+        return [
+            'success' => $isSuccess,
+            'message' => "Verify payment status successfully",
             'data' => $isSuccess ? $callback : []
         ];
     }
@@ -330,6 +363,29 @@ class PaymobMethod extends Method implements PaymentMethodContract
             throw new Exception("Get order data failed in paymob # " . $e->getMessage());
         }
         return [];
+    }
+    /**
+     * Retrieve transaction by order from paymob
+     *
+     * @param int $payment_order_id
+     * @param string $token
+     * @return void
+     */
+    private function retrieveTransactionByOrder($payment_order_id, $token)
+    {
+        $host = $this->url . 'ecommerce/orders/transaction_inquiry';
+        $requestBody = [
+            "auth_token" => $token,
+            "order_id" => $payment_order_id
+        ];
+        $response = Http::post($host, $requestBody);
+        if ($response->ok()) {
+            return $response->json();
+        }
+        return [
+            'success' => false,
+            'message' => $response->json()['detail'] ?? 'Transaction not found'
+        ];
     }
     /**
      * Calculate the installment fees.
