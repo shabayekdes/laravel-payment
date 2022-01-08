@@ -100,7 +100,7 @@ class PaymobMethodFeature extends TestCase
         $fakeRequest = new Request();
         $fakeRequest->setMethod('POST');
 
-        $requestData = PaymobCallback::processesCallback();
+        $requestData = PaymobCallback::processesCallback(24826928);
         $fakeRequest->request->add($requestData);
 
         $paymentCallback = $payment->pay($fakeRequest);
@@ -121,7 +121,7 @@ class PaymobMethodFeature extends TestCase
         $fakeRequest = new Request();
         $fakeRequest->setMethod('GET');
 
-        $requestData = PaymobCallback::responseCallback();
+        $requestData = PaymobCallback::responseCallback('24827227', '19766521');
         $fakeRequest->replace($requestData);
 
         $paymentCallback = $payment->pay($fakeRequest);
@@ -148,7 +148,7 @@ class PaymobMethodFeature extends TestCase
         $fakeRequest = new Request();
         $fakeRequest->setMethod('POST');
 
-        $requestData = PaymobCallback::processesCallback();
+        $requestData = PaymobCallback::processesCallback(24826928);
         $fakeRequest->request->add($requestData);
 
         $paymentCallback = $payment->pay($fakeRequest);
@@ -163,7 +163,7 @@ class PaymobMethodFeature extends TestCase
         config()->set('payment.stores.2.credentials.hmac_hash', 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R');
         config()->set('payment.stores.2.is_installment', true);
 
-        $requestData = PaymobCallback::processesCallback();
+        $requestData = PaymobCallback::processesCallback(24826928);
         Http::fake([
             // Stub a JSON response for paymob endpoints...
             'https://accept.paymobsolutions.com/api/auth/tokens' => Http::response(['token' => Str::random(512)], 200),
@@ -177,7 +177,7 @@ class PaymobMethodFeature extends TestCase
         $fakeRequest = new Request();
         $fakeRequest->setMethod('POST');
 
-        $requestData = PaymobCallback::processesCallback();
+        $requestData = PaymobCallback::processesCallback(24826928);
         $fakeRequest->request->add($requestData);
 
         $paymentCallback = $payment->pay($fakeRequest);

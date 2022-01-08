@@ -157,7 +157,7 @@ class PaymobRequestTest extends TestCase
         $method_id = 2;
         $payment = Payment::store($method_id);
 
-        $requestData = PaymobCallback::processesCallback();
+        $requestData = PaymobCallback::processesCallback(24826928);
         $processesCallback = $this->callMethod($payment, 'processesCallback', [$requestData]);
 
         $this->assertTrue($processesCallback['transaction_status']);
@@ -172,7 +172,7 @@ class PaymobRequestTest extends TestCase
         $method_id = 2;
         $payment = Payment::store($method_id);
 
-        $requestData = PaymobCallback::responseCallback();
+        $requestData = PaymobCallback::responseCallback('24827227', '19766521');
         $processesCallback = $this->callMethod($payment, 'responseCallBack', [$requestData]);
 
         $this->assertTrue($processesCallback['transaction_status']);
@@ -183,7 +183,7 @@ class PaymobRequestTest extends TestCase
     /** @test*/
     public function test_paymob_get_order_data_api_success()
     {
-        $requestData = PaymobCallback::processesCallback();
+        $requestData = PaymobCallback::processesCallback(24826928);
         Http::fake([
             // Stub a JSON response for paymob endpoints...
             'https://accept.paymobsolutions.com/api/auth/tokens' => Http::response(['token' => Str::random(512)], 200),
@@ -202,7 +202,7 @@ class PaymobRequestTest extends TestCase
     /** @test */
     public function test_verify_payment_status_is_successfully_from_paymob_gateway()
     {
-        $requestData = PaymobCallback::processesCallback();
+        $requestData = PaymobCallback::processesCallback(24826928);
 
         Http::fake([
             // Stub a JSON response for paymob endpoints...
