@@ -108,7 +108,6 @@ class PaymobMethod extends Method implements PaymentMethodContract
     }
 
     /**
-<<<<<<< HEAD
      * Verify if payment status from gateway
      *
      * @param int $payment_order_id
@@ -142,10 +141,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
         ];
     }
     /**
-     * Authentication Request
-=======
      * Authentication Request.
->>>>>>> 59a31b11f08aec24902f5d50d3c2354391ff52c6
      *
      * @return string
      */
