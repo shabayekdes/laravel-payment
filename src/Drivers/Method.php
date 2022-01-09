@@ -39,7 +39,7 @@ abstract class Method
      *
      * @var array
      */
-    private $items = [];
+    protected $items = [];
     /**
      * payment config.
      *
@@ -153,21 +153,6 @@ abstract class Method
 
         return $this->address;
     }
-
-    /**
-     * Get items.
-     *
-     * @return array
-     */
-    public function getItems()
-    {
-        if (empty($this->items)) {
-            throw new \Exception('Items not set.');
-        }
-
-        return $this->items;
-    }
-
     /**
      * Set address details.
      *
@@ -198,6 +183,27 @@ abstract class Method
         $this->items[] = $item;
         $this->amount += isset($item['amount_cents']) ? $item['amount_cents'] : 0;
 
+        return $this;
+    }
+    /**
+     * Add one item.
+     *
+     * @param string $name
+     * @param int $price
+     * @param integer $quantity
+     * @param string $description
+     * @return self
+     */
+    public function addItem($name, $price, $quantity = 1, $description = null)
+    {
+        $this->items[] = [
+            'name' => $name,
+            'price' => $price,
+            'quantity' => $quantity,
+            'description' => $description,
+        ];
+
+        $this->amount += $price;
         return $this;
     }
 

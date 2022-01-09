@@ -178,7 +178,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
                 'delivery_needed'   => false,
                 'merchant_order_id' => $this->transaction_id.'-'.rand(10000, 99999),
                 'merchant_id'       => $this->merchant_id,
-                'amount_cents'      => (int) $this->amount * 100,
+                'amount_cents'      => $this->amount * 100,
                 'currency'          => 'EGP',
                 'items'             => $this->getItems(),
                 'shipping_data'     => [
@@ -441,5 +441,25 @@ class PaymobMethod extends Method implements PaymentMethodContract
         }
 
         return $result;
+    }
+    /**
+     * Get items.
+     *
+     * @return array
+     */
+    private function getItems()
+    {
+        if (empty($this->items)) {
+            throw new \Exception('Items not set.');
+        }
+
+        return collect($this->items)->map(function ($item) {
+            return [
+                "name" => $item['name'],
+                "amount_cents" => $item['price'] * 100,
+                "quantity" => $item['quantity'],
+                "description" => $item['description'] ?? "NA",
+            ];
+        })->toArray();
     }
 }

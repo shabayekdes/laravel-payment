@@ -109,12 +109,28 @@ $payment = Payment::store($method_id);
 
 - Add items with loop array of data items
 ```php
-    $payment->items([
-        "name" => "ASC1515",
-        "amount_cents" => "500000",
-        "description" => "Smart Watch",
-        "quantity" => "1"
-    ]);
+    $items = [
+        [
+            "name" => "item1",
+            "price" => 100,
+            "quantity" => 2,
+            "description" => "item1 description",
+        ],
+        [
+            "name" => "item2",
+            "price" => 200,
+            "quantity" => 1,
+            "description" => "item2 description",
+        ],
+    ];
+    $payment->items($items);
+    // OR By One
+    $name = "item1";
+    $price = 100;
+    $quantity = 2; // Default 1
+    $description = "item1 description"; // Default null
+
+    $payment->addItem($name, $price, $quantity, $description);
 ```
 
 - Check the payment is online to get pay url

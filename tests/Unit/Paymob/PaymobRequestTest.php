@@ -245,7 +245,7 @@ class PaymobRequestTest extends TestCase
         return [
             'name'         => 'Product name',
             'description'  => 'Product description',
-            'amount_cents' => 15000,
+            'price' => 150,
             'quantity'     => 1,
         ];
     }
