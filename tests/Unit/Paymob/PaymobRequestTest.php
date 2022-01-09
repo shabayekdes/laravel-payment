@@ -49,65 +49,6 @@ class PaymobRequestTest extends TestCase
     }
 
     /** @test*/
-    public function test_create_order_without_set_customer_details()
-    {
-        $this->expectException(\Exception::class);
-
-        Http::fake([
-            // Stub a JSON response for paymob endpoints...
-            'https://accept.paymobsolutions.com/api/*' => Http::response([], 200),
-        ]);
-
-        $method_id = 2;
-        $payment = Payment::store($method_id);
-
-        $token = Str::random(512);
-        $order = $this->callMethod($payment, 'orderCreation', [$token]);
-    }
-
-    /** @test*/
-    public function test_create_order_without_items_details()
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Items not set.');
-
-        Http::fake([
-            // Stub a JSON response for paymob endpoints...
-            'https://accept.paymobsolutions.com/api/*' => Http::response([], 200),
-        ]);
-
-        $method_id = 2;
-        $payment = Payment::store($method_id);
-
-        $payment->customer($this->customer());
-
-        $token = Str::random(512);
-        $this->callMethod($payment, 'orderCreation', [$token]);
-    }
-
-    /** @test*/
-    public function test_create_order_success()
-    {
-        $order_id = rand(1, 100);
-        Http::fake([
-            // Stub a JSON response for paymob endpoints...
-            'https://accept.paymobsolutions.com/api/*' => Http::response(['id' => $order_id], 200),
-        ]);
-
-        $method_id = 2;
-        $payment = Payment::store($method_id);
-
-        $payment->customer($this->customer());
-        $payment->items($this->items());
-
-        $token = Str::random(512);
-        $order = $this->callMethod($payment, 'orderCreation', [$token]);
-
-        $this->assertTrue(isset($order['id']));
-        $this->assertEquals($order_id, $order['id']);
-    }
-
-    /** @test*/
     public function test_payment_keys_without_address()
     {
         $this->expectException(\Exception::class);
