@@ -153,6 +153,7 @@ abstract class Method
 
         return $this->address;
     }
+
     /**
      * Set address details.
      *
@@ -185,13 +186,14 @@ abstract class Method
 
         return $this;
     }
+
     /**
      * Add one item.
      *
-     * @param string $name
-     * @param int $price
-     * @param integer $quantity
-     * @param string $description
+     * @param  string  $name
+     * @param  int  $price
+     * @param  int  $quantity
+     * @param  string  $description
      * @return self
      */
     public function addItem($name, $price, $quantity = 1, $description = null)
@@ -204,6 +206,7 @@ abstract class Method
         ];
 
         $this->amount += $price;
+
         return $this;
     }
 
