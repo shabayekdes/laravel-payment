@@ -442,6 +442,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
 
         return $result;
     }
+
     /**
      * Get items.
      *
@@ -455,10 +456,10 @@ class PaymobMethod extends Method implements PaymentMethodContract
 
         return collect($this->items)->map(function ($item) {
             return [
-                "name" => $item['name'],
-                "amount_cents" => $item['price'] * 100,
-                "quantity" => $item['quantity'],
-                "description" => $item['description'] ?? "NA",
+                'name' => $item['name'],
+                'amount_cents' => $item['price'] * 100,
+                'quantity' => $item['quantity'],
+                'description' => $item['description'] ?? 'NA',
             ];
         })->toArray();
     }

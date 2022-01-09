@@ -7,8 +7,8 @@ class PaymobCallback
     /**
      * Return the processes paymob callback.
      *
-     * @param int $order_id
-     * @param bool $status
+     * @param  int  $order_id
+     * @param  bool  $status
      * @return array
      */
     public static function processesCallback(int $order_id, bool $status = true)
@@ -215,8 +215,8 @@ class PaymobCallback
     /**
      * Return the processes paymob callback.
      *
-     * @param int $order_id
-     * @param bool $status
+     * @param  int  $order_id
+     * @param  bool  $status
      * @return array
      */
     public static function responseCallback(string $order_id, $transaction_id, string $status = 'true')
