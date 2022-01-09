@@ -2,8 +2,8 @@
 
 namespace Shabayek\Payment\Tests\Unit\Paymob;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Shabayek\Payment\Facade\Payment;
 use Shabayek\Payment\Tests\TestCase;
 
@@ -36,9 +36,9 @@ class PaymobOrderTest extends TestCase
         $this->expectException(\Exception::class);
 
         Http::fake([
-                // Stub a JSON response for paymob endpoints...
-                'https://accept.paymobsolutions.com/api/*' => Http::response([], 200),
-            ]);
+            // Stub a JSON response for paymob endpoints...
+            'https://accept.paymobsolutions.com/api/*' => Http::response([], 200),
+        ]);
 
         $method_id = 2;
         $payment = Payment::store($method_id);
@@ -54,9 +54,9 @@ class PaymobOrderTest extends TestCase
         $this->expectExceptionMessage('Items not set.');
 
         Http::fake([
-                // Stub a JSON response for paymob endpoints...
-                'https://accept.paymobsolutions.com/api/*' => Http::response([], 200),
-            ]);
+            // Stub a JSON response for paymob endpoints...
+            'https://accept.paymobsolutions.com/api/*' => Http::response([], 200),
+        ]);
 
         $method_id = 2;
         $payment = Payment::store($method_id);
@@ -72,9 +72,9 @@ class PaymobOrderTest extends TestCase
     {
         $order_id = rand(1, 100);
         Http::fake([
-                // Stub a JSON response for paymob endpoints...
-                'https://accept.paymobsolutions.com/api/*' => Http::response(['id' => $order_id], 200),
-            ]);
+            // Stub a JSON response for paymob endpoints...
+            'https://accept.paymobsolutions.com/api/*' => Http::response(['id' => $order_id], 200),
+        ]);
 
         $method_id = 2;
         $payment = Payment::store($method_id);
@@ -104,6 +104,7 @@ class PaymobOrderTest extends TestCase
         $this->assertEquals($items[0]['quantity'], $item['quantity']);
         $this->assertEquals($items[0]['description'], $item['description']);
     }
+
     /** @test */
     public function it_can_add_item_by_one_with_paymob_success_with_default_details()
     {
@@ -117,6 +118,7 @@ class PaymobOrderTest extends TestCase
         $this->assertEquals($items[0]['quantity'], 1);
         $this->assertEquals($items[0]['description'], 'NA');
     }
+
     /**
      * Get customer fake data.
      *
