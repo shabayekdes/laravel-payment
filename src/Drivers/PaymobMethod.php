@@ -3,9 +3,10 @@
 namespace Shabayek\Payment\Drivers;
 
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Shabayek\Payment\Exceptions\InvalidCredentialsException;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 
 /**
@@ -40,7 +41,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
     {
         foreach ($credentials as $key => $value) {
             if (empty($value)) {
-                throw new Exception("Paymob payment credentials ($key) are not set");
+                throw new InvalidCredentialsException("Paymob payment credentials ($key) are invalid.");
             }
             $this->$key = $value;
         }
