@@ -14,22 +14,6 @@ use Shabayek\Payment\Tests\TestCase;
  */
 class PaymobOrderTest extends TestCase
 {
-    /**
-     * Setup test cases.
-     *
-     * @return void
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-        // additional setup
-        config()->set('payment.stores.2.credentials.api_key', 'test');
-        config()->set('payment.stores.2.credentials.hmac_hash', 'test');
-        config()->set('payment.stores.2.credentials.merchant_id', 'test');
-        config()->set('payment.stores.2.credentials.iframe_id', 'test');
-        config()->set('payment.stores.2.credentials.integration_id', 'test');
-    }
-
     /** @test*/
     public function test_create_order_without_set_customer_details()
     {
@@ -147,5 +131,21 @@ class PaymobOrderTest extends TestCase
             'price' => 150,
             'quantity'     => 1,
         ];
+    }
+    /**
+     * Define environment setup.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     * @return void
+     */
+    protected function defineEnvironment($app)
+    {
+        $app['config']->set('payment.stores.2.credentials', [
+            'api_key'   => 'test',
+            'hmac_hash'   => 'test',
+            'merchant_id'   => 'test',
+            'iframe_id'   => 'test',
+            'integration_id'   => 'test',
+        ]);
     }
 }

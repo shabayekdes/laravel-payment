@@ -2,11 +2,12 @@
 
 namespace Shabayek\Payment\Tests\Unit\Paymob;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Facade\Payment;
-use Shabayek\Payment\Tests\Helper\Paymob\PaymobCallback;
 use Shabayek\Payment\Tests\TestCase;
+use Shabayek\Payment\Exceptions\InvalidCredentialsException;
+use Shabayek\Payment\Tests\Helper\Paymob\PaymobCallback;
 
 /**
  * Class PaymobMethodTest.
@@ -15,20 +16,11 @@ use Shabayek\Payment\Tests\TestCase;
  */
 class PaymobRequestTest extends TestCase
 {
-    /**
-     * Setup test cases.
-     *
-     * @return void
-     */
-    public function setUp(): void
+    /** @test */
+    public function test_invalid_credentials_expcetion()
     {
-        parent::setUp();
-        // additional setup
-        config()->set('payment.stores.2.credentials.api_key', 'test');
-        config()->set('payment.stores.2.credentials.hmac_hash', 'test');
-        config()->set('payment.stores.2.credentials.merchant_id', 'test');
-        config()->set('payment.stores.2.credentials.iframe_id', 'test');
-        config()->set('payment.stores.2.credentials.integration_id', 'test');
+        $this->expectException(InvalidCredentialsException::class);
+        Payment::store(3);
     }
 
     /** @test*/
@@ -201,5 +193,22 @@ class PaymobRequestTest extends TestCase
             'apartment' => 'Test apartment',
             'building'  => 'Test building',
         ];
+    }
+
+    /**
+     * Define environment setup.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     * @return void
+     */
+    protected function defineEnvironment($app)
+    {
+        $app['config']->set('payment.stores.2.credentials', [
+            'api_key'   => 'test',
+            'hmac_hash'   => 'test',
+            'merchant_id'   => 'test',
+            'iframe_id'   => 'test',
+            'integration_id'   => 'test',
+        ]);
     }
 }

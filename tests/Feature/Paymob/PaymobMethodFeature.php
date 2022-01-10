@@ -17,22 +17,6 @@ use Shabayek\Payment\Tests\TestCase;
  */
 class PaymobMethodFeature extends TestCase
 {
-    /**
-     * Setup test cases.
-     *
-     * @return void
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-        // additional setup
-        config()->set('payment.stores.2.credentials.api_key', 'test');
-        config()->set('payment.stores.2.credentials.hmac_hash', 'test');
-        config()->set('payment.stores.2.credentials.merchant_id', 'test');
-        config()->set('payment.stores.2.credentials.iframe_id', 'test');
-        config()->set('payment.stores.2.credentials.integration_id', 'test');
-    }
-
     /** @test*/
     public function test_payment_token_in_return_purchase_url_with_paymob()
     {
@@ -214,7 +198,11 @@ class PaymobMethodFeature extends TestCase
             'quantity'     => 1,
         ];
     }
-
+    /**
+     * Get address fake data.
+     *
+     * @return array
+     */
     private function address(): array
     {
         return [
@@ -225,5 +213,21 @@ class PaymobMethodFeature extends TestCase
             'apartment' => 'Test apartment',
             'building'  => 'Test building',
         ];
+    }
+    /**
+     * Define environment setup.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     * @return void
+     */
+    protected function defineEnvironment($app)
+    {
+        $app['config']->set('payment.stores.2.credentials', [
+            'api_key'   => 'test',
+            'hmac_hash'   => 'test',
+            'merchant_id'   => 'test',
+            'iframe_id'   => 'test',
+            'integration_id'   => 'test',
+        ]);
     }
 }
