@@ -198,6 +198,7 @@ class PaymobMethodFeature extends TestCase
             'quantity'     => 1,
         ];
     }
+
     /**
      * Get address fake data.
      *
@@ -214,6 +215,7 @@ class PaymobMethodFeature extends TestCase
             'building'  => 'Test building',
         ];
     }
+
     /**
      * Define environment setup.
      *

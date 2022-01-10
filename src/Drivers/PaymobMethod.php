@@ -3,11 +3,11 @@
 namespace Shabayek\Payment\Drivers;
 
 use Exception;
-use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
-use Shabayek\Payment\Exceptions\InvalidCredentialsException;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
+use Shabayek\Payment\Exceptions\InvalidCredentialsException;
 
 /**
  * PaymobMethod class.
