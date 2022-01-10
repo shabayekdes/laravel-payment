@@ -132,6 +132,7 @@ class PaymobOrderTest extends TestCase
             'quantity'     => 1,
         ];
     }
+
     /**
      * Define environment setup.
      *
