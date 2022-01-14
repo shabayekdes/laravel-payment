@@ -4,6 +4,7 @@ namespace Shabayek\Payment\Drivers;
 
 use Shabayek\Payment\Contracts\AddressContract;
 use Shabayek\Payment\Contracts\CustomerContract;
+use Shabayek\Payment\Exceptions\InvalidCredentialsException;
 
 /**
  * Method abstract class.
@@ -35,11 +36,18 @@ abstract class Method
      */
     private $address;
     /**
-     * Items details.
+     * errors.
      *
      * @var array
      */
     protected $items = [];
+    /**
+     * Items details.
+     *
+     * @var array
+     */
+    private $errors = [];
+
     /**
      * payment config.
      *
@@ -55,35 +63,24 @@ abstract class Method
     public function __construct(array $config)
     {
         $this->config = $config;
+        $this->setCredentials($config['credentials']);
     }
 
     /**
-     * Set credentials of payment methods.
+     * Set credentials.
      *
+     * @param  array  $credentials
      * @return void
      */
-    abstract protected function setCredentials($credentials);
-
-    /**
-     * Set the amount of transaction.
-     *
-     * @deprecated v0.5
-     *
-     * @param $amount
-     * @return self
-     *
-     * @throws \Exception
-     */
-    public function amount($amount)
+    protected function setCredentials(array $credentials)
     {
-        if (! is_numeric($amount)) {
-            throw new \Exception('Amount value should be a number (integer or float).');
+        foreach ($credentials as $key => $value) {
+            if (empty($value)) {
+                $this->setErrors("Payment credentials ($key) are invalid.");
+            }
+            $this->$key = $value;
         }
-        $this->amount = $amount;
-
-        return $this;
     }
-
     /**
      * Set transaction id.
      *
@@ -238,5 +235,25 @@ abstract class Method
     public function isInstallment()
     {
         return $this->config['is_installment'];
+    }
+    /**
+     * Set errors.
+     *
+     * @param string $message
+     * @return void
+     */
+    protected function setErrors($message)
+    {
+        $this->errors['success'] = false;
+        $this->errors['message'][] = $message;
+    }
+    /**
+     * Get error messages.
+     *
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->errors['message'];
     }
 }
