@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
-use Shabayek\Payment\Exceptions\InvalidCredentialsException;
 
 /**
  * PaymobMethod class.
@@ -37,8 +36,10 @@ class PaymobMethod extends Method implements PaymentMethodContract
         $orderCreation = $this->orderCreation($token);
         if ($orderCreation) {
             $paymentKey = $this->paymentKeyRequest($token, $orderCreation['id']);
+
             return "{$this->url}acceptance/iframes/{$this->iframe_id}?payment_token={$paymentKey}";
         }
+
         return null;
     }
 

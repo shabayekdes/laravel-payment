@@ -4,7 +4,6 @@ namespace Shabayek\Payment\Drivers;
 
 use Shabayek\Payment\Contracts\AddressContract;
 use Shabayek\Payment\Contracts\CustomerContract;
-use Shabayek\Payment\Exceptions\InvalidCredentialsException;
 
 /**
  * Method abstract class.
@@ -81,6 +80,7 @@ abstract class Method
             $this->$key = $value;
         }
     }
+
     /**
      * Set transaction id.
      *
@@ -236,10 +236,11 @@ abstract class Method
     {
         return $this->config['is_installment'];
     }
+
     /**
      * Set errors.
      *
-     * @param string $message
+     * @param  string  $message
      * @return void
      */
     protected function setErrors($message)
@@ -247,6 +248,7 @@ abstract class Method
         $this->errors['success'] = false;
         $this->errors['message'][] = $message;
     }
+
     /**
      * Get error messages.
      *

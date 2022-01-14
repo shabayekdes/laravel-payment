@@ -4,7 +4,6 @@ namespace Shabayek\Payment\Tests\Unit\Paymob;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-use Shabayek\Payment\Exceptions\InvalidCredentialsException;
 use Shabayek\Payment\Facade\Payment;
 use Shabayek\Payment\Tests\Helper\Paymob\PaymobCallback;
 use Shabayek\Payment\Tests\TestCase;
