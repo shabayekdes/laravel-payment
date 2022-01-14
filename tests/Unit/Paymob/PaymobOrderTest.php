@@ -34,7 +34,7 @@ class PaymobOrderTest extends TestCase
     /** @test*/
     public function test_create_order_without_items_details()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Items not set.');
 
         Http::fake([

@@ -16,13 +16,6 @@ use Shabayek\Payment\Tests\TestCase;
  */
 class PaymobRequestTest extends TestCase
 {
-    /** @test */
-    public function test_invalid_credentials_expcetion()
-    {
-        $this->expectException(InvalidCredentialsException::class);
-        Payment::store(3);
-    }
-
     /** @test*/
     public function test_authication_token()
     {
