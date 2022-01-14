@@ -333,21 +333,15 @@ class PaymobMethod extends Method implements PaymentMethodContract
      */
     private function getOrderData($id)
     {
-        try {
-            $token = $this->getAuthenticationToken();
-            $response = Http::withToken($token)->get("{$this->url}acceptance/transactions/{$id}");
+        $token = $this->getAuthenticationToken();
+        $response = Http::withToken($token)->get("{$this->url}acceptance/transactions/{$id}");
+        $result = $response->json();
 
-            $result = $response->json();
-
-            if ($response->ok() && isset($result['success']) && $result['success'] === true) {
-                return $result;
-            }
-
-            throw new Exception($result['detail'] ?? 'Order not found');
-        } catch (Exception $e) {
-            throw new Exception('Get order data failed in paymob # '.$e->getMessage());
+        if ($response->successful() && isset($result['success']) && $result['success'] === true) {
+            return $result;
         }
 
+        $this->setErrors($result['detail'] ?? 'Order not found');
         return [];
     }
 
