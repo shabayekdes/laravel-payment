@@ -132,13 +132,13 @@ class PaymobMethodFeature extends TestCase
         $fakeRequest = new Request();
         $fakeRequest->setMethod('POST');
 
-        $requestData = PaymobCallback::processesCallback(24826928);
+        $requestData = PaymobCallback::processesCallback(24826928, false);
         $fakeRequest->request->add($requestData);
 
         $paymentCallback = $payment->pay($fakeRequest);
 
         $this->assertFalse($paymentCallback['success']);
-        $this->assertEquals('Get order data failed in paymob # incorrect credentials', $paymentCallback['message']);
+        $this->assertEquals('Transaction did not completed', $paymentCallback['message']);
     }
 
     /** @test*/
