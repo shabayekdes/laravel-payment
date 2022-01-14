@@ -8,23 +8,13 @@ use Shabayek\Payment\Contracts\PaymentMethodContract;
 class CodMethod extends Method implements PaymentMethodContract
 {
     /**
-     * Set credentials of payment methods.
-     *
-     * @return void
-     */
-    protected function setCredentials($credentials)
-    {
-        // Implementation set credentials of payment methods.
-    }
-
-    /**
      * Purchase with paymant mwthod and get redirect url.
      *
-     * @return string
+     * @return string|null
      */
-    public function purchase(): string
+    public function purchase()
     {
-        return '';
+        return null;
     }
 
     /**
