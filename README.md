@@ -160,6 +160,9 @@ $method_id = 1; // payment method id from the config file
 $payment_order_id = 111; // payment order id
 $payment_status = Payment::store($method_id)->verify($payment_order_id);
 ```
+
+## Change log
+Please see [CHANGELOG](https://github.com/shabayekdes/laravel-payment/blob/main/CHANGELOG.md) for more information on what has been changed recently.
 ## License
 
 The Laravel payment methods package is open-sourced software licensed under the [MIT license](https://github.com/shabayekdes/laravel-payment/blob/main/LICENSE).
