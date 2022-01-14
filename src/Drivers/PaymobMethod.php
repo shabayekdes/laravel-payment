@@ -343,6 +343,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
         }
 
         $this->setErrors($result['detail'] ?? 'Order not found');
+
         return [];
     }
 
