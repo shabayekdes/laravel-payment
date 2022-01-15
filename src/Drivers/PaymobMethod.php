@@ -13,17 +13,7 @@ use Shabayek\Payment\Contracts\PaymentMethodContract;
  */
 class PaymobMethod extends Method implements PaymentMethodContract
 {
-    /**
-     * Set credentials.
-     *
-     * @param  array  $credentials
-     * @return void
-     */
-    protected function setCredentials(array $credentials)
-    {
-        parent::setCredentials($credentials);
-        $this->url = 'https://accept.paymobsolutions.com/api/';
-    }
+    private $url = 'https://accept.paymobsolutions.com/api/';
 
     /**
      * Purchase with paymant mwthod and get redirect url.
