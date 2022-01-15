@@ -141,6 +141,13 @@ if ($payment->isOnline()) {
 }
 ```
 
+-Print the errors messages
+
+```php
+$payment->getErrors();
+$payment->isSuccess();
+```
+
 - When callback from payment gateway, you can use the following code to verify the payment
 
 ```php

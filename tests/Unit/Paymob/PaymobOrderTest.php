@@ -34,7 +34,7 @@ class PaymobOrderTest extends TestCase
     /** @test*/
     public function test_create_order_without_items_details()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Items not set.');
 
         Http::fake([
@@ -49,6 +49,22 @@ class PaymobOrderTest extends TestCase
 
         $token = Str::random(512);
         $this->callMethod($payment, 'orderCreation', [$token]);
+    }
+
+    /** @test*/
+    public function test_create_order_without_customer_details()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Customer details not set.');
+
+        // Fake Data
+        $item = $this->items();
+
+        $method_id = 2;
+        $payment = Payment::store($method_id);
+        $payment->addItem($item['name'], $item['price'], $item['quantity'], $item['description']);
+
+        $payment->purchase();
     }
 
     /** @test*/
