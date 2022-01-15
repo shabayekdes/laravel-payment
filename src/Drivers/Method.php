@@ -35,13 +35,13 @@ abstract class Method
      */
     private $address;
     /**
-     * errors.
+     * Items details.
      *
      * @var array
      */
     protected $items = [];
     /**
-     * Items details.
+     * errors.
      *
      * @var array
      */
