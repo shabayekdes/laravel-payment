@@ -2,6 +2,15 @@
 
 ## [Unreleased](https://github.com/shabayekdes/laravel-payment/compare/main...develop)
 
+## [v0.7.0 (2022-01-15)](https://github.com/shabayekdes/laravel-payment/compare/v0.6.0...v0.7.0)
+
+### Added
+- Added get errors message if payment gateway is failed ([#14](https://github.com/shabayekdes/laravel-payment/pull/14))
+- Added get payment success status
+
+### Changed
+- Changed handling error exception to store errors in array instead throw exception 
+
 ## [v0.6.0 (2022-01-08)](https://github.com/shabayekdes/laravel-payment/compare/v0.5.1...v0.6.0)
 
 ### Added
