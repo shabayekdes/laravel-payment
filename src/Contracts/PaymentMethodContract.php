@@ -9,9 +9,9 @@ interface PaymentMethodContract
     /**
      * Purchase with paymant mwthod and get redirect url.
      *
-     * @return string
+     * @return string|null
      */
-    public function purchase(): string;
+    public function purchase();
 
     /**
      * Pay with payment method.

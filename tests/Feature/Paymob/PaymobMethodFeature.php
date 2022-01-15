@@ -17,22 +17,6 @@ use Shabayek\Payment\Tests\TestCase;
  */
 class PaymobMethodFeature extends TestCase
 {
-    /**
-     * Setup test cases.
-     *
-     * @return void
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-        // additional setup
-        config()->set('payment.stores.2.credentials.api_key', 'test');
-        config()->set('payment.stores.2.credentials.hmac_hash', 'test');
-        config()->set('payment.stores.2.credentials.merchant_id', 'test');
-        config()->set('payment.stores.2.credentials.iframe_id', 'test');
-        config()->set('payment.stores.2.credentials.integration_id', 'test');
-    }
-
     /** @test*/
     public function test_payment_token_in_return_purchase_url_with_paymob()
     {
@@ -100,7 +84,7 @@ class PaymobMethodFeature extends TestCase
         $fakeRequest = new Request();
         $fakeRequest->setMethod('POST');
 
-        $requestData = PaymobCallback::processesCallback();
+        $requestData = PaymobCallback::processesCallback(24826928);
         $fakeRequest->request->add($requestData);
 
         $paymentCallback = $payment->pay($fakeRequest);
@@ -121,7 +105,7 @@ class PaymobMethodFeature extends TestCase
         $fakeRequest = new Request();
         $fakeRequest->setMethod('GET');
 
-        $requestData = PaymobCallback::responseCallback();
+        $requestData = PaymobCallback::responseCallback('24827227', '19766521');
         $fakeRequest->replace($requestData);
 
         $paymentCallback = $payment->pay($fakeRequest);
@@ -148,13 +132,13 @@ class PaymobMethodFeature extends TestCase
         $fakeRequest = new Request();
         $fakeRequest->setMethod('POST');
 
-        $requestData = PaymobCallback::processesCallback();
+        $requestData = PaymobCallback::processesCallback(24826928, false);
         $fakeRequest->request->add($requestData);
 
         $paymentCallback = $payment->pay($fakeRequest);
 
         $this->assertFalse($paymentCallback['success']);
-        $this->assertEquals('Get order data failed in paymob # incorrect credentials', $paymentCallback['message']);
+        $this->assertEquals('Transaction did not completed', $paymentCallback['message']);
     }
 
     /** @test*/
@@ -163,7 +147,7 @@ class PaymobMethodFeature extends TestCase
         config()->set('payment.stores.2.credentials.hmac_hash', 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R');
         config()->set('payment.stores.2.is_installment', true);
 
-        $requestData = PaymobCallback::processesCallback();
+        $requestData = PaymobCallback::processesCallback(24826928);
         Http::fake([
             // Stub a JSON response for paymob endpoints...
             'https://accept.paymobsolutions.com/api/auth/tokens' => Http::response(['token' => Str::random(512)], 200),
@@ -177,7 +161,7 @@ class PaymobMethodFeature extends TestCase
         $fakeRequest = new Request();
         $fakeRequest->setMethod('POST');
 
-        $requestData = PaymobCallback::processesCallback();
+        $requestData = PaymobCallback::processesCallback(24826928);
         $fakeRequest->request->add($requestData);
 
         $paymentCallback = $payment->pay($fakeRequest);
@@ -210,11 +194,16 @@ class PaymobMethodFeature extends TestCase
         return [
             'name'         => 'Product name',
             'description'  => 'Product description',
-            'amount_cents' => 15000,
+            'price' => 150,
             'quantity'     => 1,
         ];
     }
 
+    /**
+     * Get address fake data.
+     *
+     * @return array
+     */
     private function address(): array
     {
         return [
@@ -225,5 +214,22 @@ class PaymobMethodFeature extends TestCase
             'apartment' => 'Test apartment',
             'building'  => 'Test building',
         ];
+    }
+
+    /**
+     * Define environment setup.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     * @return void
+     */
+    protected function defineEnvironment($app)
+    {
+        $app['config']->set('payment.stores.2.credentials', [
+            'api_key'   => 'test',
+            'hmac_hash'   => 'test',
+            'merchant_id'   => 'test',
+            'iframe_id'   => 'test',
+            'integration_id'   => 'test',
+        ]);
     }
 }

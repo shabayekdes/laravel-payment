@@ -7,16 +7,18 @@ class PaymobCallback
     /**
      * Return the processes paymob callback.
      *
+     * @param  int  $order_id
+     * @param  bool  $status
      * @return array
      */
-    public static function processesCallback()
+    public static function processesCallback(int $order_id, bool $status = true)
     {
         return [
             'obj' => [
                 'id'                     => 19766242,
                 'pending'                => false,
                 'amount_cents'           => 102797,
-                'success'                => true,
+                'success'                => $status,
                 'is_auth'                => false,
                 'is_capture'             => false,
                 'is_standalone_payment'  => true,
@@ -27,7 +29,7 @@ class PaymobCallback
                 'profile_id'             => 4217,
                 'has_parent_transaction' => false,
                 'order'                  => [
-                    'id'              => 24826928,
+                    'id'              => $order_id,
                     'created_at'      => '2021-12-09T17:08:03.715077',
                     'delivery_needed' => false,
                     'merchant'        => [
@@ -213,9 +215,11 @@ class PaymobCallback
     /**
      * Return the processes paymob callback.
      *
+     * @param  int  $order_id
+     * @param  bool  $status
      * @return array
      */
-    public static function responseCallback()
+    public static function responseCallback(string $order_id, $transaction_id, string $status = 'true')
     {
         return [
             'owner'                  => '4708',
@@ -223,7 +227,7 @@ class PaymobCallback
             'source_data_sub_type'   => 'MasterCard',
             'is_standalone_payment'  => 'true',
             'profile_id'             => '4217',
-            'order'                  => '24827227',
+            'order'                  => $order_id,
             'source_data_type'       => 'card',
             'created_at'             => '2021-12-09T17:10:06.099493',
             'has_parent_transaction' => 'false',
@@ -231,7 +235,7 @@ class PaymobCallback
             'is_refunded'            => 'false',
             'merchant_order_id'      => '23790-69578',
             'is_3d_secure'           => 'true',
-            'success'                => 'true',
+            'success'                => $status,
             'is_refund'              => 'false',
             'acq_response_code'      => '-',
             'data_message'           => 'AUTHENTICATION_FAILED',
@@ -248,7 +252,7 @@ class PaymobCallback
             'merchant_commission'    => '0',
             'is_capture'             => 'false',
             'hmac'                   => '91718408c8962be7b17b8397e993668677f3949345b887e228d61a3eed1003ebfca18297589c544670257787a89e4ffd89b6a91ae1bab346cfe8186b5eb342f6',
-            'id'                     => '19766521',
+            'id'                     => $transaction_id,
         ];
     }
 }

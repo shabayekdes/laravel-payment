@@ -13,52 +13,34 @@ use Shabayek\Payment\Contracts\PaymentMethodContract;
  */
 class PaymobMethod extends Method implements PaymentMethodContract
 {
-    private $url;
-    private $iframe_id;
-    private $api_key;
-    private $merchant_id;
-    private $integration_id;
-    private $hmac_hash;
-
     /**
-     * PaymobMethod constructor.
+     * Set credentials.
      *
-     * @param  array  $config
-     */
-    public function __construct(array $config)
-    {
-        parent::__construct($config);
-        $this->setCredentials($config['credentials']);
-    }
-
-    /**
-     * Set credentials of paymob payment.
-     *
+     * @param  array  $credentials
      * @return void
      */
-    protected function setCredentials($credentials)
+    protected function setCredentials(array $credentials)
     {
-        foreach ($credentials as $key => $value) {
-            if (empty($value)) {
-                throw new Exception("Paymob payment credentials ($key) are not set");
-            }
-            $this->$key = $value;
-        }
+        parent::setCredentials($credentials);
         $this->url = 'https://accept.paymobsolutions.com/api/';
     }
 
     /**
      * Purchase with paymant mwthod and get redirect url.
      *
-     * @return string
+     * @return string|null
      */
-    public function purchase(): string
+    public function purchase()
     {
         $token = $this->getAuthenticationToken();
         $orderCreation = $this->orderCreation($token);
-        $paymentKey = $this->paymentKeyRequest($token, $orderCreation['id']);
+        if ($orderCreation) {
+            $paymentKey = $this->paymentKeyRequest($token, $orderCreation['id']);
 
-        return "{$this->url}acceptance/iframes/{$this->iframe_id}?payment_token={$paymentKey}";
+            return "{$this->url}acceptance/iframes/{$this->iframe_id}?payment_token={$paymentKey}";
+        }
+
+        return null;
     }
 
     /**
@@ -148,20 +130,14 @@ class PaymobMethod extends Method implements PaymentMethodContract
     {
         $postData = ['api_key' => $this->api_key];
 
-        try {
-            $response = Http::post("{$this->url}auth/tokens", $postData);
+        $response = Http::post("{$this->url}auth/tokens", $postData);
+        $result = $response->json();
 
-            $result = $response->json();
-
-            if ($response->successful()) {
-                return $result['token'];
-            }
-            $error = 'Api key not found';
-        } catch (\Exception $e) {
-            $error = $e->getMessage();
+        if ($response->successful()) {
+            return $result['token'];
         }
 
-        throw new Exception('Authentication failed in paymob # '.$error);
+        $this->setErrors('Authentication failed in paymob Api key not found');
     }
 
     /**
@@ -172,32 +148,29 @@ class PaymobMethod extends Method implements PaymentMethodContract
      */
     private function orderCreation($token)
     {
-        try {
-            $postData = [
-                'auth_token'        => $token,
-                'delivery_needed'   => false,
-                'merchant_order_id' => $this->transaction_id.'-'.rand(10000, 99999),
-                'merchant_id'       => $this->merchant_id,
-                'amount_cents'      => (int) $this->amount * 100,
-                'currency'          => 'EGP',
-                'items'             => $this->getItems(),
-                'shipping_data'     => [
-                    'first_name'   => $this->getCustomerDetails('first_name'),
-                    'last_name'    => $this->getCustomerDetails('last_name'),
-                    'email'        => $this->getCustomerDetails('email'),
-                    'phone_number' => $this->getCustomerDetails('phone'),
-                ],
-            ];
-            $response = Http::post("{$this->url}ecommerce/orders", $postData);
-            if ($response->successful()) {
-                return $response->json();
-            }
-            $error = 'Order creation failed';
-        } catch (Exception $e) {
-            $error = $e->getMessage();
+        $postData = [
+            'auth_token'        => $token,
+            'delivery_needed'   => false,
+            'merchant_order_id' => $this->transaction_id.'-'.rand(10000, 99999),
+            'merchant_id'       => $this->merchant_id,
+            'amount_cents'      => $this->amount * 100,
+            'currency'          => 'EGP',
+            'items'             => $this->getItems(),
+            'shipping_data'     => [
+                'first_name'   => $this->getCustomerDetails('first_name'),
+                'last_name'    => $this->getCustomerDetails('last_name'),
+                'email'        => $this->getCustomerDetails('email'),
+                'phone_number' => $this->getCustomerDetails('phone'),
+            ],
+        ];
+        $response = Http::post("{$this->url}ecommerce/orders", $postData);
+        $result = $response->json();
+
+        if ($response->successful()) {
+            return $result;
         }
 
-        throw new Exception('Order not created success in paymob # '.$error);
+        $this->setErrors('Order not created success in paymob');
     }
 
     /**
@@ -208,37 +181,36 @@ class PaymobMethod extends Method implements PaymentMethodContract
      */
     private function paymentKeyRequest($token, $orderPayId)
     {
-        try {
-            $postData = [
-                'auth_token'     => $token,
-                'amount_cents'   => (int) $this->amount * 100,
-                'expiration'     => 3600,
-                'order_id'       => $orderPayId,
-                'currency'       => 'EGP',
-                'integration_id' => $this->integration_id,
-                'billing_data'   => [
-                    'first_name'   => $this->getCustomerDetails('first_name'),
-                    'last_name'    => $this->getCustomerDetails('last_name'),
-                    'email'        => $this->getCustomerDetails('email'),
-                    'phone_number' => $this->getCustomerDetails('phone'),
-                    'apartment'    => $this->getAddressDetails('apartment'),
-                    'floor'        => $this->getAddressDetails('floor'),
-                    'city'         => $this->getAddressDetails('city'),
-                    'state'        => $this->getAddressDetails('state'),
-                    'street'       => $this->getAddressDetails('street'),
-                    'building'     => $this->getAddressDetails('building'),
-                    'country'      => 'EG',
-                ],
-            ];
+        $postData = [
+            'auth_token'     => $token,
+            'amount_cents'   => (int) $this->amount * 100,
+            'expiration'     => 3600,
+            'order_id'       => $orderPayId,
+            'currency'       => 'EGP',
+            'integration_id' => $this->integration_id,
+            'billing_data'   => [
+                'first_name'   => $this->getCustomerDetails('first_name'),
+                'last_name'    => $this->getCustomerDetails('last_name'),
+                'email'        => $this->getCustomerDetails('email'),
+                'phone_number' => $this->getCustomerDetails('phone'),
+                'apartment'    => $this->getAddressDetails('apartment'),
+                'floor'        => $this->getAddressDetails('floor'),
+                'city'         => $this->getAddressDetails('city'),
+                'state'        => $this->getAddressDetails('state'),
+                'street'       => $this->getAddressDetails('street'),
+                'building'     => $this->getAddressDetails('building'),
+                'country'      => 'EG',
+            ],
+        ];
 
-            $response = Http::post("{$this->url}acceptance/payment_keys", $postData);
+        $response = Http::post("{$this->url}acceptance/payment_keys", $postData);
+        $result = $response->json();
 
-            $result = $response->json();
-
+        if ($response->successful()) {
             return $result['token'];
-        } catch (Exception $e) {
-            throw new Exception('Payment key request not created success in paymob #'.$e->getMessage());
         }
+
+        $this->setErrors('Payment key request not created success in paymob');
     }
 
     /**
@@ -362,20 +334,15 @@ class PaymobMethod extends Method implements PaymentMethodContract
      */
     private function getOrderData($id)
     {
-        try {
-            $token = $this->getAuthenticationToken();
-            $response = Http::withToken($token)->get("{$this->url}acceptance/transactions/{$id}");
+        $token = $this->getAuthenticationToken();
+        $response = Http::withToken($token)->get("{$this->url}acceptance/transactions/{$id}");
+        $result = $response->json();
 
-            $result = $response->json();
-
-            if ($response->ok() && isset($result['success']) && $result['success'] === true) {
-                return $result;
-            }
-
-            throw new Exception($result['detail'] ?? 'Order not found');
-        } catch (Exception $e) {
-            throw new Exception('Get order data failed in paymob # '.$e->getMessage());
+        if ($response->successful() && isset($result['success']) && $result['success'] === true) {
+            return $result;
         }
+
+        $this->setErrors($result['detail'] ?? 'Order not found');
 
         return [];
     }
@@ -398,11 +365,7 @@ class PaymobMethod extends Method implements PaymentMethodContract
         if ($response->ok()) {
             return $response->json();
         }
-
-        return [
-            'success' => false,
-            'message' => $response->json()['detail'] ?? 'Transaction not found',
-        ];
+        $this->setErrors($response->json()['detail'] ?? 'Transaction not found');
     }
 
     /**
@@ -441,5 +404,26 @@ class PaymobMethod extends Method implements PaymentMethodContract
         }
 
         return $result;
+    }
+
+    /**
+     * Get items.
+     *
+     * @return array
+     */
+    private function getItems()
+    {
+        if (empty($this->items)) {
+            throw new \InvalidArgumentException('Items not set.');
+        }
+
+        return collect($this->items)->map(function ($item) {
+            return [
+                'name' => $item['name'],
+                'amount_cents' => $item['price'] * 100,
+                'quantity' => $item['quantity'],
+                'description' => $item['description'] ?? 'NA',
+            ];
+        })->toArray();
     }
 }

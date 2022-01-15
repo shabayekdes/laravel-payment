@@ -15,22 +15,6 @@ use Shabayek\Payment\Tests\TestCase;
  */
 class PaymobRequestTest extends TestCase
 {
-    /**
-     * Setup test cases.
-     *
-     * @return void
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-        // additional setup
-        config()->set('payment.stores.2.credentials.api_key', 'test');
-        config()->set('payment.stores.2.credentials.hmac_hash', 'test');
-        config()->set('payment.stores.2.credentials.merchant_id', 'test');
-        config()->set('payment.stores.2.credentials.iframe_id', 'test');
-        config()->set('payment.stores.2.credentials.integration_id', 'test');
-    }
-
     /** @test*/
     public function test_authication_token()
     {
@@ -46,65 +30,6 @@ class PaymobRequestTest extends TestCase
 
         $this->assertNotEquals(false, $token);
         $this->assertEquals(gettype($token), 'string');
-    }
-
-    /** @test*/
-    public function test_create_order_without_set_customer_details()
-    {
-        $this->expectException(\Exception::class);
-
-        Http::fake([
-            // Stub a JSON response for paymob endpoints...
-            'https://accept.paymobsolutions.com/api/*' => Http::response([], 200),
-        ]);
-
-        $method_id = 2;
-        $payment = Payment::store($method_id);
-
-        $token = Str::random(512);
-        $order = $this->callMethod($payment, 'orderCreation', [$token]);
-    }
-
-    /** @test*/
-    public function test_create_order_without_items_details()
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Items not set.');
-
-        Http::fake([
-            // Stub a JSON response for paymob endpoints...
-            'https://accept.paymobsolutions.com/api/*' => Http::response([], 200),
-        ]);
-
-        $method_id = 2;
-        $payment = Payment::store($method_id);
-
-        $payment->customer($this->customer());
-
-        $token = Str::random(512);
-        $this->callMethod($payment, 'orderCreation', [$token]);
-    }
-
-    /** @test*/
-    public function test_create_order_success()
-    {
-        $order_id = rand(1, 100);
-        Http::fake([
-            // Stub a JSON response for paymob endpoints...
-            'https://accept.paymobsolutions.com/api/*' => Http::response(['id' => $order_id], 200),
-        ]);
-
-        $method_id = 2;
-        $payment = Payment::store($method_id);
-
-        $payment->customer($this->customer());
-        $payment->items($this->items());
-
-        $token = Str::random(512);
-        $order = $this->callMethod($payment, 'orderCreation', [$token]);
-
-        $this->assertTrue(isset($order['id']));
-        $this->assertEquals($order_id, $order['id']);
     }
 
     /** @test*/
@@ -157,7 +82,7 @@ class PaymobRequestTest extends TestCase
         $method_id = 2;
         $payment = Payment::store($method_id);
 
-        $requestData = PaymobCallback::processesCallback();
+        $requestData = PaymobCallback::processesCallback(24826928);
         $processesCallback = $this->callMethod($payment, 'processesCallback', [$requestData]);
 
         $this->assertTrue($processesCallback['transaction_status']);
@@ -172,7 +97,7 @@ class PaymobRequestTest extends TestCase
         $method_id = 2;
         $payment = Payment::store($method_id);
 
-        $requestData = PaymobCallback::responseCallback();
+        $requestData = PaymobCallback::responseCallback('24827227', '19766521');
         $processesCallback = $this->callMethod($payment, 'responseCallBack', [$requestData]);
 
         $this->assertTrue($processesCallback['transaction_status']);
@@ -183,7 +108,7 @@ class PaymobRequestTest extends TestCase
     /** @test*/
     public function test_paymob_get_order_data_api_success()
     {
-        $requestData = PaymobCallback::processesCallback();
+        $requestData = PaymobCallback::processesCallback(24826928);
         Http::fake([
             // Stub a JSON response for paymob endpoints...
             'https://accept.paymobsolutions.com/api/auth/tokens' => Http::response(['token' => Str::random(512)], 200),
@@ -202,7 +127,7 @@ class PaymobRequestTest extends TestCase
     /** @test */
     public function test_verify_payment_status_is_successfully_from_paymob_gateway()
     {
-        $requestData = PaymobCallback::processesCallback();
+        $requestData = PaymobCallback::processesCallback(24826928);
 
         Http::fake([
             // Stub a JSON response for paymob endpoints...
@@ -245,7 +170,7 @@ class PaymobRequestTest extends TestCase
         return [
             'name'         => 'Product name',
             'description'  => 'Product description',
-            'amount_cents' => 15000,
+            'price' => 150,
             'quantity'     => 1,
         ];
     }
@@ -260,5 +185,22 @@ class PaymobRequestTest extends TestCase
             'apartment' => 'Test apartment',
             'building'  => 'Test building',
         ];
+    }
+
+    /**
+     * Define environment setup.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     * @return void
+     */
+    protected function defineEnvironment($app)
+    {
+        $app['config']->set('payment.stores.2.credentials', [
+            'api_key'   => 'test',
+            'hmac_hash'   => 'test',
+            'merchant_id'   => 'test',
+            'iframe_id'   => 'test',
+            'integration_id'   => 'test',
+        ]);
     }
 }

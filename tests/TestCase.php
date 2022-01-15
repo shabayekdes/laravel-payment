@@ -3,7 +3,7 @@
 namespace Shabayek\Payment\Tests;
 
 use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
-use Orchestra\Testbench\TestCase as BaseTestCase;
+use Orchestra\Testbench\TestCase as Orchestra;
 use Shabayek\Payment\Providers\PaymentServiceProvider;
 
 /**
@@ -11,7 +11,7 @@ use Shabayek\Payment\Providers\PaymentServiceProvider;
  *
  * @author Esmail Shabayek
  */
-class TestCase extends BaseTestCase
+abstract class TestCase extends Orchestra
 {
     // protected $loadEnvironmentVariables = true;
 
@@ -29,10 +29,10 @@ class TestCase extends BaseTestCase
     /**
      * Get package serivce providers.
      *
-     * @param [type] $app
-     * @return void
+     * @param  \Illuminate\Foundation\Application  $app
+     * @return array
      */
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             PaymentServiceProvider::class,

@@ -1,5 +1,5 @@
 # Laravel Payment Methods
-[![Build Status](https://github.styleci.io/repos/421966331/shield?style=flat&branch=develop)](https://github.styleci.io/repos/421966331) [![Packagist version](https://img.shields.io/packagist/v/shabayek/laravel-payment)](https://packagist.org/packages/shabayek/laravel-payment) [![mit](https://img.shields.io/apm/l/laravel)](https://packagist.org/packages/shabayek/laravel-payment) ![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/shabayek/laravel-payment) ![Packagist Downloads](https://img.shields.io/packagist/dt/shabayek/laravel-payment)
+[![Github Status](https://github.com/shabayekdes/laravel-payment/actions/workflows/tests.yml/badge.svg)](https://github.com/shabayekdes/laravel-payment/actions) [![Styleci Status](https://github.styleci.io/repos/421966331/shield?style=flat&branch=develop)](https://github.styleci.io/repos/421966331) [![Packagist version](https://img.shields.io/packagist/v/shabayek/laravel-payment)](https://packagist.org/packages/shabayek/laravel-payment) [![mit](https://img.shields.io/apm/l/laravel)](https://packagist.org/packages/shabayek/laravel-payment) ![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/shabayek/laravel-payment) ![Packagist Downloads](https://img.shields.io/packagist/dt/shabayek/laravel-payment)
 
 This is a Laravel Package for Payment Gateway Integration. It has a clear and consistent API, is fully unit tested, and even comes with an example application to get you started.
 
@@ -109,12 +109,28 @@ $payment = Payment::store($method_id);
 
 - Add items with loop array of data items
 ```php
-    $payment->items([
-        "name" => "ASC1515",
-        "amount_cents" => "500000",
-        "description" => "Smart Watch",
-        "quantity" => "1"
-    ]);
+    $items = [
+        [
+            "name" => "item1",
+            "price" => 100,
+            "quantity" => 2,
+            "description" => "item1 description",
+        ],
+        [
+            "name" => "item2",
+            "price" => 200,
+            "quantity" => 1,
+            "description" => "item2 description",
+        ],
+    ];
+    $payment->items($items);
+    // OR By One
+    $name = "item1";
+    $price = 100;
+    $quantity = 2; // Default 1
+    $description = "item1 description"; // Default null
+
+    $payment->addItem($name, $price, $quantity, $description);
 ```
 
 - Check the payment is online to get pay url
@@ -123,6 +139,13 @@ $payment = Payment::store($method_id);
 if ($payment->isOnline()) {
     $url = $payment->purchase();
 }
+```
+
+-Print the errors messages
+
+```php
+$payment->getErrors();
+$payment->isSuccess();
 ```
 
 - When callback from payment gateway, you can use the following code to verify the payment
@@ -144,6 +167,9 @@ $method_id = 1; // payment method id from the config file
 $payment_order_id = 111; // payment order id
 $payment_status = Payment::store($method_id)->verify($payment_order_id);
 ```
+
+## Change log
+Please see [CHANGELOG](https://github.com/shabayekdes/laravel-payment/blob/main/CHANGELOG.md) for more information on what has been changed recently.
 ## License
 
 The Laravel payment methods package is open-sourced software licensed under the [MIT license](https://github.com/shabayekdes/laravel-payment/blob/main/LICENSE).
