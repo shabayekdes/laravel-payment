@@ -2,9 +2,9 @@
 
 namespace Shabayek\Payment\Tests;
 
+use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Shabayek\Payment\Providers\PaymentServiceProvider;
-use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
 
 /**
  * TestCase class.
@@ -29,8 +29,7 @@ abstract class TestCase extends Orchestra
     /**
      * Get package serivce providers.
      *
-     * @param \Illuminate\Foundation\Application $app
-     *
+     * @param  \Illuminate\Foundation\Application  $app
      * @return array
      */
     protected function getPackageProviders($app): array
