@@ -67,7 +67,6 @@ class PaymobOrderTest extends TestCase
         $payment->purchase();
     }
 
-
     /** @test*/
     public function test_create_order_success()
     {
