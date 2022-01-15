@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
-use Shabayek\Payment\Exceptions\InvalidCredentialsException;
 
 /**
  * PaymobMethod class.
