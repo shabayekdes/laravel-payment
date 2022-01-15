@@ -37,7 +37,10 @@
     "autoload-dev": {
         "psr-4": {
             "Shabayek\\Payment\\Tests\\": "tests"
-        }
+        },
+        "files": [
+            "tests/Helper/helpers.php"
+        ]
     },
     "scripts": {
         "test": "vendor/bin/phpunit",
