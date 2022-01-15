@@ -8,7 +8,7 @@ use Shabayek\Payment\Contracts\CustomerContract;
 /**
  * Method abstract class.
  */
-abstract class Method
+abstract class AbstractMethod
 {
     /**
      * Amount.

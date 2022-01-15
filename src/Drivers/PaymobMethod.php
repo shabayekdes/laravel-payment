@@ -11,7 +11,7 @@ use Shabayek\Payment\Contracts\PaymentMethodContract;
 /**
  * PaymobMethod class.
  */
-class PaymobMethod extends Method implements PaymentMethodContract
+class PaymobMethod extends AbstractMethod implements PaymentMethodContract
 {
     private $url = 'https://accept.paymobsolutions.com/api/';
 
