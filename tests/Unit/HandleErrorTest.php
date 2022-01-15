@@ -2,7 +2,6 @@
 
 namespace Shabayek\Payment\Tests\Unit;
 
-use Illuminate\Http\Request;
 use Shabayek\Payment\Facade\Payment;
 use Shabayek\Payment\Tests\TestCase;
 
