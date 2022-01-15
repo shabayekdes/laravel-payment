@@ -258,4 +258,14 @@ abstract class Method
     {
         return $this->errors['message'];
     }
+
+    /**
+     * Get success status.
+     *
+     * @return array
+     */
+    public function isSuccess()
+    {
+        return $this->errors['success'] ?? true;
+    }
 }
