@@ -2,6 +2,7 @@
 
 namespace Shabayek\Payment\Drivers;
 
+use Illuminate\Database\Eloquent\Model;
 use Shabayek\Payment\Contracts\AddressContract;
 use Shabayek\Payment\Contracts\CustomerContract;
 
@@ -97,18 +98,13 @@ abstract class AbstractMethod
     /**
      * Set customer details.
      *
-     * @param  CustomerContract|array  $customer
+     * @param  Model  $customer
      * @return self
      */
     public function customer($customer)
     {
-        if (is_array($customer)) {
-            $this->customer = $customer;
-        }
-
-        if ($customer instanceof CustomerContract) {
-            $this->customer = $customer->customerDetails();
-        }
+        $this->customer = $customer;
+        $this->address = $customer->billingDetails();
 
         return $this;
     }
@@ -124,12 +120,7 @@ abstract class AbstractMethod
         if ($this->customer == null) {
             throw new \InvalidArgumentException('Customer details not set.');
         }
-
-        if ($property) {
-            return $this->customer[$property] ?? 'NA';
-        }
-
-        return $this->customer;
+        return $this->customer->customerDetails($property);
     }
 
     /**
@@ -138,7 +129,7 @@ abstract class AbstractMethod
      * @param  string|null  $property
      * @return array|string
      */
-    public function getAddressDetails($property = null)
+    public function getBillingDetails($property = null)
     {
         if ($this->address == null) {
             throw new \InvalidArgumentException('Address details not set.');
