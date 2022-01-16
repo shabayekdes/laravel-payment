@@ -26,6 +26,7 @@
     },
     "require-dev": {
         "nunomaduro/collision": "^5.10",
+        "mockery/mockery": "dev-master",
         "orchestra/testbench": "^6.0",
         "phpunit/phpunit": "^9.5"
     },
