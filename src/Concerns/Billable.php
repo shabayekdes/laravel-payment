@@ -2,8 +2,8 @@
 
 namespace Shabayek\Payment\Concerns;
 
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 trait Billable
 {
@@ -46,6 +46,7 @@ trait Billable
     {
         return $this->phone;
     }
+
     /**
      * Get the billable billing relations.
      *
@@ -64,16 +65,19 @@ trait Billable
     public function customerDetails($property): array
     {
         if ($property) {
-            $column = Str::camel($property) . 'Column';
+            $column = Str::camel($property).'Column';
+
             return $this->$column() ?? 'NA';
         }
+
         return [
-            "first_name" => $this->firstNameColumn(),
-            "last_name" => $this->lastNameColumn(),
-            "email" => $this->emailColumn(),
-            "phone" => $this->phoneColumn(),
+            'first_name' => $this->firstNameColumn(),
+            'last_name' => $this->lastNameColumn(),
+            'email' => $this->emailColumn(),
+            'phone' => $this->phoneColumn(),
         ];
     }
+
     /**
      * Set billing's details.
      *
@@ -82,12 +86,12 @@ trait Billable
     public function billingDetails(): array
     {
         return [
-            "apartment" => $this->billingRelation()->apartment,
-            "floor" => $this->billingRelation()->floor,
-            "city" => $this->billingRelation()->city,
-            "state" => $this->billingRelation()->state,
-            "street" => $this->billingRelation()->street,
-            "building" => $this->billingRelation()->building,
+            'apartment' => $this->billingRelation()->apartment,
+            'floor' => $this->billingRelation()->floor,
+            'city' => $this->billingRelation()->city,
+            'state' => $this->billingRelation()->state,
+            'street' => $this->billingRelation()->street,
+            'building' => $this->billingRelation()->building,
         ];
     }
 }
