@@ -2,13 +2,14 @@
 
 namespace Shabayek\Payment\Tests\Feature\Paymob;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Facade\Payment;
-use Shabayek\Payment\Tests\Helper\Paymob\PaymobCallback;
 use Shabayek\Payment\Tests\TestCase;
+use Illuminate\Support\Facades\Config;
+use Shabayek\Payment\Tests\Fixtures\User;
+use Shabayek\Payment\Tests\Helper\Paymob\PaymobCallback;
 
 /**
  * Class PaymobMethodFeature.
@@ -32,8 +33,7 @@ class PaymobMethodFeature extends TestCase
         $method_id = 2;
         $payment = Payment::store($method_id);
 
-        $payment->customer($this->customer());
-        $payment->address($this->address());
+        $payment->customer(fakeCustomer());
         $payment->items($this->items());
 
         $payUrl = $payment->purchase();
@@ -61,8 +61,7 @@ class PaymobMethodFeature extends TestCase
         $method_id = 2;
         $payment = Payment::store($method_id);
 
-        $payment->customer($this->customer());
-        $payment->address($this->address());
+        $payment->customer(fakeCustomer());
         $payment->items($this->items());
 
         $payUrl = $payment->purchase();
@@ -167,21 +166,6 @@ class PaymobMethodFeature extends TestCase
         $paymentCallback = $payment->pay($fakeRequest);
 
         $this->assertTrue($paymentCallback['success']);
-    }
-
-    /**
-     * Get customer fake data.
-     *
-     * @return array
-     */
-    private function customer(): array
-    {
-        return [
-            'first_name' => 'John',
-            'last_name'  => 'Doe',
-            'phone'      => '+989120000000',
-            'email'      => 'customer@test.com',
-        ];
     }
 
     /**
