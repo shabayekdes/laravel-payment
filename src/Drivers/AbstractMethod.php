@@ -115,7 +115,7 @@ abstract class AbstractMethod
      * @param  string|null  $property
      * @return array|string
      */
-    public function getCustomerDetails($property = null)
+    protected function getCustomerDetails($property = null)
     {
         if ($this->customer == null) {
             throw new \InvalidArgumentException('Customer details not set.');
@@ -129,7 +129,7 @@ abstract class AbstractMethod
      * @param  string|null  $property
      * @return array|string
      */
-    public function getBillingDetails($property = null)
+    protected function getBillingDetails($property = null)
     {
         if ($this->address == null) {
             throw new \InvalidArgumentException('Address details not set.');
@@ -141,26 +141,6 @@ abstract class AbstractMethod
 
         return $this->address;
     }
-
-    /**
-     * Set address details.
-     *
-     * @param  AddressContract|array  $address
-     * @return self
-     */
-    public function address($address)
-    {
-        if (is_array($address)) {
-            $this->address = $address;
-        }
-
-        if ($address instanceof AddressContract) {
-            $this->address = $address->addressDetails();
-        }
-
-        return $this;
-    }
-
     /**
      * Set items.
      *
