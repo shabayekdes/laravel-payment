@@ -120,6 +120,7 @@ abstract class AbstractMethod
         if ($this->customer == null) {
             throw new \InvalidArgumentException('Customer details not set.');
         }
+
         return $this->customer->customerDetails($property);
     }
 
