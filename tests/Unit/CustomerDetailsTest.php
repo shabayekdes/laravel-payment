@@ -2,12 +2,10 @@
 
 namespace Shabayek\Payment\Tests\Unit;
 
-use Mockery;
 use Mockery\MockInterface;
-use Illuminate\Http\Request;
 use Shabayek\Payment\Facade\Payment;
-use Shabayek\Payment\Tests\TestCase;
 use Shabayek\Payment\Tests\Fixtures\User;
+use Shabayek\Payment\Tests\TestCase;
 
 /**
  * Class CustomerDetailsTest.
