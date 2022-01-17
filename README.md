@@ -19,58 +19,6 @@ composer require shabayek/laravel-payment
 php artisan vendor:publish --provider="Shabayek\Payment\PaymentServiceProvider" --tag=config
 ```
 
-- Implement customer details contracts on user model
-
-```php
-use Shabayek\Payment\Contracts\CustomerContract;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-
-class User extends Authenticatable implements CustomerContract
-{
-    /**
-     * Set address's details.
-     *
-     * @return array
-     */
-    public function customerDetails(): array
-    {
-        return [
-            "first_name" => $this->first_name,
-            "last_name" => $this->last_name,
-            "email" => $this->email,
-            "phone" => $this->phone,
-        ]
-    }
-}
-```
-
-- Implement address details contracts on address model
-
-```php
-use Shabayek\Payment\Contracts\AddressContract;
-use Illuminate\Database\Eloquent\Model;
-
-class Address extends Model implements AddressContract
-{
-    /**
-     * Set address's details.
-     *
-     * @return array
-     */
-    public function addressDetails(): array
-    {
-        return [
-            "apartment" => $this->apartment,
-            "floor" => $this->floor,
-            "city" => $this->city,
-            "state" => $this->state,
-            "street" => $this->street,
-            "building" => $this->building,
-        ]
-    }
-}
-```
-
 - Initiate a payment with the following code:
 
 ```php
@@ -78,36 +26,62 @@ $method_id = 1; // payment method id from the config file
 $payment = Payment::store($method_id);
 ```
 
-- You can insert user model object that implements **CustomerContract** or array 
+- Implement customer details contracts on user model by adding **Billable** trait
 
 ```php
-    $payment->customer($user);
-    // OR array
-    $payment->customer([
-        'first_name' => 'John',
-        'last_name' => 'Doe',
-        'email' => 'test@test.com',
-        'phone' => '09123456789',
-    ]);
+use Shabayek\Payment\Concerns\Billable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class User extends Authenticatable
+{
+    use Billable, Notifiable;
+
+}
+```
+- Following columns is default for billable user
+    - **first_name**
+    - **last_name**
+    - **email**
+    - **phone**
+
+if you want to change the column name you can do add public methods on your model with convention name CamelCase like **firstName** + **Column**
+FirstNameColumn
+```php
+    /**
+     * Get the first name.
+     *
+     * @return string|null
+     */
+    public function firstNameColumn()
+    {
+        return $this->name; // OR $this->first_name;
+    }
 ```
 
-- You enter address model object that implements **AddressContract** array of data
+- Implement address details with relation to address model 
+> The default relation is **address** if you want change the relation name you can do add public methods on your user model 
+
 ```php
-    $payment->address($address);
-    // OR array
-    $payment->address([
-        "apartment" => "803",
-        "floor" => "42",
-        "street" => "Ethan Land",
-        "building" => "8028",
-        "postal_code" => "01898",
-        "city" => "Jaskolskiburgh",
-        "country" => "CR",
-        "state" => "Utah"
-    ]);
+    /**
+     * Get the billable billing relations.
+     *
+     * @return Model
+     */
+    public function billingRelation()
+    {
+        return $this->address_relation; // OR $this->address;
+    }
+```
+
+- Pass the user model to payment gateway
+
+```php
+$payment->customer($user);
 ```
 
 - Add items with loop array of data items
+
 ```php
     $items = [
         [

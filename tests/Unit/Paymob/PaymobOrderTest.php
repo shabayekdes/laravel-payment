@@ -45,7 +45,7 @@ class PaymobOrderTest extends TestCase
         $method_id = 2;
         $payment = Payment::store($method_id);
 
-        $payment->customer($this->customer());
+        $payment->customer(fakeCustomer());
 
         $token = Str::random(512);
         $this->callMethod($payment, 'orderCreation', [$token]);
@@ -79,7 +79,7 @@ class PaymobOrderTest extends TestCase
         $method_id = 2;
         $payment = Payment::store($method_id);
 
-        $payment->customer($this->customer());
+        $payment->customer(fakeCustomer());
         $payment->items($this->items());
 
         $token = Str::random(512);
@@ -117,21 +117,6 @@ class PaymobOrderTest extends TestCase
 
         $this->assertEquals($items[0]['quantity'], 1);
         $this->assertEquals($items[0]['description'], 'NA');
-    }
-
-    /**
-     * Get customer fake data.
-     *
-     * @return array
-     */
-    private function customer(): array
-    {
-        return [
-            'first_name' => 'John',
-            'last_name'  => 'Doe',
-            'phone'      => '+989120000000',
-            'email'      => 'customer@test.com',
-        ];
     }
 
     /**

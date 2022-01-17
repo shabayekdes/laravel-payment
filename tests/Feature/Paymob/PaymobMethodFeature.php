@@ -32,8 +32,7 @@ class PaymobMethodFeature extends TestCase
         $method_id = 2;
         $payment = Payment::store($method_id);
 
-        $payment->customer($this->customer());
-        $payment->address($this->address());
+        $payment->customer(fakeCustomer());
         $payment->items($this->items());
 
         $payUrl = $payment->purchase();
@@ -61,8 +60,7 @@ class PaymobMethodFeature extends TestCase
         $method_id = 2;
         $payment = Payment::store($method_id);
 
-        $payment->customer($this->customer());
-        $payment->address($this->address());
+        $payment->customer(fakeCustomer());
         $payment->items($this->items());
 
         $payUrl = $payment->purchase();
@@ -167,21 +165,6 @@ class PaymobMethodFeature extends TestCase
         $paymentCallback = $payment->pay($fakeRequest);
 
         $this->assertTrue($paymentCallback['success']);
-    }
-
-    /**
-     * Get customer fake data.
-     *
-     * @return array
-     */
-    private function customer(): array
-    {
-        return [
-            'first_name' => 'John',
-            'last_name'  => 'Doe',
-            'phone'      => '+989120000000',
-            'email'      => 'customer@test.com',
-        ];
     }
 
     /**
