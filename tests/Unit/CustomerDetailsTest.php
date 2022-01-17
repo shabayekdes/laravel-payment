@@ -36,4 +36,24 @@ class CustomerDetailsTest extends TestCase
         $this->assertEquals('John', $customerDetails['first_name']);
         $this->assertEquals('Doe', $customerDetails['last_name']);
     }
+    /** @test*/
+    public function test_can_get_customer_details_first_name_from_name_column_successfully()
+    {
+        // Mock user model
+        $mock = $this->partialMock(User::class, function (MockInterface $mock) {
+            $mock->shouldReceive('getAttribute')->once()->with('name')->andReturn('name');
+            $mock->shouldReceive('firstNameColumn')->once()->andReturn($mock->name);
+        });
+        $mock->first_name = 'Changed';
+        $mock->last_name = 'Doe';
+        $mock->email = 'test@test.com';
+        $mock->phone = '01000000000';
+
+        $payment = Payment::store(2);
+        $payment->customer($mock);
+
+        $customerDetails = $this->callMethod($payment, 'getCustomerDetails');
+
+        $this->assertEquals('name', $customerDetails['first_name']);
+    }
 }

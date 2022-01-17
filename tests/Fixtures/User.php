@@ -10,7 +10,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class User extends Model
 {
     use Billable, Notifiable;
-
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var string[]|bool
+     */
+    protected $guarded = [];
     /**
      * Get the address associated with the User
      *
