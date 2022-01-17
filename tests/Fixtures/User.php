@@ -16,6 +16,7 @@ class User extends Model
      * @var string[]|bool
      */
     protected $guarded = [];
+
     /**
      * Get the address associated with the User.
      *

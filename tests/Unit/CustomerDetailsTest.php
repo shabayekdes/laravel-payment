@@ -34,6 +34,7 @@ class CustomerDetailsTest extends TestCase
         $this->assertEquals('John', $customerDetails['first_name']);
         $this->assertEquals('Doe', $customerDetails['last_name']);
     }
+
     /** @test*/
     public function test_can_get_customer_details_first_name_from_name_column_successfully()
     {
