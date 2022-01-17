@@ -4,9 +4,9 @@ namespace Shabayek\Payment\Tests\Unit;
 
 use Mockery\MockInterface;
 use Shabayek\Payment\Facade\Payment;
-use Shabayek\Payment\Tests\TestCase;
-use Shabayek\Payment\Tests\Fixtures\User;
 use Shabayek\Payment\Tests\Fixtures\Shipping;
+use Shabayek\Payment\Tests\Fixtures\User;
+use Shabayek\Payment\Tests\TestCase;
 
 /**
  * Class CustomerDetailsTest.
@@ -35,6 +35,7 @@ class CustomerDetailsTest extends TestCase
         $this->assertEquals('John', $customerDetails['first_name']);
         $this->assertEquals('Doe', $customerDetails['last_name']);
     }
+
     /** @test*/
     public function test_can_get_customer_details_first_name_from_name_column_successfully()
     {
@@ -55,6 +56,7 @@ class CustomerDetailsTest extends TestCase
 
         $this->assertEquals('name', $customerDetails['first_name']);
     }
+
     /** @test*/
     public function test_can_get_customer_details_with_changing_address_relation_successfully()
     {
@@ -67,7 +69,7 @@ class CustomerDetailsTest extends TestCase
             'street'    => 'Test street',
             'building'  => 'Test building',
         ];
-        $mock = $this->partialMock(User::class, function (MockInterface $mock) use($address) {
+        $mock = $this->partialMock(User::class, function (MockInterface $mock) use ($address) {
             $mock->shouldReceive('get')->once()->andReturn(new Shipping($address));
             $mock->shouldReceive('billingRelation')->andReturn($mock->get());
         });
