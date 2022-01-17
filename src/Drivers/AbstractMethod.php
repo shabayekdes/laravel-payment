@@ -120,6 +120,7 @@ abstract class AbstractMethod
         if ($this->customer == null) {
             throw new \InvalidArgumentException('Customer details not set.');
         }
+
         return $this->customer->customerDetails($property);
     }
 
@@ -141,6 +142,7 @@ abstract class AbstractMethod
 
         return $this->address;
     }
+
     /**
      * Set items.
      *
