@@ -2,6 +2,15 @@
 
 ## [Unreleased](https://github.com/shabayekdes/laravel-payment/compare/main...develop)
 
+## [v0.7.1 (2022-02-05)](https://github.com/shabayekdes/laravel-payment/compare/v0.7.0...v0.7.1)
+
+### Added
+- Added **Billable** trait ([#29](https://github.com/shabayekdes/laravel-payment/pull/29))
+- Added currency and country config
+
+### Enhanced
+- Enhanced test helpers
+
 ## [v0.7.0 (2022-01-15)](https://github.com/shabayekdes/laravel-payment/compare/v0.6.0...v0.7.0)
 
 ### Added
