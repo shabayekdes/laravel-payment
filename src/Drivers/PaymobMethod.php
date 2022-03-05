@@ -11,19 +11,9 @@ use Shabayek\Payment\Contracts\PaymentMethodContract;
 /**
  * PaymobMethod class.
  */
-class PaymobMethod extends Method implements PaymentMethodContract
+class PaymobMethod extends AbstractMethod implements PaymentMethodContract
 {
-    /**
-     * Set credentials.
-     *
-     * @param  array  $credentials
-     * @return void
-     */
-    protected function setCredentials(array $credentials)
-    {
-        parent::setCredentials($credentials);
-        $this->url = 'https://accept.paymobsolutions.com/api/';
-    }
+    private $url = 'https://accept.paymobsolutions.com/api/';
 
     /**
      * Purchase with paymant mwthod and get redirect url.
@@ -154,14 +144,15 @@ class PaymobMethod extends Method implements PaymentMethodContract
             'merchant_order_id' => $this->transaction_id.'-'.rand(10000, 99999),
             'merchant_id'       => $this->merchant_id,
             'amount_cents'      => $this->amount * 100,
-            'currency'          => 'EGP',
+            'currency'          => config('paymob.currency'),
             'items'             => $this->getItems(),
-            'shipping_data'     => [
-                'first_name'   => $this->getCustomerDetails('first_name'),
-                'last_name'    => $this->getCustomerDetails('last_name'),
-                'email'        => $this->getCustomerDetails('email'),
-                'phone_number' => $this->getCustomerDetails('phone'),
-            ],
+            'shipping_data'     => $this->getCustomerDetails(),
+            // 'shipping_data'     => [
+            //     'first_name'   => $this->getCustomerDetails('first_name'),
+            //     'last_name'    => $this->getCustomerDetails('last_name'),
+            //     'email'        => $this->getCustomerDetails('email'),
+            //     'phone_number' => $this->getCustomerDetails('phone'),
+            // ],
         ];
         $response = Http::post("{$this->url}ecommerce/orders", $postData);
         $result = $response->json();
@@ -183,24 +174,25 @@ class PaymobMethod extends Method implements PaymentMethodContract
     {
         $postData = [
             'auth_token'     => $token,
+            'integration_id' => $this->integration_id,
             'amount_cents'   => (int) $this->amount * 100,
             'expiration'     => 3600,
             'order_id'       => $orderPayId,
-            'currency'       => 'EGP',
-            'integration_id' => $this->integration_id,
-            'billing_data'   => [
-                'first_name'   => $this->getCustomerDetails('first_name'),
-                'last_name'    => $this->getCustomerDetails('last_name'),
-                'email'        => $this->getCustomerDetails('email'),
-                'phone_number' => $this->getCustomerDetails('phone'),
-                'apartment'    => $this->getAddressDetails('apartment'),
-                'floor'        => $this->getAddressDetails('floor'),
-                'city'         => $this->getAddressDetails('city'),
-                'state'        => $this->getAddressDetails('state'),
-                'street'       => $this->getAddressDetails('street'),
-                'building'     => $this->getAddressDetails('building'),
-                'country'      => 'EG',
-            ],
+            'currency'       => config('paymob.currency'),
+            'billing_data'   => $this->getBillingData(),
+            // 'billing_data'   => [
+            //     'first_name'   => $this->getCustomerDetails('first_name'),
+            //     'last_name'    => $this->getCustomerDetails('last_name'),
+            //     'email'        => $this->getCustomerDetails('email'),
+            //     'phone_number' => $this->getCustomerDetails('phone'),
+            //     'apartment'    => $this->getAddressDetails('apartment'),
+            //     'floor'        => $this->getAddressDetails('floor'),
+            //     'city'         => $this->getAddressDetails('city'),
+            //     'state'        => $this->getAddressDetails('state'),
+            //     'street'       => $this->getAddressDetails('street'),
+            //     'building'     => $this->getAddressDetails('building'),
+            //     'country'      => config('paymob.country'),
+            // ],
         ];
 
         $response = Http::post("{$this->url}acceptance/payment_keys", $postData);
@@ -425,5 +417,13 @@ class PaymobMethod extends Method implements PaymentMethodContract
                 'description' => $item['description'] ?? 'NA',
             ];
         })->toArray();
+    }
+
+    public function getBillingData()
+    {
+        $data = array_merge($this->getCustomerDetails(), $this->getBillingDetails());
+        $data['country'] = config('paymob.country');
+
+        return $data;
     }
 }

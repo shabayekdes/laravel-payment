@@ -15,6 +15,9 @@ return [
 
     'default' => env('PAYMENT_DEFAULT_DRIVER', 'cod'),
 
+    'currency' => env('GATEWAY_CURRENCY', 'EGP'),
+    'country' => env('GATEWAY_COUNTRY', 'EG'),
+
     /*
     |--------------------------------------------------------------------------
     | Payment Stores

@@ -3,6 +3,7 @@
 namespace Shabayek\Payment\Tests\Unit\Paymob;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Shabayek\Payment\Facade\Payment;
 use Shabayek\Payment\Tests\TestCase;
 
@@ -41,5 +42,27 @@ class PaymobHandleErrorTest extends TestCase
 
         $this->assertIsArray($errors);
         $this->assertContains('incorrect credentials', $errors);
+    }
+
+    /** @test*/
+    public function test_payment_keys_without_address()
+    {
+        Http::fake([
+            // Stub a JSON response for paymob endpoints...
+            'https://accept.paymobsolutions.com/api/*' => Http::response([], 500),
+        ]);
+
+        $method_id = 2;
+        $payment = Payment::store($method_id);
+
+        $payment->customer(fakeCustomer());
+
+        $token = Str::random(512);
+        $order_id = rand(1, 100);
+        $this->callMethod($payment, 'paymentKeyRequest', [$token, $order_id]);
+        $errors = $payment->getErrors();
+
+        $this->assertIsArray($errors);
+        $this->assertContains('Payment key request not created success in paymob', $errors);
     }
 }

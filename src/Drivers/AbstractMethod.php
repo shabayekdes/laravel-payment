@@ -2,13 +2,14 @@
 
 namespace Shabayek\Payment\Drivers;
 
+use Illuminate\Database\Eloquent\Model;
 use Shabayek\Payment\Contracts\AddressContract;
 use Shabayek\Payment\Contracts\CustomerContract;
 
 /**
  * Method abstract class.
  */
-abstract class Method
+abstract class AbstractMethod
 {
     /**
      * Amount.
@@ -97,18 +98,13 @@ abstract class Method
     /**
      * Set customer details.
      *
-     * @param  CustomerContract|array  $customer
+     * @param  Model  $customer
      * @return self
      */
     public function customer($customer)
     {
-        if (is_array($customer)) {
-            $this->customer = $customer;
-        }
-
-        if ($customer instanceof CustomerContract) {
-            $this->customer = $customer->customerDetails();
-        }
+        $this->customer = $customer;
+        $this->address = $customer->billingDetails();
 
         return $this;
     }
@@ -119,17 +115,13 @@ abstract class Method
      * @param  string|null  $property
      * @return array|string
      */
-    public function getCustomerDetails($property = null)
+    protected function getCustomerDetails($property = null)
     {
         if ($this->customer == null) {
             throw new \InvalidArgumentException('Customer details not set.');
         }
 
-        if ($property) {
-            return $this->customer[$property] ?? 'NA';
-        }
-
-        return $this->customer;
+        return $this->customer->customerDetails($property);
     }
 
     /**
@@ -138,7 +130,7 @@ abstract class Method
      * @param  string|null  $property
      * @return array|string
      */
-    public function getAddressDetails($property = null)
+    protected function getBillingDetails($property = null)
     {
         if ($this->address == null) {
             throw new \InvalidArgumentException('Address details not set.');
@@ -149,25 +141,6 @@ abstract class Method
         }
 
         return $this->address;
-    }
-
-    /**
-     * Set address details.
-     *
-     * @param  AddressContract|array  $address
-     * @return self
-     */
-    public function address($address)
-    {
-        if (is_array($address)) {
-            $this->address = $address;
-        }
-
-        if ($address instanceof AddressContract) {
-            $this->address = $address->addressDetails();
-        }
-
-        return $this;
     }
 
     /**

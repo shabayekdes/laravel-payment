@@ -5,7 +5,7 @@ namespace Shabayek\Payment\Drivers;
 use Illuminate\Http\Request;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 
-class CodMethod extends Method implements PaymentMethodContract
+class CodMethod extends AbstractMethod implements PaymentMethodContract
 {
     /**
      * Purchase with paymant mwthod and get redirect url.
