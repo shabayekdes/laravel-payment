@@ -94,6 +94,7 @@ trait Billable
                 'country' => 'NA',
             ];
         }
+
         return [
             'apartment' => $this->billingRelation()->apartment,
             'floor' => $this->billingRelation()->floor,
