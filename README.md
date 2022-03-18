@@ -107,6 +107,12 @@ $payment->customer($user);
     $payment->addItem($name, $price, $quantity, $description);
 ```
 
+- Set transaction id will send to gateway
+
+```php
+$payment->transaction($transaction_id);
+```
+
 - Check the payment is online to get pay url
 
 ```php
@@ -115,7 +121,7 @@ if ($payment->isOnline()) {
 }
 ```
 
--Print the errors messages
+- Print the errors messages
 
 ```php
 $payment->getErrors();
