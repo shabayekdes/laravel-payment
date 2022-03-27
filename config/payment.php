@@ -101,7 +101,7 @@ return [
          * Visa NBE MasterCard.
          */
         5 => [
-            'driver'         => 'masterCard',
+            'driver'         => 'mastercard',
             'is_active'      => true,
             'is_online'      => true,
             'is_installment' => false,
@@ -120,7 +120,7 @@ return [
          * Visa QNB MasterCard.
          */
         6 => [
-            'driver'         => 'masterCard',
+            'driver'         => 'mastercard',
             'class'          => \App\Classes\Payment\Drivers\MasterCardMethod::class,
             'is_active'      => true,
             'is_online'      => true,

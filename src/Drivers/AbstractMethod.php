@@ -28,7 +28,7 @@ abstract class AbstractMethod
      *
      * @var CustomerContract|array
      */
-    private $customer;
+    protected $customer;
     /**
      * Address details.
      *

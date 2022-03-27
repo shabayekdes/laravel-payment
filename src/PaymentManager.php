@@ -2,11 +2,12 @@
 
 namespace Shabayek\Payment;
 
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Support\Manager;
 use InvalidArgumentException;
+use Illuminate\Support\Manager;
 use Shabayek\Payment\Drivers\CodMethod;
 use Shabayek\Payment\Drivers\PaymobMethod;
+use Shabayek\Payment\Drivers\MastercardMethod;
+use Illuminate\Contracts\Foundation\Application;
 
 /**
  * PaymentManager class.
@@ -104,6 +105,16 @@ class PaymentManager extends Manager
     private function createPaymobMethod(array $config)
     {
         return new PaymobMethod($config);
+    }
+    /**
+     * Create mastercard method instance.
+     *
+     * @param  array  $config
+     * @return MastercardMethod
+     */
+    private function createMastercardMethod(array $config)
+    {
+        return new MastercardMethod($config);
     }
 
     /**
