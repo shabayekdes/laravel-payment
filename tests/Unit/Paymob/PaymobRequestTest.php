@@ -2,11 +2,12 @@
 
 namespace Shabayek\Payment\Tests\Unit\Paymob;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Facade\Payment;
-use Shabayek\Payment\Tests\Helper\Paymob\PaymobCallback;
 use Shabayek\Payment\Tests\TestCase;
+use Shabayek\Payment\Models\PaymentCredential;
+use Shabayek\Payment\Tests\Helper\Paymob\PaymobCallback;
 
 /**
  * Class PaymobMethodTest.
@@ -24,7 +25,7 @@ class PaymobRequestTest extends TestCase
         ]);
 
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $token = $this->callMethod($payment, 'getAuthenticationToken');
 
@@ -42,7 +43,7 @@ class PaymobRequestTest extends TestCase
         ]);
 
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $payment->customer(fakeCustomer());
 
@@ -56,9 +57,9 @@ class PaymobRequestTest extends TestCase
     /** @test*/
     public function test_paymob_processes_callback_success()
     {
-        config()->set('payment.stores.2.credentials.hmac_hash', 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R');
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        PaymentCredential::where('payment_method_id', $method_id)->where('key', 'hmac_hash')->update(['value' => 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R']);
+        $payment = Payment::via($method_id);
 
         $requestData = PaymobCallback::processesCallback(24826928);
         $processesCallback = $this->callMethod($payment, 'processesCallback', [$requestData]);
@@ -71,9 +72,9 @@ class PaymobRequestTest extends TestCase
     /** @test*/
     public function test_paymob_response_callback_success()
     {
-        config()->set('payment.stores.2.credentials.hmac_hash', 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R');
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        PaymentCredential::where('payment_method_id', $method_id)->where('key', 'hmac_hash')->update(['value' => 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R']);
+        $payment = Payment::via($method_id);
 
         $requestData = PaymobCallback::responseCallback('24827227', '19766521');
         $processesCallback = $this->callMethod($payment, 'responseCallBack', [$requestData]);
@@ -95,7 +96,7 @@ class PaymobRequestTest extends TestCase
         ]);
 
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $order = $this->callMethod($payment, 'getOrderData', [1]);
 
@@ -117,7 +118,7 @@ class PaymobRequestTest extends TestCase
         $method_id = 2;
         $paymob_order_id = 24826928;
 
-        $payment_status = Payment::store($method_id)->verify($paymob_order_id);
+        $payment_status = Payment::via($method_id)->verify($paymob_order_id);
 
         $this->assertTrue($payment_status['success']);
         $this->assertEquals($paymob_order_id, $payment_status['data']['payment_order_id']);

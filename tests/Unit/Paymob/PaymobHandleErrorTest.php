@@ -18,7 +18,7 @@ class PaymobHandleErrorTest extends TestCase
     public function test_error_when_forget_set_paymob_credentials()
     {
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
         $errors = $payment->getErrors();
 
         $this->assertIsArray($errors);
@@ -35,7 +35,7 @@ class PaymobHandleErrorTest extends TestCase
         ]);
 
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $this->callMethod($payment, 'getOrderData', [$order_id]);
         $errors = $payment->getErrors();
@@ -53,7 +53,7 @@ class PaymobHandleErrorTest extends TestCase
         ]);
 
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $payment->customer(fakeCustomer());
 

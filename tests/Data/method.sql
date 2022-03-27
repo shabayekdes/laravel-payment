@@ -1,0 +1,3 @@
+INSERT INTO `payment_methods` VALUES (1,'Cash On Delivery','images/payment_methods/cash_payment.png','cod',1,0,0,'2022-03-27 19:34:05','2022-03-27 19:34:05'),(2,'Credit / Debit card','images/payment_methods/credit_payment.png','paymob',1,1,0,'2022-03-27 19:34:05','2022-03-27 19:34:05');
+
+INSERT INTO `payment_credentials` VALUES (1,'api_key',NULL,2,'2022-03-27 19:34:05','2022-03-27 19:34:05'),(2,'hmac_hash',NULL,2,'2022-03-27 19:34:05','2022-03-27 19:34:05'),(3,'merchant_id',NULL,2,'2022-03-27 19:34:05','2022-03-27 19:34:05'),(4,'iframe_id',NULL,2,'2022-03-27 19:34:05','2022-03-27 19:34:05'),(5,'integration_id',NULL,2,'2022-03-27 19:34:05','2022-03-27 19:34:05');
