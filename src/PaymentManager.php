@@ -3,11 +3,11 @@
 namespace Shabayek\Payment;
 
 use Exception;
-use InvalidArgumentException;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
 use Shabayek\Payment\Drivers\CodMethod;
 use Shabayek\Payment\Drivers\PaymobMethod;
-use Illuminate\Contracts\Foundation\Application;
 use Shabayek\Payment\Models\PaymentMethod;
 
 /**
@@ -39,10 +39,11 @@ class PaymentManager
     {
         $this->app = $app;
     }
-   /**
+
+    /**
      * Get a payment store instance by name, wrapped in a repository.
      *
-     * @param int  $id
+     * @param  int  $id
      */
     public function via(int $id)
     {
@@ -70,8 +71,7 @@ class PaymentManager
     /**
      * Resolve the given store.
      *
-     * @param  array $gateway
-     *
+     * @param  array  $gateway
      * @return mixed
      */
     protected function resolve($gateway)
@@ -85,13 +85,12 @@ class PaymentManager
         $providerMethod = 'create'.ucfirst($provider).'Provider';
 
         if (method_exists($this, $providerMethod)) {
-
             return $this->{$providerMethod}($gateway);
         } else {
             throw new InvalidArgumentException("Gateway [{$provider}] is not supported.");
         }
-
     }
+
     /**
      * Create cod method instance.
      *
@@ -135,7 +134,7 @@ class PaymentManager
     {
         $method = PaymentMethod::with('credentials')->find($id);
 
-        if (!$method) {
+        if (! $method) {
             throw new InvalidArgumentException("Payment method [{$id}] is not found.");
         }
 
