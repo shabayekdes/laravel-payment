@@ -2,8 +2,8 @@
 
 namespace Shabayek\Payment\Drivers;
 
-use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Shabayek\Payment\Contracts\AddressContract;
 use Shabayek\Payment\Contracts\CustomerContract;
 

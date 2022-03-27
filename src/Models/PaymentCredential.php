@@ -1,4 +1,5 @@
 <?php
+
 namespace Shabayek\Payment\Models;
 
 use Illuminate\Database\Eloquent\Model;
