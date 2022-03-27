@@ -30,7 +30,7 @@ class PaymobMethodFeature extends TestCase
         ]);
 
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $payment->customer(fakeCustomer());
         $payment->items($this->items());
@@ -58,7 +58,7 @@ class PaymobMethodFeature extends TestCase
         ]);
 
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $payment->customer(fakeCustomer());
         $payment->items($this->items());
@@ -77,7 +77,7 @@ class PaymobMethodFeature extends TestCase
         config()->set('payment.stores.2.credentials.hmac_hash', 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R');
 
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $fakeRequest = new Request();
         $fakeRequest->setMethod('POST');
@@ -98,7 +98,7 @@ class PaymobMethodFeature extends TestCase
         config()->set('payment.stores.2.credentials.hmac_hash', 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R');
 
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $fakeRequest = new Request();
         $fakeRequest->setMethod('GET');
@@ -125,7 +125,7 @@ class PaymobMethodFeature extends TestCase
         ]);
 
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $fakeRequest = new Request();
         $fakeRequest->setMethod('POST');
@@ -154,7 +154,7 @@ class PaymobMethodFeature extends TestCase
         ]);
 
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $fakeRequest = new Request();
         $fakeRequest->setMethod('POST');

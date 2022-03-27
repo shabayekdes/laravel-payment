@@ -17,7 +17,7 @@ class CodMethodTest extends TestCase
     public function test_cod_method_should_have_required_function()
     {
         $method_id = 1;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $this->assertTrue(method_exists($payment, 'purchase'));
         $this->assertTrue(method_exists($payment, 'pay'));
@@ -27,7 +27,7 @@ class CodMethodTest extends TestCase
     public function test_cod_method_purchase_should_return_null_value()
     {
         $method_id = 1;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $this->assertEmpty($payment->purchase());
     }
@@ -36,7 +36,7 @@ class CodMethodTest extends TestCase
     public function test_cod_method_should_pay_function_return_array_of_data()
     {
         $method_id = 1;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
         $mockRequest = new Request();
         $pay = $payment->pay($mockRequest);
 
@@ -48,7 +48,7 @@ class CodMethodTest extends TestCase
     public function test_cod_method_should_pay_function_return_success()
     {
         $method_id = 1;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
         $mockRequest = new Request();
         $pay = $payment->pay($mockRequest);
 

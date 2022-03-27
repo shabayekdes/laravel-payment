@@ -27,7 +27,7 @@ class CustomerDetailsTest extends TestCase
         $mock->email = 'test@test.com';
         $mock->phone = '01000000000';
 
-        $payment = Payment::store(2);
+        $payment = Payment::via(2);
         $payment->customer($mock);
 
         $customerDetails = $this->callMethod($payment, 'getCustomerDetails');
@@ -49,7 +49,7 @@ class CustomerDetailsTest extends TestCase
         $mock->email = 'test@test.com';
         $mock->phone = '01000000000';
 
-        $payment = Payment::store(2);
+        $payment = Payment::via(2);
         $payment->customer($mock);
 
         $customerDetails = $this->callMethod($payment, 'getCustomerDetails');
@@ -74,7 +74,7 @@ class CustomerDetailsTest extends TestCase
             $mock->shouldReceive('billingRelation')->andReturn($mock->get());
         });
 
-        $payment = Payment::store(2);
+        $payment = Payment::via(2);
         $payment->customer($mock);
 
         $billingDetails = $this->callMethod($payment, 'getBillingDetails');
