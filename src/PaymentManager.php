@@ -62,7 +62,6 @@ class PaymentManager
 
             return $this->providers[$id] = $this->resolve($this->gateway);
         } catch (Exception $e) {
-            Log::error($e->getMessage());
             throw $e;
         }
     }

@@ -58,7 +58,9 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
                 if ($this->isInstallment()) {
                     $orderData = $this->getOrderData($callback['payment_order_id']);
 
-                    $downPaymentInfo = $this->calculateInstallmentFees($orderData);
+                    //TODO:: Handle installment down payment after get method from database
+                    // $downPaymentInfo = $this->calculateInstallmentFees($orderData);
+                    $downPaymentInfo = [];
                 }
                 $callback['down_payment_info'] = $downPaymentInfo;
 
@@ -93,7 +95,9 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
         if (isset($response['success']) && $response['success']) {
             $downPaymentInfo = [];
             if ($this->isInstallment()) {
-                $downPaymentInfo = $this->calculateInstallmentFees($response);
+                //TODO:: Handle installment down payment after get method from database
+                // $downPaymentInfo = $this->calculateInstallmentFees($orderData);
+                $downPaymentInfo = [];
             }
 
             $callback = [

@@ -2,11 +2,12 @@
 
 namespace Shabayek\Payment\Tests\Unit\Paymob;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Facade\Payment;
-use Shabayek\Payment\Tests\Helper\Paymob\PaymobCallback;
 use Shabayek\Payment\Tests\TestCase;
+use Shabayek\Payment\Models\PaymentCredential;
+use Shabayek\Payment\Tests\Helper\Paymob\PaymobCallback;
 
 /**
  * Class PaymobMethodTest.
@@ -56,8 +57,8 @@ class PaymobRequestTest extends TestCase
     /** @test*/
     public function test_paymob_processes_callback_success()
     {
-        config()->set('payment.stores.2.credentials.hmac_hash', 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R');
         $method_id = 2;
+        PaymentCredential::where('payment_method_id', $method_id)->where('key', 'hmac_hash')->update(['value' => 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R']);
         $payment = Payment::via($method_id);
 
         $requestData = PaymobCallback::processesCallback(24826928);
@@ -71,8 +72,8 @@ class PaymobRequestTest extends TestCase
     /** @test*/
     public function test_paymob_response_callback_success()
     {
-        config()->set('payment.stores.2.credentials.hmac_hash', 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R');
         $method_id = 2;
+        PaymentCredential::where('payment_method_id', $method_id)->where('key', 'hmac_hash')->update(['value' => 'DOBJWVLKIEBRP5GZXWMHBJJV58GYLZ5R']);
         $payment = Payment::via($method_id);
 
         $requestData = PaymobCallback::responseCallback('24827227', '19766521');
