@@ -31,11 +31,12 @@ return [
          * Cash On Delivery.
          */
         1 => [
-            'provider'         => 'cod',
+            'provider'       => 'cod',
+            'gateway'        => 'cod',
             'is_active'      => true,
             'is_online'      => false,
             'is_installment' => false,
-            'name'        => 'Cash On Delivery',
+            'name'           => 'Cash On Delivery',
             'logo'           => 'images/payment_methods/cash_payment.png',
             'credentials'    => [],
         ],
@@ -43,11 +44,12 @@ return [
          * Credit / Debit card Paymob.
          */
         2 => [
-            'provider'         => 'paymob',
+            'provider'       => 'paymob',
+            'gateway'        => 'visa',
             'is_active'      => true,
             'is_online'      => true,
             'is_installment' => false,
-            'name'        => 'Credit / Debit card',
+            'name'           => 'Credit / Debit card',
             'logo'           => 'images/payment_methods/credit_payment.png',
             'credentials'    => [
                 'api_key'        => env('PAYMOB_API_KEY'),
