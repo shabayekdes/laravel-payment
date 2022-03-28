@@ -2,14 +2,14 @@
 
 namespace Shabayek\Payment\Tests\Feature\Paymob;
 
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Shabayek\Payment\Facade\Payment;
-use Shabayek\Payment\Tests\TestCase;
-use Shabayek\Payment\Models\PaymentMethod;
 use Shabayek\Payment\Models\PaymentCredential;
+use Shabayek\Payment\Models\PaymentMethod;
 use Shabayek\Payment\Tests\Helper\Paymob\PaymobCallback;
+use Shabayek\Payment\Tests\TestCase;
 
 /**
  * Class PaymobMethodFeature.
