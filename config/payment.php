@@ -75,7 +75,7 @@ return [
                 'password' => env('QNB_PASSWORD'),
                 'base_url' => env('QNB_BASE_URL'),
                 'checkout_js' => env('QNB_CHECKOUT_JS'),
-                'merchant_id' => env('QNB_MERCHANT_ID')
+                'merchant_id' => env('QNB_MERCHANT_ID'),
             ],
         ],
     ],
