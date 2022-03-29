@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
+use Shabayek\Payment\Enums\Gateway;
 
 /**
  * PaymobMethod class.
@@ -16,7 +17,7 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
     private $url = 'https://accept.paymobsolutions.com/api/';
 
     /**
-     * Purchase with paymant mwthod and get redirect url.
+     * Purchase with payment method and get redirect url.
      *
      * @return string|null
      */
@@ -57,10 +58,7 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
                 $downPaymentInfo = [];
                 if ($this->isInstallment()) {
                     $orderData = $this->getOrderData($callback['payment_order_id']);
-
-                    //TODO:: Handle installment down payment after get method from database
-                    // $downPaymentInfo = $this->calculateInstallmentFees($orderData);
-                    $downPaymentInfo = [];
+                    $downPaymentInfo = $this->calculateInstallmentFees($orderData);
                 }
                 $callback['down_payment_info'] = $downPaymentInfo;
 
@@ -95,9 +93,7 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
         if (isset($response['success']) && $response['success']) {
             $downPaymentInfo = [];
             if ($this->isInstallment()) {
-                //TODO:: Handle installment down payment after get method from database
-                // $downPaymentInfo = $this->calculateInstallmentFees($orderData);
-                $downPaymentInfo = [];
+                $downPaymentInfo = $this->calculateInstallmentFees($response);
             }
 
             $callback = [
@@ -323,10 +319,10 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
     }
 
     /**
-     * Get order detials.
+     * Get order details.
      *
      * @param  int  $id
-     * @return void|object
+     * @return array
      */
     private function getOrderData($id)
     {
@@ -338,9 +334,13 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
             return $result;
         }
 
-        $this->setErrors($result['detail'] ?? 'Order not found');
+        $error = $result['detail'] ?? 'Transaction not found';
+        $this->setErrors($error);
 
-        return [];
+        return [
+            'success' => false,
+            'message' => $error,
+        ];
     }
 
     /**
@@ -361,37 +361,41 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
         if ($response->ok()) {
             return $response->json();
         }
-        $this->setErrors($response->json()['detail'] ?? 'Transaction not found');
+
+        $error = $response->json()['detail'] ?? 'Transaction not found';
+        $this->setErrors($error);
+
+        return [
+            'success' => false,
+            'message' => $error,
+        ];
     }
 
     /**
      * Calculate the installment fees.
      *
-     * @param [type] $orderDetials
+     * @param [type] $orderDetails
      * @return array
      */
-    private function calculateInstallmentFees($orderDetials)
+    private function calculateInstallmentFees($orderDetails)
     {
         $result = [];
 
-        $driver = $this->config['driver'];
+        $driver = $this->config['gateway'];
 
         switch ($driver) {
-            case 'valu':
-                $result['down_payment'] = data_get($orderDetials, 'data.down_payment') ?? 0;
-                $result['admin_fees'] = 0; // $orderDetials->data->purchase_fees ?? 0; ##Change happened in valu response
-                break;
-            case 'shahry':
-                $result['down_payment'] = data_get($orderDetials, 'data.shahry_order.down_payment') ?? 0;
-                $result['admin_fees'] = data_get($orderDetials, 'data.shahry_order.administrative_fees') ?? 0;
-                break;
-            case 'souhoola':
-                $result['down_payment'] = data_get($orderDetials, 'data.installment_info.downpaymentValue') ?? 0;
-                $result['admin_fees'] = data_get($orderDetials, 'data.installment_info.adminFees') ?? 0;
-                break;
-            case 'get_go':
-                $result['down_payment'] = data_get($orderDetials, 'data.down_payment') ?? 0;
+            case Gateway::VALU:
+            case Gateway::GET_GO:
+                $result['down_payment'] = data_get($orderDetails, 'data.down_payment') ?? 0;
                 $result['admin_fees'] = 0;
+                break;
+            case Gateway::SHAHRY:
+                $result['down_payment'] = data_get($orderDetails, 'data.shahry_order.down_payment') ?? 0;
+                $result['admin_fees'] = data_get($orderDetails, 'data.shahry_order.administrative_fees') ?? 0;
+                break;
+            case Gateway::SOUHOOLA:
+                $result['down_payment'] = data_get($orderDetails, 'data.installment_info.downpaymentValue') ?? 0;
+                $result['admin_fees'] = data_get($orderDetails, 'data.installment_info.adminFees') ?? 0;
                 break;
             default:
                 $result['down_payment'] = 0;
