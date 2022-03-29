@@ -2,11 +2,10 @@
 
 namespace Shabayek\Payment\Tests;
 
-use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\DB;
+use Shabayek\Payment\Models\PaymentMethod;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Shabayek\Payment\Providers\PaymentServiceProvider;
+use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
 
 /**
  * TestCase class.
@@ -25,13 +24,44 @@ abstract class TestCase extends Orchestra
     public function setUp(): void
     {
         parent::setUp();
+
         // additional setup
-        Artisan::call('migrate');
-        DB::unprepared(file_get_contents(__DIR__.'/Data/method.sql'));
+        $this->setUpDatabase($this->app);
     }
 
     /**
-     * Get package serivce providers.
+     * Set up the database.
+     *
+     * @param \Illuminate\Foundation\Application $app
+     */
+    protected function setUpDatabase($app)
+    {
+        include_once __DIR__.'/../database/migrations/2022_03_27_210209_create_payment_methods_table.php';
+        include_once __DIR__.'/../database/migrations/2022_03_27_210557_create_payment_credentials_table.php';
+
+        (new \CreatePaymentMethodsTable())->up();
+        (new \CreatePaymentCredentialsTable())->up();
+
+        $methods = $app['config']->get('payment.stores');
+
+        foreach ($methods as $method) {
+            $credentials = $method['credentials'];
+            unset($method['credentials']);
+
+            $gateway = PaymentMethod::create($method);
+            if(!empty($credentials)){
+                foreach($credentials as $key => $value){
+                    $gateway->credentials()->create([
+                        'key' => $key,
+                        'value' => $value
+                    ]);
+                }
+            }
+        }
+    }
+
+    /**
+     * Get package service providers.
      *
      * @param  \Illuminate\Foundation\Application  $app
      * @return array
@@ -46,7 +76,7 @@ abstract class TestCase extends Orchestra
     /**
      * Get environment set up.
      *
-     * @param [type] $app
+     * @param  \Illuminate\Foundation\Application  $app
      * @return void
      */
     protected function getEnvironmentSetUp($app)

@@ -2,10 +2,11 @@
 
 namespace Shabayek\Payment\Tests\Unit\Paymob;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Facade\Payment;
 use Shabayek\Payment\Tests\TestCase;
+use Shabayek\Payment\Models\PaymentCredential;
 
 /**
  * Class PaymobHandleErrorTest.
@@ -17,6 +18,7 @@ class PaymobHandleErrorTest extends TestCase
     /** @test */
     public function test_error_when_forget_set_paymob_credentials()
     {
+        PaymentCredential::where('key', 'api_key')->update(['value' => null]);
         $method_id = 2;
         $payment = Payment::via($method_id);
         $errors = $payment->getErrors();
