@@ -3,11 +3,10 @@
 namespace Shabayek\Payment\Drivers;
 
 use Exception;
-use Illuminate\Support\Arr;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 
 /**
@@ -27,11 +26,11 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
     {
         //
     }
+
     /**
-     * Payment checkout view
+     * Payment checkout view.
      *
-     * @param \Illuminate\Database\Eloquent\Model $transaction
-     *
+     * @param  \Illuminate\Database\Eloquent\Model  $transaction
      * @return void
      */
     public function checkoutForm(Model $transaction)
@@ -42,20 +41,20 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
                 'order' => [
                     'id' => $this->transaction_id,
                     'amount' => $this->amount,
-                    'currency' => config('payment.currency')
+                    'currency' => config('payment.currency'),
                 ],
                 'interaction' => [
-                    'operation' => 'PURCHASE'
+                    'operation' => 'PURCHASE',
                 ],
                 'airline' => [
                     'ticket' => [
-                        'ticketNumber' => $this->ticketNumber ?? ""
-                    ]
-                ]
+                        'ticketNumber' => $this->ticketNumber ?? '',
+                    ],
+                ],
             ];
 
             $response = Http::withBasicAuth($this->username, $this->password)
-                ->post($this->baseUrl . "/merchant/{$this->merchant_id}/session", $postRequest);
+                ->post($this->baseUrl."/merchant/{$this->merchant_id}/session", $postRequest);
 
             $result = $response->json();
 
@@ -67,17 +66,16 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
                     'success_indicator'=> $result['successIndicator'],
                 ]);
 
-                return view("payment::mastercard", [
-                    "merchant_id" => $this->merchant_id,
-                    "checkout_js" => $this->checkout_js,
-                    "total_amount" => $this->amount,
-                    "customer_id" => $this->customer->id,
-                    "session_id" => $session_id,
+                return view('payment::mastercard', [
+                    'merchant_id' => $this->merchant_id,
+                    'checkout_js' => $this->checkout_js,
+                    'total_amount' => $this->amount,
+                    'customer_id' => $this->customer->id,
+                    'session_id' => $session_id,
                 ]);
-
             } else {
-                Log::error("Error in creating session for transaction {$transaction->id} # " . json_encode($result));
-                throw new Exception("BANK INSTALLMENT ERROR");
+                Log::error("Error in creating session for transaction {$transaction->id} # ".json_encode($result));
+                throw new Exception('BANK INSTALLMENT ERROR');
             }
         } catch (Exception $e) {
             $this->setErrors('Order not created session in mastercard');
@@ -96,7 +94,7 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
 
         return [
             'success' => true,
-            'message' => "success",
+            'message' => 'success',
             'data'    => [],
         ];
     }
