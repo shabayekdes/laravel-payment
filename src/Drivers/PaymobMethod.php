@@ -3,11 +3,11 @@
 namespace Shabayek\Payment\Drivers;
 
 use Exception;
-use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
-use Shabayek\Payment\Enums\Gateway;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
+use Shabayek\Payment\Enums\Gateway;
 
 /**
  * PaymobMethod class.
@@ -339,7 +339,7 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
 
         return [
             'success' => false,
-            'message' => $error
+            'message' => $error,
         ];
     }
 
@@ -364,9 +364,10 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
 
         $error = $response->json()['detail'] ?? 'Transaction not found';
         $this->setErrors($error);
+
         return [
             'success' => false,
-            'message' => $error
+            'message' => $error,
         ];
     }
 
