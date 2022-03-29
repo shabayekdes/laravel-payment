@@ -36,5 +36,6 @@ class PaymentServiceProvider extends ServiceProvider
         ]);
 
         $this->loadViewsFrom(__DIR__.'/../../resources/views', 'payment');
+        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
     }
 }

@@ -3,6 +3,8 @@
 namespace Shabayek\Payment\Tests;
 
 use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Shabayek\Payment\Providers\PaymentServiceProvider;
 
@@ -24,6 +26,8 @@ abstract class TestCase extends Orchestra
     {
         parent::setUp();
         // additional setup
+        Artisan::call('migrate');
+        DB::unprepared(file_get_contents(__DIR__.'/Data/method.sql'));
     }
 
     /**

@@ -42,7 +42,7 @@ class PaymentManagerTest extends TestCase
     public function a_payment_facade_return_cod_method_instance(): void
     {
         $method_id = 1;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $this->assertInstanceOf(CodMethod::class, $payment);
     }
@@ -51,7 +51,7 @@ class PaymentManagerTest extends TestCase
     public function a_payment_facade_return_paymob_method_instance(): void
     {
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $this->assertInstanceOf(PaymobMethod::class, $payment);
     }
@@ -62,13 +62,13 @@ class PaymentManagerTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         $method_id = 0;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
     }
 
     /** @test */
     public function it_can_set_amount_when_add_to_items()
     {
-        $payment = Payment::store(2);
+        $payment = Payment::via(2);
         $items = [
             'name'         => 'ASC1515',
             'amount_cents' => 500000,
@@ -89,7 +89,7 @@ class PaymentManagerTest extends TestCase
     /** @test */
     public function it_can_add_to_items_without_amount()
     {
-        $payment = Payment::store(2);
+        $payment = Payment::via(2);
         $items = [
             'name'         => 'ASC1515',
             'amount_cents' => 500000,

@@ -3,6 +3,7 @@
 namespace Shabayek\Payment\Drivers;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Shabayek\Payment\Contracts\AddressContract;
 use Shabayek\Payment\Contracts\CustomerContract;
 
@@ -74,6 +75,8 @@ abstract class AbstractMethod
      */
     protected function setCredentials(array $credentials)
     {
+        $credentials = Arr::pluck($credentials, 'value', 'key');
+
         foreach ($credentials as $key => $value) {
             if (empty($value)) {
                 $this->setErrors("Payment credentials ($key) are invalid.");
