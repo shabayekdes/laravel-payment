@@ -44,7 +44,7 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
                 ],
                 'interaction' => [
                     'operation' => 'PURCHASE',
-                ]
+                ],
             ];
             if ($this->ticket_number) {
                 $postRequest['airline']['ticket']['ticketNumber'] = $this->ticket_number;
@@ -76,7 +76,7 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
                 throw new Exception('BANK INSTALLMENT ERROR');
             }
         } catch (Exception $e) {
-            $this->setErrors('create session in mastercard failed # ' . $e->getMessage());
+            $this->setErrors('create session in mastercard failed # '.$e->getMessage());
         }
     }
 
