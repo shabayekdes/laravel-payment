@@ -1,4 +1,5 @@
 <?php
+
 namespace Shabayek\Payment\Enums;
 
 class Gateway
