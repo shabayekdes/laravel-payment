@@ -18,6 +18,7 @@ class CreatePaymentMethodsTable extends Migration
             $table->string('name');
             $table->string('logo');
             $table->string('provider', 20);
+            $table->string('gateway', 50);
             $table->boolean('is_active')->default(true);
             $table->boolean('is_online')->default(true);
             $table->boolean('is_installment')->default(false);

@@ -232,7 +232,7 @@ abstract class AbstractMethod
      */
     public function getErrors()
     {
-        return $this->errors['message'];
+        return $this->errors['message'] ?? [];
     }
 
     /**
