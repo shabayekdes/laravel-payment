@@ -118,7 +118,7 @@ class PaymentManager
      * @param  array  $config
      * @return MastercardMethod
      */
-    private function createMastercardMethod(array $config)
+    private function createMastercardProvider(array $config)
     {
         return new MastercardMethod($config);
     }

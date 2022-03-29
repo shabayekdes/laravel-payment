@@ -6,7 +6,6 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 
 /**
@@ -45,16 +44,14 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
                 ],
                 'interaction' => [
                     'operation' => 'PURCHASE',
-                ],
-                'airline' => [
-                    'ticket' => [
-                        'ticketNumber' => $this->ticketNumber ?? '',
-                    ],
-                ],
+                ]
             ];
+            if ($this->ticket_number) {
+                $postRequest['airline']['ticket']['ticketNumber'] = $this->ticket_number;
+            }
 
             $response = Http::withBasicAuth($this->username, $this->password)
-                ->post($this->baseUrl."/merchant/{$this->merchant_id}/session", $postRequest);
+                ->post($this->base_url."/merchant/{$this->merchant_id}/session", $postRequest);
 
             $result = $response->json();
 
@@ -71,14 +68,15 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
                     'checkout_js' => $this->checkout_js,
                     'total_amount' => $this->amount,
                     'customer_id' => $this->customer->id,
+                    'transaction_id' => $this->transaction_id,
+                    'callback_url' => $this->callback_url,
                     'session_id' => $session_id,
                 ]);
             } else {
-                Log::error("Error in creating session for transaction {$transaction->id} # ".json_encode($result));
                 throw new Exception('BANK INSTALLMENT ERROR');
             }
         } catch (Exception $e) {
-            $this->setErrors('Order not created session in mastercard');
+            $this->setErrors('create session in mastercard failed # ' . $e->getMessage());
         }
     }
 

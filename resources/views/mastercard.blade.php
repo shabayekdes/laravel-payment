@@ -5,7 +5,7 @@
     <title>Laravel Payment Package | MasterCard</title>
 
     <script src="{{ $checkout_js }}" data-error="errorCallback" data-cancel="cancelCallback"
-        data-complete="{{ URL::to('api/customer/orders/receipt/' . $transaction->id . '?token=' . $token) }}">
+        data-complete="{{ $callback_url }}">
     </script>
 
     <script type="text/javascript">
