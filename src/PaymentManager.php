@@ -23,11 +23,11 @@ class PaymentManager
     protected $app;
 
     /**
-     * The array of resolved payment stores.
+     * The array of resolved payment providers.
      *
      * @var array
      */
-    protected $stores = [];
+    protected $providers = [];
 
     /**
      * Create a new payment manager instance.

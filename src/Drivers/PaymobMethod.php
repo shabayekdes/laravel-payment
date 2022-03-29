@@ -17,7 +17,7 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
     private $url = 'https://accept.paymobsolutions.com/api/';
 
     /**
-     * Purchase with paymant mwthod and get redirect url.
+     * Purchase with payment method and get redirect url.
      *
      * @return string|null
      */
@@ -58,10 +58,7 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
                 $downPaymentInfo = [];
                 if ($this->isInstallment()) {
                     $orderData = $this->getOrderData($callback['payment_order_id']);
-
-                    //TODO:: Handle installment down payment after get method from database
                     $downPaymentInfo = $this->calculateInstallmentFees($orderData);
-                    $downPaymentInfo = [];
                 }
                 $callback['down_payment_info'] = $downPaymentInfo;
 
@@ -96,8 +93,7 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
         if (isset($response['success']) && $response['success']) {
             $downPaymentInfo = [];
             if ($this->isInstallment()) {
-                $downPaymentInfo = $this->calculateInstallmentFees($orderData);
-                $downPaymentInfo = [];
+                $downPaymentInfo = $this->calculateInstallmentFees($response);
             }
 
             $callback = [
