@@ -46,7 +46,7 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
                     'operation' => 'PURCHASE',
                 ],
             ];
-            if ($this->ticket_number) {
+            if (isset($this->ticket_number)) {
                 $postRequest['airline']['ticket']['ticketNumber'] = $this->ticket_number;
             }
 
@@ -88,12 +88,20 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
      */
     public function pay(Request $request): array
     {
-        // write logic here
+        $isSuccess = false;
+
+        if ($request->has('result') && $request->get('result') == self::RESPONSE_SUCCESS) {
+            $isSuccess = true;
+
+            $callback = [
+                'resultIndicator' => $request->get('resultIndicator'),
+            ];
+        }
 
         return [
-            'success' => true,
+            'success' => $isSuccess,
             'message' => 'success',
-            'data'    => [],
+            'data'    => $isSuccess ? $callback : [],
         ];
     }
 
