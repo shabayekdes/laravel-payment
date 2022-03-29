@@ -2,10 +2,10 @@
 
 namespace Shabayek\Payment\Tests;
 
-use Shabayek\Payment\Models\PaymentMethod;
-use Orchestra\Testbench\TestCase as Orchestra;
-use Shabayek\Payment\Providers\PaymentServiceProvider;
 use Illuminate\Foundation\Bootstrap\LoadEnvironmentVariables;
+use Orchestra\Testbench\TestCase as Orchestra;
+use Shabayek\Payment\Models\PaymentMethod;
+use Shabayek\Payment\Providers\PaymentServiceProvider;
 
 /**
  * TestCase class.
@@ -32,7 +32,7 @@ abstract class TestCase extends Orchestra
     /**
      * Set up the database.
      *
-     * @param \Illuminate\Foundation\Application $app
+     * @param  \Illuminate\Foundation\Application  $app
      */
     protected function setUpDatabase($app)
     {
@@ -49,11 +49,11 @@ abstract class TestCase extends Orchestra
             unset($method['credentials']);
 
             $gateway = PaymentMethod::create($method);
-            if(!empty($credentials)){
-                foreach($credentials as $key => $value){
+            if (! empty($credentials)) {
+                foreach ($credentials as $key => $value) {
                     $gateway->credentials()->create([
                         'key' => $key,
-                        'value' => $value
+                        'value' => $value,
                     ]);
                 }
             }

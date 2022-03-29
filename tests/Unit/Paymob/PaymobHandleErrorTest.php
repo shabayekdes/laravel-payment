@@ -2,11 +2,11 @@
 
 namespace Shabayek\Payment\Tests\Unit\Paymob;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Shabayek\Payment\Facade\Payment;
-use Shabayek\Payment\Tests\TestCase;
 use Shabayek\Payment\Models\PaymentCredential;
+use Shabayek\Payment\Tests\TestCase;
 
 /**
  * Class PaymobHandleErrorTest.
