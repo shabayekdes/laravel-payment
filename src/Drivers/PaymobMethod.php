@@ -3,11 +3,12 @@
 namespace Shabayek\Payment\Drivers;
 
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Http;
-use Shabayek\Payment\Contracts\PaymentMethodContract;
+use Illuminate\Http\Request;
 use Shabayek\Payment\Enums\Gateway;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Database\Eloquent\Model;
+use Shabayek\Payment\Contracts\PaymentMethodContract;
 
 /**
  * PaymobMethod class.
@@ -76,6 +77,17 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
             'message' => $message,
             'data'    => $isSuccess ? $callback : [],
         ];
+    }
+
+    /**
+     * Payment checkout view.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $transaction
+     * @return void
+     */
+    public function checkoutForm(Model $transaction)
+    {
+        throw new Exception('Not implemented yet');
     }
 
     /**
