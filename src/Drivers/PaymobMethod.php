@@ -3,12 +3,12 @@
 namespace Shabayek\Payment\Drivers;
 
 use Exception;
-use Illuminate\Support\Arr;
-use Illuminate\Http\Request;
-use Shabayek\Payment\Enums\Gateway;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
+use Shabayek\Payment\Enums\Gateway;
 
 /**
  * PaymobMethod class.
