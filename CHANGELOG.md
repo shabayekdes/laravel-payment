@@ -2,6 +2,21 @@
 
 ## [Unreleased](https://github.com/shabayekdes/laravel-payment/compare/main...develop)
 
+## [v0.8.0 (2022-04-13)](https://github.com/shabayekdes/laravel-payment/compare/v0.7.1...v0.8.0)
+
+### Added
+- Added new payment gateway Mastercard ([#43](https://github.com/shabayekdes/laravel-payment/pull/43)).
+- Added payment method models and migration.
+- Added new method checkout form to methods.
+- Added test cases for mastercard method.
+
+### Changed
+- Changed the way we handle the payment gateways from database instead config ([#41](https://github.com/shabayekdes/laravel-payment/pull/41))
+- Changed the payment manager to get method from database.
+
+### Enhanced
+- Enhanced test cases
+
 ## [v0.7.1 (2022-02-05)](https://github.com/shabayekdes/laravel-payment/compare/v0.7.0...v0.7.1)
 
 ### Added
