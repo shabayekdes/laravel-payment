@@ -2,11 +2,12 @@
 
 namespace Shabayek\Payment\Tests\Feature\Mastercard;
 
-use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Enums\Gateway;
+use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Facade\Payment;
-use Shabayek\Payment\Tests\Fixtures\Transaction;
 use Shabayek\Payment\Tests\TestCase;
+use Shabayek\Payment\Models\PaymentCredential;
+use Shabayek\Payment\Tests\Fixtures\Transaction;
 
 /**
  * Class MastercardMethodFeature.
@@ -18,8 +19,12 @@ class MastercardMethodFeature extends TestCase
     /** @test */
     public function it_can_checkout_form_mastercard_method_successfully()
     {
+        $merchant_id = 'TEST_MERCHANT';
+        PaymentCredential::where('payment_method_id', 3)->where('key', 'merchant_id')->update([
+            'value' => $merchant_id,
+        ]);
         Http::fake([
-            'https://qnbalahli.gateway.mastercard.com/api/rest/version/61/merchant/TESTQNBAATEST001/session' => Http::response(
+            "https://qnbalahli.test.gateway.mastercard.com/api/rest/version/61/merchant/{$merchant_id}/session" => Http::response(
                 [
                     'result'           => Gateway::MASTERCARD_RESPONSE_SUCCESS,
                     'successIndicator' => 'test',
@@ -48,10 +53,15 @@ class MastercardMethodFeature extends TestCase
      */
     public function it_can_mastercard_set_error_if_not_created_session()
     {
+        $merchant_id = 'TEST_MERCHANT';
+        PaymentCredential::where('payment_method_id', 3)->where('key', 'merchant_id')->update([
+            'value' => $merchant_id,
+        ]);
+
         Http::fake([
-            'https://qnbalahli.gateway.mastercard.com/api/rest/version/61/merchant/TESTQNBAATEST001/session' => Http::response(
+            "https://qnbalahli.test.gateway.mastercard.com/api/rest/version/61/merchant/{$merchant_id}/session" => Http::response(
                 [
-                    'result'           => 'declined',
+                    'result' => 'declined',
                 ], 200),
         ]);
 
