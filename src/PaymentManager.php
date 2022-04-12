@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use InvalidArgumentException;
 use Shabayek\Payment\Drivers\CodMethod;
+use Shabayek\Payment\Drivers\MastercardMethod;
 use Shabayek\Payment\Drivers\PaymobMethod;
 use Shabayek\Payment\Models\PaymentMethod;
 
@@ -109,6 +110,17 @@ class PaymentManager
     private function createPaymobProvider($config)
     {
         return new PaymobMethod($config);
+    }
+
+    /**
+     * Create mastercard method instance.
+     *
+     * @param  array  $config
+     * @return MastercardMethod
+     */
+    private function createMastercardProvider(array $config)
+    {
+        return new MastercardMethod($config);
     }
 
     /**

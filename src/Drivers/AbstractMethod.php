@@ -29,7 +29,7 @@ abstract class AbstractMethod
      *
      * @var CustomerContract|array
      */
-    private $customer;
+    protected $customer;
     /**
      * Address details.
      *
@@ -232,7 +232,7 @@ abstract class AbstractMethod
      */
     public function getErrors()
     {
-        return $this->errors['message'];
+        return $this->errors['message'] ?? [];
     }
 
     /**
