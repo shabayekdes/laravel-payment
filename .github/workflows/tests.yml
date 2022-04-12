@@ -2,6 +2,9 @@ name: tests
 
 on:
   push:
+      branches:
+      - main
+      - develop
   pull_request:
   schedule:
     - cron: '0 0 * * *'
@@ -28,9 +31,6 @@ jobs:
           extensions: dom, curl, libxml, mbstring, zip
           tools: composer:v2
           coverage: none
-
-      - name: Copy .env
-        run: echo "${{ secrets.MY_PROJECT_ENV}}" > .env
 
       - name: Install dependencies
         run: |
