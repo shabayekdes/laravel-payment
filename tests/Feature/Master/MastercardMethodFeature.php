@@ -2,12 +2,12 @@
 
 namespace Shabayek\Payment\Tests\Feature\Mastercard;
 
-use Shabayek\Payment\Enums\Gateway;
 use Illuminate\Support\Facades\Http;
+use Shabayek\Payment\Enums\Gateway;
 use Shabayek\Payment\Facade\Payment;
-use Shabayek\Payment\Tests\TestCase;
 use Shabayek\Payment\Models\PaymentCredential;
 use Shabayek\Payment\Tests\Fixtures\Transaction;
+use Shabayek\Payment\Tests\TestCase;
 
 /**
  * Class MastercardMethodFeature.
