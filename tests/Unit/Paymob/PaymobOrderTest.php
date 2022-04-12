@@ -25,7 +25,7 @@ class PaymobOrderTest extends TestCase
         ]);
 
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $token = Str::random(512);
         $order = $this->callMethod($payment, 'orderCreation', [$token]);
@@ -43,7 +43,7 @@ class PaymobOrderTest extends TestCase
         ]);
 
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $payment->customer(fakeCustomer());
 
@@ -57,11 +57,16 @@ class PaymobOrderTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Customer details not set.');
 
+        Http::fake([
+            // Stub a JSON response for paymob endpoints...
+            'https://accept.paymobsolutions.com/api/auth/tokens' => Http::response(['token' => Str::random(512)], 200),
+        ]);
+
         // Fake Data
         $item = $this->items();
 
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
         $payment->addItem($item['name'], $item['price'], $item['quantity'], $item['description']);
 
         $payment->purchase();
@@ -77,7 +82,7 @@ class PaymobOrderTest extends TestCase
         ]);
 
         $method_id = 2;
-        $payment = Payment::store($method_id);
+        $payment = Payment::via($method_id);
 
         $payment->customer(fakeCustomer());
         $payment->items($this->items());
@@ -94,7 +99,7 @@ class PaymobOrderTest extends TestCase
     {
         // Fake Data
         $item = $this->items();
-        $payment = Payment::store(2);
+        $payment = Payment::via(2);
 
         $payment->addItem($item['name'], $item['price'], $item['quantity'], $item['description']);
         $items = $this->callMethod($payment, 'getItems');
@@ -110,7 +115,7 @@ class PaymobOrderTest extends TestCase
     {
         // Fake Data
         $item = $this->items();
-        $payment = Payment::store(2);
+        $payment = Payment::via(2);
 
         $payment->addItem($item['name'], $item['price']);
         $items = $this->callMethod($payment, 'getItems');

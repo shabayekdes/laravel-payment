@@ -2,16 +2,18 @@
 
 namespace Shabayek\Payment;
 
+use Exception;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Support\Manager;
 use InvalidArgumentException;
 use Shabayek\Payment\Drivers\CodMethod;
+use Shabayek\Payment\Drivers\MastercardMethod;
 use Shabayek\Payment\Drivers\PaymobMethod;
+use Shabayek\Payment\Models\PaymentMethod;
 
 /**
  * PaymentManager class.
  */
-class PaymentManager extends Manager
+class PaymentManager
 {
     /**
      * The application instance.
@@ -21,11 +23,11 @@ class PaymentManager extends Manager
     protected $app;
 
     /**
-     * The array of resolved payment stores.
+     * The array of resolved payment providers.
      *
      * @var array
      */
-    protected $stores = [];
+    protected $providers = [];
 
     /**
      * Create a new payment manager instance.
@@ -41,46 +43,50 @@ class PaymentManager extends Manager
     /**
      * Get a payment store instance by name, wrapped in a repository.
      *
-     * @param  int|null  $name
+     * @param  int  $id
      */
-    public function store(int $id = null)
+    public function via(int $id)
     {
-        $id = $id ?: $this->getDefaultDriver();
-
-        return $this->stores[$id] = $this->get($id);
+        return $this->providers[$id] ?? $this->get($id);
     }
 
     /**
-     * Attempt to get the store from the local payment.
+     * Get the payment connection configuration.
      *
-     * @param $id
-     * @return mixed
+     * @param  $name
+     * @return string
      */
     protected function get($id)
     {
-        return $this->stores[$id] ?? $this->resolve($id);
+        try {
+            $this->gateway = $this->getMethod($id);
+
+            return $this->providers[$id] = $this->resolve($this->gateway);
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     /**
      * Resolve the given store.
      *
-     * @param $id
+     * @param  array  $gateway
      * @return mixed
      */
-    protected function resolve($id)
+    protected function resolve($gateway)
     {
-        $config = $this->getConfig($id);
+        $provider = $this->getProvider();
 
-        if (is_null($config)) {
-            throw new InvalidArgumentException("Payment store [{$id}] is not defined.");
+        if (is_null($provider)) {
+            throw new InvalidArgumentException("Payment gateway with [{$gateway['name']}] is not defined.");
         }
 
-        $driverMethod = 'create'.ucfirst($config['driver']).'Method';
+        $providerMethod = 'create'.ucfirst($provider).'Provider';
 
-        if (method_exists($this, $driverMethod)) {
-            return $this->{$driverMethod}($config);
+        if (method_exists($this, $providerMethod)) {
+            return $this->{$providerMethod}($gateway);
         } else {
-            throw new InvalidArgumentException("Driver [{$config['driver']}] is not supported.");
+            throw new InvalidArgumentException("Gateway [{$provider}] is not supported.");
         }
     }
 
@@ -90,7 +96,7 @@ class PaymentManager extends Manager
      * @param  array  $config
      * @return CodMethod
      */
-    private function createCodMethod(array $config)
+    private function createCodProvider($config)
     {
         return new CodMethod($config);
     }
@@ -101,29 +107,47 @@ class PaymentManager extends Manager
      * @param  array  $config
      * @return PaymobMethod
      */
-    private function createPaymobMethod(array $config)
+    private function createPaymobProvider($config)
     {
         return new PaymobMethod($config);
     }
 
     /**
-     * Get the payment connection configuration.
+     * Create mastercard method instance.
      *
-     * @param $id
-     * @return array
+     * @param  array  $config
+     * @return MastercardMethod
      */
-    protected function getConfig($id)
+    private function createMastercardProvider(array $config)
     {
-        return $this->app['config']["payment.stores.{$id}"];
+        return new MastercardMethod($config);
     }
 
     /**
-     * Get the default payment driver name.
+     * Get the payment connection configuration.
      *
+     * @param  $name
      * @return string
      */
-    public function getDefaultDriver(): string
+    protected function getProvider()
     {
-        return $this->app['config']['payment.default'];
+        return $this->gateway['provider'] ?? null;
+    }
+
+    /**
+     * Get the payment method from database.
+     *
+     * @param [type] $id
+     * @return array
+     */
+    private function getMethod($id)
+    {
+        $method = PaymentMethod::with('credentials')->find($id);
+
+        if (! $method) {
+            throw new InvalidArgumentException("Payment method [{$id}] is not found.");
+        }
+
+        return $method->toArray();
     }
 }

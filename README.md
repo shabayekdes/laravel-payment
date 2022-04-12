@@ -1,4 +1,5 @@
 # Laravel Payment Methods
+
 [![Github Status](https://github.com/shabayekdes/laravel-payment/actions/workflows/tests.yml/badge.svg)](https://github.com/shabayekdes/laravel-payment/actions) [![Styleci Status](https://github.styleci.io/repos/421966331/shield?style=flat&branch=develop)](https://github.styleci.io/repos/421966331) [![Packagist version](https://img.shields.io/packagist/v/shabayek/laravel-payment)](https://packagist.org/packages/shabayek/laravel-payment) [![mit](https://img.shields.io/apm/l/laravel)](https://packagist.org/packages/shabayek/laravel-payment) ![Packagist PHP Version Support](https://img.shields.io/packagist/php-v/shabayek/laravel-payment) ![Packagist Downloads](https://img.shields.io/packagist/dt/shabayek/laravel-payment)
 
 This is a Laravel Package for Payment Gateway Integration. It has a clear and consistent API, is fully unit tested, and even comes with an example application to get you started.
@@ -23,7 +24,7 @@ php artisan vendor:publish --provider="Shabayek\Payment\PaymentServiceProvider" 
 
 ```php
 $method_id = 1; // payment method id from the config file
-$payment = Payment::store($method_id);
+$payment = Payment::via($method_id);
 ```
 
 - Implement customer details contracts on user model by adding **Billable** trait
@@ -39,14 +40,16 @@ class User extends Authenticatable
 
 }
 ```
+
 - Following columns is default for billable user
-    - **first_name**
-    - **last_name**
-    - **email**
-    - **phone**
+  - **first_name**
+  - **last_name**
+  - **email**
+  - **phone**
 
 if you want to change the column name you can do add public methods on your model with convention name CamelCase like **firstName** + **Column**
 FirstNameColumn
+
 ```php
     /**
      * Get the first name.
@@ -59,8 +62,8 @@ FirstNameColumn
     }
 ```
 
-- Implement address details with relation to address model 
-> The default relation is **address** if you want change the relation name you can do add public methods on your user model 
+- Implement address details with relation to address model
+  > The default relation is **address** if you want change the relation name you can do add public methods on your user model
 
 ```php
     /**
@@ -107,6 +110,12 @@ $payment->customer($user);
     $payment->addItem($name, $price, $quantity, $description);
 ```
 
+- Set transaction id will send to gateway
+
+```php
+$payment->transaction($transaction_id);
+```
+
 - Check the payment is online to get pay url
 
 ```php
@@ -115,7 +124,14 @@ if ($payment->isOnline()) {
 }
 ```
 
--Print the errors messages
+- The MasterCard method adds a new way to get the checkout form
+> pass the transaction model will update successIndicator and return view with checkout form
+
+```php
+$payment->checkoutForm(Transaction $transaction);
+```
+
+- Print the errors messages
 
 ```php
 $payment->getErrors();
@@ -136,14 +152,28 @@ $payment = $payment->pay($request);
 ```
 
 - Check the payment status
+
 ```php
 $method_id = 1; // payment method id from the config file
 $payment_order_id = 111; // payment order id
-$payment_status = Payment::store($method_id)->verify($payment_order_id);
+$payment_status = Payment::via($method_id)->verify($payment_order_id);
 ```
 
 ## Change log
+
 Please see [CHANGELOG](https://github.com/shabayekdes/laravel-payment/blob/main/CHANGELOG.md) for more information on what has been changed recently.
+
+
+## Contributing
+
+Please see [CONTRIBUTING](https://github.com/shabayekdes/laravel-payment/blob/main/CONTRIBUTING.md) for details.
+
+
+## Security Vulnerabilities
+
+If you've found a bug regarding security please mail [esmail.shabayek@gmail.com](mailto:esmail.shabayek@gmail.com) instead of using the issue tracker.
+
+
 ## License
 
 The Laravel payment methods package is open-sourced software licensed under the [MIT license](https://github.com/shabayekdes/laravel-payment/blob/main/LICENSE).

@@ -85,6 +85,16 @@ trait Billable
      */
     public function billingDetails(): array
     {
+        if (is_null($this->billingRelation())) {
+            return [
+                'address' => 'NA',
+                'city' => 'NA',
+                'state' => 'NA',
+                'zip' => 'NA',
+                'country' => 'NA',
+            ];
+        }
+
         return [
             'apartment' => $this->billingRelation()->apartment,
             'floor' => $this->billingRelation()->floor,

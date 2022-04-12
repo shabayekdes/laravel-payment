@@ -34,5 +34,8 @@ class PaymentServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../../config/payment.php' => config_path('payment.php'),
         ]);
+
+        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'payment');
+        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
     }
 }
