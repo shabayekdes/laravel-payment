@@ -124,6 +124,13 @@ if ($payment->isOnline()) {
 }
 ```
 
+- The MasterCard method adds a new way to get the checkout form
+> pass the transaction model will update successIndicator and return view with checkout form
+
+```php
+$payment->checkoutForm(Transaction $transaction);
+```
+
 - Print the errors messages
 
 ```php
@@ -155,6 +162,17 @@ $payment_status = Payment::via($method_id)->verify($payment_order_id);
 ## Change log
 
 Please see [CHANGELOG](https://github.com/shabayekdes/laravel-payment/blob/main/CHANGELOG.md) for more information on what has been changed recently.
+
+
+## Contributing
+
+Please see [CONTRIBUTING](https://github.com/shabayekdes/laravel-payment/blob/main/CONTRIBUTING.md) for details.
+
+
+## Security Vulnerabilities
+
+If you've found a bug regarding security please mail [esmail.shabayek@gmail.com](mailto:esmail.shabayek@gmail.com) instead of using the issue tracker.
+
 
 ## License
 
