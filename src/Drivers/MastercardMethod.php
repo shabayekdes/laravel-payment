@@ -3,9 +3,10 @@
 namespace Shabayek\Payment\Drivers;
 
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Shabayek\Payment\Enums\Gateway;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Database\Eloquent\Model;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 
 /**
@@ -13,9 +14,6 @@ use Shabayek\Payment\Contracts\PaymentMethodContract;
  */
 class MastercardMethod extends AbstractMethod implements PaymentMethodContract
 {
-    private const STATUS_APPROVED = 'APPROVED';
-    private const RESPONSE_SUCCESS = 'SUCCESS';
-
     /**
      * Purchase with payment method and get redirect url.
      *
@@ -37,12 +35,12 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
         try {
             $postRequest = [
                 'apiOperation' => 'CREATE_CHECKOUT_SESSION',
-                'order' => [
-                    'id' => $this->transaction_id,
-                    'amount' => $this->amount,
+                'order'        => [
+                    'id'       => $this->transaction_id,
+                    'amount'   => $this->amount,
                     'currency' => config('payment.currency'),
                 ],
-                'interaction' => [
+                'interaction'   => [
                     'operation' => 'PURCHASE',
                 ],
             ];
@@ -55,25 +53,25 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
 
             $result = $response->json();
 
-            if (isset($result['result']) && $result['result'] == self::RESPONSE_SUCCESS) {
+            if (isset($result['result']) && $result['result'] == Gateway::MASTERCARD_RESPONSE_SUCCESS) {
                 $session_id = $result['session']['id'];
 
                 $transaction->update([
-                    'session_id' => $session_id,
-                    'success_indicator'=> $result['successIndicator'],
+                    'session_id'        => $session_id,
+                    'success_indicator' => $result['successIndicator'],
                 ]);
 
                 return view('payment::mastercard', [
-                    'merchant_id' => $this->merchant_id,
-                    'checkout_js' => $this->checkout_js,
-                    'total_amount' => $this->amount,
-                    'customer_id' => $this->customer->id,
+                    'merchant_id'    => $this->merchant_id,
+                    'checkout_js'    => $this->checkout_js,
+                    'total_amount'   => $this->amount,
+                    'customer_id'    => $this->customer->id,
                     'transaction_id' => $this->transaction_id,
-                    'callback_url' => $this->callback_url,
-                    'session_id' => $session_id,
+                    'callback_url'   => $this->callback_url,
+                    'session_id'     => $session_id,
                 ]);
             } else {
-                throw new Exception('BANK INSTALLMENT ERROR');
+                throw new Exception(json_encode($result));
             }
         } catch (Exception $e) {
             $this->setErrors('create session in mastercard failed # '.$e->getMessage());
@@ -90,7 +88,7 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
     {
         $isSuccess = false;
 
-        if ($request->has('result') && $request->get('result') == self::RESPONSE_SUCCESS) {
+        if ($request->has('result') && $request->get('result') == Gateway::MASTERCARD_RESPONSE_SUCCESS) {
             $isSuccess = true;
 
             $callback = [
