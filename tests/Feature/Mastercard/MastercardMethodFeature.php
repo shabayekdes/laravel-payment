@@ -2,12 +2,14 @@
 
 namespace Shabayek\Payment\Tests\Feature\Mastercard;
 
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use Shabayek\Payment\Enums\Gateway;
+use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Facade\Payment;
+use Shabayek\Payment\Tests\TestCase;
 use Shabayek\Payment\Models\PaymentCredential;
 use Shabayek\Payment\Tests\Fixtures\Transaction;
-use Shabayek\Payment\Tests\TestCase;
 
 /**
  * Class MastercardMethodFeature.
@@ -77,6 +79,22 @@ class MastercardMethodFeature extends TestCase
 
         $this->assertFalse($payment->isSuccess());
     }
+
+    /** @test */
+    public function it_can_complete_with_mastercard_payment_successfully()
+    {
+        $resultIndicator = Str::random(10);
+        $payment = Payment::via(3);
+
+        $mockRequest = new Request();
+        $mockRequest->merge(['result' => Gateway::MASTERCARD_RESPONSE_SUCCESS, 'resultIndicator' => $resultIndicator]);
+
+        $pay = $payment->pay($mockRequest);
+
+        $this->assertTrue($pay['success']);
+        $this->assertEquals($resultIndicator, $pay['data']['resultIndicator']);
+    }
+
 
     /**
      * Get items fake data.
