@@ -2,14 +2,14 @@
 
 namespace Shabayek\Payment\Tests\Feature\Mastercard;
 
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Shabayek\Payment\Enums\Gateway;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+use Shabayek\Payment\Enums\Gateway;
 use Shabayek\Payment\Facade\Payment;
-use Shabayek\Payment\Tests\TestCase;
 use Shabayek\Payment\Models\PaymentCredential;
 use Shabayek\Payment\Tests\Fixtures\Transaction;
+use Shabayek\Payment\Tests\TestCase;
 
 /**
  * Class MastercardMethodFeature.
@@ -94,7 +94,6 @@ class MastercardMethodFeature extends TestCase
         $this->assertTrue($pay['success']);
         $this->assertEquals($resultIndicator, $pay['data']['resultIndicator']);
     }
-
 
     /**
      * Get items fake data.
