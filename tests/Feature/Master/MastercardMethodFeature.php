@@ -2,11 +2,11 @@
 
 namespace Shabayek\Payment\Tests\Feature\Paymob;
 
-use Shabayek\Payment\Enums\Gateway;
 use Illuminate\Support\Facades\Http;
+use Shabayek\Payment\Enums\Gateway;
 use Shabayek\Payment\Facade\Payment;
-use Shabayek\Payment\Tests\TestCase;
 use Shabayek\Payment\Tests\Fixtures\Transaction;
+use Shabayek\Payment\Tests\TestCase;
 
 /**
  * Class MastercardMethodFeature.
@@ -24,8 +24,8 @@ class MastercardMethodFeature extends TestCase
                     'result'           => Gateway::MASTERCARD_RESPONSE_SUCCESS,
                     'successIndicator' => 'test',
                     'session'          => [
-                        'id' => '123'
-                    ]
+                        'id' => '123',
+                    ],
                 ], 200),
         ]);
 
@@ -34,7 +34,7 @@ class MastercardMethodFeature extends TestCase
         $payment->customer(fakeCustomer());
 
         $transaction = new Transaction([
-            'id' => 1000
+            'id' => 1000,
         ]);
         $payment->transaction($transaction->id);
         $formView = $payment->checkoutForm($transaction);
@@ -60,14 +60,13 @@ class MastercardMethodFeature extends TestCase
         $payment->customer(fakeCustomer());
 
         $transaction = new Transaction([
-            'id' => 1000
+            'id' => 1000,
         ]);
         $payment->transaction($transaction->id);
         $payment->checkoutForm($transaction);
 
         $this->assertFalse($payment->isSuccess());
     }
-
 
     /**
      * Get items fake data.
