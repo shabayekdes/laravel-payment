@@ -1,6 +1,6 @@
 <?php
 
-namespace Shabayek\Payment\Tests\Feature\Paymob;
+namespace Shabayek\Payment\Tests\Feature\Mastercard;
 
 use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Enums\Gateway;
