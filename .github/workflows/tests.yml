@@ -29,8 +29,12 @@ jobs:
           tools: composer:v2
           coverage: none
 
+      - name: Copy .env
+        run: echo "${{ secrets.MY_PROJECT_ENV}}" > .env
+
       - name: Install dependencies
         run: |
            composer update --prefer-dist --no-interaction --no-progress
+
       - name: Execute tests
         run: vendor/bin/phpunit --verbose
