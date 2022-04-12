@@ -84,6 +84,23 @@ abstract class TestCase extends Orchestra
         // make sure, our .env file is loaded
         $app->useEnvironmentPath(__DIR__.'/..');
         $app->bootstrapWith([LoadEnvironmentVariables::class]);
+
+        $app['config']->set('payment.stores.2.credentials', [
+            'api_key' => env('PAYMOB_API_KEY'),
+            'hmac_hash' => env('PAYMOB_HMAC_HASH'),
+            'merchant_id' => env('PAYMOB_MERCHANT_ID'),
+            'iframe_id' => env('PAYMOB_CARD_IFRAME_ID'),
+            'integration_id' => env('PAYMOB_CARD_INTEGRATION_ID'),
+        ]);
+
+        $app['config']->set('payment.stores.3.credentials', [
+            'username'     => env('QNB_USERNAME'),
+            'password'     => env('QNB_PASSWORD'),
+            'base_url'     => env('QNB_BASE_URL'),
+            'callback_url' => env('QNB_CALLBACK_URL'),
+            'checkout_js'  => env('QNB_CHECKOUT_JS'),
+            'merchant_id'  => env('QNB_MERCHANT_ID'),
+        ]);
         parent::getEnvironmentSetUp($app);
     }
 
