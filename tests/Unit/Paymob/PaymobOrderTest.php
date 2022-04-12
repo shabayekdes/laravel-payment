@@ -57,6 +57,11 @@ class PaymobOrderTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Customer details not set.');
 
+        Http::fake([
+            // Stub a JSON response for paymob endpoints...
+            'https://accept.paymobsolutions.com/api/auth/tokens' => Http::response(['token' => Str::random(512)], 200),
+        ]);
+
         // Fake Data
         $item = $this->items();
 
