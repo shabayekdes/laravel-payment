@@ -10,7 +10,7 @@ use Shabayek\Payment\Enums\Gateway;
 
 /**
  * MastercardMethod class.
- * @package Shabayek\Payment\Drivers
+ *
  * @author Esmail Shabayek <esmail.shabayek@gmail.com>
  */
 class MastercardMethod extends AbstractMethod implements PaymentMethodContract
