@@ -68,6 +68,7 @@ class CustomerDetailsTest extends TestCase
             'state'     => 'Test state',
             'street'    => 'Test street',
             'building'  => 'Test building',
+            'zip'       => '12345',
         ];
         $mock = $this->partialMock(User::class, function (MockInterface $mock) use ($address) {
             $mock->shouldReceive('get')->once()->andReturn(new Shipping($address));

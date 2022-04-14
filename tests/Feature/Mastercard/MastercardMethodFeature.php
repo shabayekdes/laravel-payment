@@ -44,7 +44,7 @@ class MastercardMethodFeature extends TestCase
             'id' => 1000,
         ]);
         $payment->transaction($transaction->id);
-        $formView = $payment->checkoutForm($transaction);
+        $formView = $payment->checkoutForm();
 
         $this->assertStringContainsString('Checkout.configure', $formView->render());
     }
