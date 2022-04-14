@@ -28,7 +28,7 @@ class PaymobOrderTest extends TestCase
         $payment = Payment::via($method_id);
 
         $token = Str::random(512);
-        $order = $this->callMethod($payment, 'orderCreation', [$token]);
+        $this->callMethod($payment, 'orderCreation', [$token]);
     }
 
     /** @test*/
@@ -63,7 +63,7 @@ class PaymobOrderTest extends TestCase
         ]);
 
         // Fake Data
-        $item = $this->items();
+        $item = fakeItems();
 
         $method_id = 2;
         $payment = Payment::via($method_id);
@@ -85,7 +85,7 @@ class PaymobOrderTest extends TestCase
         $payment = Payment::via($method_id);
 
         $payment->customer(fakeCustomer());
-        $payment->items($this->items());
+        $payment->items(fakeItems());
 
         $token = Str::random(512);
         $order = $this->callMethod($payment, 'orderCreation', [$token]);
@@ -98,10 +98,10 @@ class PaymobOrderTest extends TestCase
     public function it_can_add_item_by_one_with_paymob_success()
     {
         // Fake Data
-        $item = $this->items();
+        $item = fakeItems();
         $payment = Payment::via(2);
 
-        $payment->addItem($item['name'], $item['price'], $item['quantity'], $item['description']);
+        $payment->addItem($item['id'], $item['name'], $item['price'], $item['quantity'], $item['description']);
         $items = $this->callMethod($payment, 'getItems');
 
         $this->assertEquals($items[0]['name'], $item['name']);
@@ -114,45 +114,13 @@ class PaymobOrderTest extends TestCase
     public function it_can_add_item_by_one_with_paymob_success_with_default_details()
     {
         // Fake Data
-        $item = $this->items();
+        $item = fakeItems();
         $payment = Payment::via(2);
 
-        $payment->addItem($item['name'], $item['price']);
+        $payment->addItem($item['id'], $item['name'], $item['price']);
         $items = $this->callMethod($payment, 'getItems');
 
         $this->assertEquals($items[0]['quantity'], 1);
         $this->assertEquals($items[0]['description'], 'NA');
-    }
-
-    /**
-     * Get items fake data.
-     *
-     * @return array
-     */
-    private function items(): array
-    {
-        return [
-            'name'         => 'Product name',
-            'description'  => 'Product description',
-            'price' => 150,
-            'quantity'     => 1,
-        ];
-    }
-
-    /**
-     * Define environment setup.
-     *
-     * @param  \Illuminate\Foundation\Application  $app
-     * @return void
-     */
-    protected function defineEnvironment($app)
-    {
-        $app['config']->set('payment.stores.2.credentials', [
-            'api_key'   => 'test',
-            'hmac_hash'   => 'test',
-            'merchant_id'   => 'test',
-            'iframe_id'   => 'test',
-            'integration_id'   => 'test',
-        ]);
     }
 }

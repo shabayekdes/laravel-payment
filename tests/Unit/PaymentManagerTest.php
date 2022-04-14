@@ -64,12 +64,7 @@ class PaymentManagerTest extends TestCase
     public function it_can_set_amount_when_add_to_items()
     {
         $payment = Payment::via(2);
-        $items = [
-            'name'         => 'ASC1515',
-            'amount_cents' => 500000,
-            'description'  => 'Smart Watch',
-            'quantity'     => '1',
-        ];
+        $items = fakeItems();
         $payment->items($items);
 
         $reflector = new \ReflectionClass(PaymobMethod::class);
@@ -78,6 +73,6 @@ class PaymentManagerTest extends TestCase
 
         $amount = $property->getValue($payment);
 
-        $this->assertEquals($items['amount_cents'], $amount);
+        $this->assertEquals($items['price'], $amount);
     }
 }
