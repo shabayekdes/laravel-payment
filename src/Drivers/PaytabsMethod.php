@@ -3,13 +3,13 @@
 namespace Shabayek\Payment\Drivers;
 
 use Illuminate\Http\Request;
-use InvalidArgumentException;
 use Illuminate\Support\Facades\Http;
+use InvalidArgumentException;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 
 /**
  * PaytabsMethod class.
- * @package Shabayek\Payment\Drivers
+ *
  * @author Esmail Shabayek <esmail.shabayek@gmail.com>
  */
 class PaytabsMethod extends AbstractMethod implements PaymentMethodContract
@@ -53,10 +53,12 @@ class PaytabsMethod extends AbstractMethod implements PaymentMethodContract
             'data' => [],
         ];
     }
+
     /**
      * Payment request api call.
      *
      * @return mixed
+     *
      * @throws InvalidArgumentException
      */
     private function paymentRequest()
@@ -64,8 +66,8 @@ class PaytabsMethod extends AbstractMethod implements PaymentMethodContract
         $requestBody = $this->requestBody();
 
         $response = Http::withHeaders([
-            'authorization' => $this->server_key
-        ])->post($this->base_url . 'payment/request', $requestBody);
+            'authorization' => $this->server_key,
+        ])->post($this->base_url.'payment/request', $requestBody);
 
         $redirectUrl = null;
         if ($response->ok()) {
@@ -77,10 +79,12 @@ class PaytabsMethod extends AbstractMethod implements PaymentMethodContract
 
         return $redirectUrl;
     }
+
     /**
-     * Handle payment body request
+     * Handle payment body request.
      *
      * @return array
+     *
      * @throws \InvalidArgumentException
      */
     private function requestBody()
@@ -88,31 +92,33 @@ class PaytabsMethod extends AbstractMethod implements PaymentMethodContract
         $cartDescription = $this->getItems();
 
         return [
-            "profile_id"       => $this->profile_id,
-            "tran_type"        => "sale",
-            "tran_class"       => "ecom",
-            "cart_id"          => (string) $this->transaction_id,
-            "cart_description" => $cartDescription,
-            "cart_currency"    => config('paymob.currency'),
-            "cart_amount"      => $this->amount,
-            "callback"         => $this->callback_url,
-            "return"           => $this->callback_url,
-            "hide_shipping"    => true,
-            "customer_details" => [
-                "name"    => $this->getCustomerDetails('full_name'),
-                "email"   => $this->getCustomerDetails('email') ?? "no email",
-                "phone"   => $this->getCustomerDetails('phone'),
-                "street1" => $this->getBillingDetails('street'),
-                "city"    => $this->getBillingDetails('city'),
-                "zip"     => $this->getBillingDetails('zip'),
-                "country" => config('paymob.currency'),
-            ]
+            'profile_id'       => $this->profile_id,
+            'tran_type'        => 'sale',
+            'tran_class'       => 'ecom',
+            'cart_id'          => (string) $this->transaction_id,
+            'cart_description' => $cartDescription,
+            'cart_currency'    => config('paymob.currency'),
+            'cart_amount'      => $this->amount,
+            'callback'         => $this->callback_url,
+            'return'           => $this->callback_url,
+            'hide_shipping'    => true,
+            'customer_details' => [
+                'name'    => $this->getCustomerDetails('full_name'),
+                'email'   => $this->getCustomerDetails('email') ?? 'no email',
+                'phone'   => $this->getCustomerDetails('phone'),
+                'street1' => $this->getBillingDetails('street'),
+                'city'    => $this->getBillingDetails('city'),
+                'zip'     => $this->getBillingDetails('zip'),
+                'country' => config('paymob.currency'),
+            ],
         ];
     }
+
     /**
-     * Get items
+     * Get items.
      *
      * @return string
+     *
      * @throws InvalidArgumentException
      */
     private function getItems()
