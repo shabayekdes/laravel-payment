@@ -2,13 +2,13 @@
 
 namespace Shabayek\Payment\Tests\Unit;
 
+use Shabayek\Payment\Drivers\CodMethod;
+use Shabayek\Payment\Drivers\MastercardMethod;
+use Shabayek\Payment\Drivers\PaymobMethod;
+use Shabayek\Payment\Exceptions\NotFoundGatewayException;
 use Shabayek\Payment\Facade\Payment;
 use Shabayek\Payment\PaymentManager;
 use Shabayek\Payment\Tests\TestCase;
-use Shabayek\Payment\Drivers\CodMethod;
-use Shabayek\Payment\Drivers\PaymobMethod;
-use Shabayek\Payment\Drivers\MastercardMethod;
-use Shabayek\Payment\Exceptions\NotFoundGatewayException;
 
 /**
  * Class PaymentManagerTest.
