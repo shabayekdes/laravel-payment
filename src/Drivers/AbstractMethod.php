@@ -252,14 +252,13 @@ abstract class AbstractMethod
     {
         return $this->errors['success'] ?? true;
     }
-
-    /**
-     * Payment reference.
+	/**
+	 * Payment reference.
      *
-     * @return string
-     */
-    public function getPaymentReference()
+	 * @return string
+	 */
+	public function getPaymentReference()
     {
-        return $this->payment_reference;
-    }
+		return $this->payment_reference;
+	}
 }
