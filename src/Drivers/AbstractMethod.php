@@ -25,6 +25,12 @@ abstract class AbstractMethod
      */
     protected $transaction_id;
     /**
+     * Payment reference.
+     *
+     * @var string
+     */
+    protected $payment_reference;
+    /**
      * Customer details.
      *
      * @var CustomerContract|array
@@ -155,7 +161,7 @@ abstract class AbstractMethod
     public function items(array $item)
     {
         $this->items[] = $item;
-        $this->amount += isset($item['amount_cents']) ? $item['amount_cents'] : 0;
+        $this->amount += isset($item['price']) ? $item['price'] : 0;
 
         return $this;
     }
@@ -163,15 +169,17 @@ abstract class AbstractMethod
     /**
      * Add one item.
      *
+     * @param  int  $id
      * @param  string  $name
      * @param  int  $price
      * @param  int  $quantity
      * @param  string  $description
      * @return self
      */
-    public function addItem($name, $price, $quantity = 1, $description = null)
+    public function addItem($id, $name, $price, $quantity = 1, $description = null)
     {
         $this->items[] = [
+            'id' => $id,
             'name' => $name,
             'price' => $price,
             'quantity' => $quantity,
@@ -244,4 +252,13 @@ abstract class AbstractMethod
     {
         return $this->errors['success'] ?? true;
     }
+	/**
+	 * Payment reference.
+     * 
+	 * @return string
+	 */
+	public function getPaymentReference()
+    {
+		return $this->payment_reference;
+	}
 }
