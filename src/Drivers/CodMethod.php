@@ -8,7 +8,7 @@ use Shabayek\Payment\Contracts\PaymentMethodContract;
 class CodMethod extends AbstractMethod implements PaymentMethodContract
 {
     /**
-     * Purchase with paymant mwthod and get redirect url.
+     * Purchase with payment method and get redirect url.
      *
      * @return string|null
      */

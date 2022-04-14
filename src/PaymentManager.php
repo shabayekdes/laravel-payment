@@ -2,23 +2,23 @@
 
 namespace Shabayek\Payment;
 
-use Exception;
-use Illuminate\Contracts\Foundation\Application;
-use InvalidArgumentException;
 use Shabayek\Payment\Drivers\CodMethod;
-use Shabayek\Payment\Drivers\MastercardMethod;
 use Shabayek\Payment\Drivers\PaymobMethod;
 use Shabayek\Payment\Models\PaymentMethod;
+use Shabayek\Payment\Drivers\MastercardMethod;
+use Shabayek\Payment\Exceptions\NotFoundGatewayException;
 
 /**
- * PaymentManager class.
+ * Payment manager class.
+ * @package Shabayek\Payment
+ * @author Esmail Shabayek <esmail.shabayek@gmail.com>
  */
 class PaymentManager
 {
     /**
      * The application instance.
      *
-     * @var Application
+     * @var \Illuminate\Foundation\Application
      */
     protected $app;
 
@@ -32,7 +32,7 @@ class PaymentManager
     /**
      * Create a new payment manager instance.
      *
-     * @param  Application  $app
+     * @param  \Illuminate\Foundation\Application  $app
      * @return void
      */
     public function __construct($app)
@@ -58,27 +58,23 @@ class PaymentManager
      */
     protected function get($id)
     {
-        try {
-            $this->gateway = $this->getMethod($id);
+        $this->gateway = $this->getMethod($id);
 
-            return $this->providers[$id] = $this->resolve($this->gateway);
-        } catch (Exception $e) {
-            throw $e;
-        }
+        return $this->providers[$id] = $this->resolve($this->gateway);
     }
-
     /**
-     * Resolve the given store.
+     * Resolve the given gateway.
      *
-     * @param  array  $gateway
+     * @param array $gateway
      * @return mixed
+     * @throws \Shabayek\Payment\Exceptions\NotFoundGatewayException
      */
     protected function resolve($gateway)
     {
         $provider = $this->getProvider();
 
         if (is_null($provider)) {
-            throw new InvalidArgumentException("Payment gateway with [{$gateway['name']}] is not defined.");
+            throw new NotFoundGatewayException("Payment gateway with [{$gateway['name']}] is not defined.");
         }
 
         $providerMethod = 'create'.ucfirst($provider).'Provider';
@@ -86,7 +82,7 @@ class PaymentManager
         if (method_exists($this, $providerMethod)) {
             return $this->{$providerMethod}($gateway);
         } else {
-            throw new InvalidArgumentException("Gateway [{$provider}] is not supported.");
+            throw new NotFoundGatewayException("Gateway [{$provider}] is not supported.");
         }
     }
 
@@ -94,7 +90,7 @@ class PaymentManager
      * Create cod method instance.
      *
      * @param  array  $config
-     * @return CodMethod
+     * @return \Shabayek\Payment\Drivers\CodMethod
      */
     private function createCodProvider($config)
     {
@@ -105,7 +101,7 @@ class PaymentManager
      * Create paymob method instance.
      *
      * @param  array  $config
-     * @return PaymobMethod
+     * @return \Shabayek\Payment\Drivers\PaymobMethod
      */
     private function createPaymobProvider($config)
     {
@@ -116,7 +112,7 @@ class PaymentManager
      * Create mastercard method instance.
      *
      * @param  array  $config
-     * @return MastercardMethod
+     * @return \Shabayek\Payment\Drivers\MastercardMethod
      */
     private function createMastercardProvider(array $config)
     {
@@ -133,19 +129,19 @@ class PaymentManager
     {
         return $this->gateway['provider'] ?? null;
     }
-
     /**
      * Get the payment method from database.
      *
-     * @param [type] $id
+     * @param mixed $id
      * @return array
+     * @throws \Shabayek\Payment\Exceptions\NotFoundGatewayException
      */
     private function getMethod($id)
     {
         $method = PaymentMethod::with('credentials')->find($id);
 
         if (! $method) {
-            throw new InvalidArgumentException("Payment method [{$id}] is not found.");
+            throw new NotFoundGatewayException("Payment method [{$id}] is not found.");
         }
 
         return $method->toArray();
