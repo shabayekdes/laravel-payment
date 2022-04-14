@@ -28,6 +28,16 @@ trait Billable
     }
 
     /**
+     * Get the full name.
+     *
+     * @return string|null
+     */
+    public function fullNameColumn()
+    {
+        return $this->firstNameColumn() . ' ' . $this->lastNameColumn();
+    }
+
+    /**
      * Get the email billing.
      *
      * @return string|null
@@ -102,6 +112,7 @@ trait Billable
             'state' => $this->billingRelation()->state,
             'street' => $this->billingRelation()->street,
             'building' => $this->billingRelation()->building,
+            'zip' => $this->billingRelation()->zip,
         ];
     }
 }
