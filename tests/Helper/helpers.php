@@ -17,3 +17,20 @@ if (! function_exists('fakeCustomer')) {
         return $user;
     }
 }
+if (! function_exists('fakeItems')) {
+    /**
+     * Get fake items.
+     *
+     * @return array
+     */
+    function fakeItems()
+    {
+        return [
+            'id'          => '111',
+            'name'        => 'Product name',
+            'description' => 'Product description',
+            'price'       => 150,
+            'quantity'    => 1,
+        ];
+    }
+}

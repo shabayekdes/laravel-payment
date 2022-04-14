@@ -3,7 +3,6 @@
 namespace Shabayek\Payment\Drivers;
 
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
@@ -11,6 +10,8 @@ use Shabayek\Payment\Enums\Gateway;
 
 /**
  * MastercardMethod class.
+ *
+ * @author Esmail Shabayek <esmail.shabayek@gmail.com>
  */
 class MastercardMethod extends AbstractMethod implements PaymentMethodContract
 {
@@ -27,10 +28,9 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
     /**
      * Payment checkout view.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $transaction
      * @return void
      */
-    public function checkoutForm(Model $transaction)
+    public function checkoutForm()
     {
         try {
             $postRequest = [
@@ -56,10 +56,7 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
             if (isset($result['result']) && $result['result'] == Gateway::MASTERCARD_RESPONSE_SUCCESS) {
                 $session_id = $result['session']['id'];
 
-                $transaction->update([
-                    'session_id'        => $session_id,
-                    'success_indicator' => $result['successIndicator'],
-                ]);
+                $this->payment_reference = $result['successIndicator'];
 
                 return view('payment::mastercard', [
                     'merchant_id'    => $this->merchant_id,
