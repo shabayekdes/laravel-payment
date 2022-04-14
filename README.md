@@ -88,26 +88,29 @@ $payment->customer($user);
 ```php
     $items = [
         [
-            "name" => "item1",
-            "price" => 100,
-            "quantity" => 2,
+            "id"          => "111",
+            "name"        => "item1",
+            "price"       => 100,
+            "quantity"    => 2,
             "description" => "item1 description",
         ],
         [
-            "name" => "item2",
-            "price" => 200,
-            "quantity" => 1,
+            "id"          => "222",
+            "name"        => "item2",
+            "price"       => 200,
+            "quantity"    => 1,
             "description" => "item2 description",
         ],
     ];
     $payment->items($items);
     // OR By One
+    $id = "111";
     $name = "item1";
     $price = 100;
     $quantity = 2; // Default 1
     $description = "item1 description"; // Default null
 
-    $payment->addItem($name, $price, $quantity, $description);
+    $payment->addItem($id, $name, $price, $quantity, $description);
 ```
 
 - Set transaction id will send to gateway
@@ -125,10 +128,16 @@ if ($payment->isOnline()) {
 ```
 
 - The MasterCard method adds a new way to get the checkout form
-> pass the transaction model will update successIndicator and return view with checkout form
+> return view with checkout form
 
 ```php
-$payment->checkoutForm(Transaction $transaction);
+$payment->checkoutForm();
+```
+
+- Get payment reference from gateway
+
+```php
+$payment->getPaymentReference();
 ```
 
 - Print the errors messages
