@@ -34,7 +34,7 @@ trait Billable
      */
     public function fullNameColumn()
     {
-        return $this->firstNameColumn().' '.$this->lastNameColumn();
+        return $this->firstNameColumn() . ' ' . $this->lastNameColumn();
     }
 
     /**
