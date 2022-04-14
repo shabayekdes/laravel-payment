@@ -3,14 +3,14 @@
 namespace Shabayek\Payment;
 
 use Shabayek\Payment\Drivers\CodMethod;
-use Shabayek\Payment\Drivers\PaymobMethod;
-use Shabayek\Payment\Models\PaymentMethod;
 use Shabayek\Payment\Drivers\MastercardMethod;
+use Shabayek\Payment\Drivers\PaymobMethod;
 use Shabayek\Payment\Exceptions\NotFoundGatewayException;
+use Shabayek\Payment\Models\PaymentMethod;
 
 /**
  * Payment manager class.
- * @package Shabayek\Payment
+ *
  * @author Esmail Shabayek <esmail.shabayek@gmail.com>
  */
 class PaymentManager
@@ -62,11 +62,13 @@ class PaymentManager
 
         return $this->providers[$id] = $this->resolve($this->gateway);
     }
+
     /**
      * Resolve the given gateway.
      *
-     * @param array $gateway
+     * @param  array  $gateway
      * @return mixed
+     *
      * @throws \Shabayek\Payment\Exceptions\NotFoundGatewayException
      */
     protected function resolve($gateway)
@@ -129,11 +131,13 @@ class PaymentManager
     {
         return $this->gateway['provider'] ?? null;
     }
+
     /**
      * Get the payment method from database.
      *
-     * @param mixed $id
+     * @param  mixed  $id
      * @return array
+     *
      * @throws \Shabayek\Payment\Exceptions\NotFoundGatewayException
      */
     private function getMethod($id)
