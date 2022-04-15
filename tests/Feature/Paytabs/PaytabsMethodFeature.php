@@ -7,8 +7,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Shabayek\Payment\Enums\Gateway;
 use Shabayek\Payment\Facade\Payment;
-use Shabayek\Payment\Models\PaymentCredential;
-use Shabayek\Payment\Tests\Fixtures\Transaction;
 use Shabayek\Payment\Tests\TestCase;
 
 /**
@@ -26,7 +24,7 @@ class PaytabsMethodFeature extends TestCase
             // Stub a JSON response for paytabs endpoints...
             'https://secure-egypt.paytabs.com/payment/request' => Http::response([
                 'redirect_url' => $redirectUrl,
-                'tran_ref' => Str::random(20)
+                'tran_ref' => Str::random(20),
             ], 200),
         ]);
 
@@ -51,9 +49,9 @@ class PaytabsMethodFeature extends TestCase
 
         $fakeRequest->merge([
             'payment_result' => [
-                'response_status' => Gateway::PAYTABS_RESPONSE_SUCCESS
+                'response_status' => Gateway::PAYTABS_RESPONSE_SUCCESS,
             ],
-            'respStatus' => Gateway::PAYTABS_RESPONSE_SUCCESS
+            'respStatus' => Gateway::PAYTABS_RESPONSE_SUCCESS,
         ]);
 
         $response = $payment->pay($fakeRequest);
@@ -72,7 +70,7 @@ class PaytabsMethodFeature extends TestCase
                 'tran_ref' => $tranRef,
                 'profile_id' => 111,
                 'payment_result' => [
-                    'response_status' => Gateway::PAYTABS_RESPONSE_SUCCESS
+                    'response_status' => Gateway::PAYTABS_RESPONSE_SUCCESS,
                 ],
             ], 200),
         ]);
