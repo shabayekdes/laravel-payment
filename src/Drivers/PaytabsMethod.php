@@ -34,11 +34,11 @@ class PaytabsMethod extends AbstractMethod implements PaymentMethodContract
     public function pay(Request $request): array
     {
         $response_status = $request->input('payment_result.response_status') ?? $request->input('respStatus');
-        $transaction_status = in_array($response_status, ['A']);
+        $transaction_status = in_array($response_status, [Gateway::PAYTABS_RESPONSE_SUCCESS]);
 
         return [
             'success' => $transaction_status,
-            'message' => $transaction_status ? 'Payment Successful' : 'Payment Failed',
+            'message' => $transaction_status ? 'Payment Successfully' : 'Payment Failed',
             'data'    => [],
         ];
     }
