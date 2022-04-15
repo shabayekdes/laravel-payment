@@ -70,9 +70,9 @@ trait Billable
     /**
      * Set customer's details.
      *
-     * @return array
+     * @return array|string
      */
-    public function customerDetails($property): array
+    public function customerDetails($property)
     {
         if ($property) {
             $column = Str::camel($property).'Column';

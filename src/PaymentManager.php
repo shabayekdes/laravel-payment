@@ -5,6 +5,7 @@ namespace Shabayek\Payment;
 use Shabayek\Payment\Drivers\CodMethod;
 use Shabayek\Payment\Drivers\MastercardMethod;
 use Shabayek\Payment\Drivers\PaymobMethod;
+use Shabayek\Payment\Drivers\PaytabsMethod;
 use Shabayek\Payment\Exceptions\NotFoundGatewayException;
 use Shabayek\Payment\Models\PaymentMethod;
 
@@ -94,7 +95,7 @@ class PaymentManager
      * @param  array  $config
      * @return \Shabayek\Payment\Drivers\CodMethod
      */
-    private function createCodProvider($config)
+    private function createCodProvider($config): CodMethod
     {
         return new CodMethod($config);
     }
@@ -105,7 +106,7 @@ class PaymentManager
      * @param  array  $config
      * @return \Shabayek\Payment\Drivers\PaymobMethod
      */
-    private function createPaymobProvider($config)
+    private function createPaymobProvider($config): PaymobMethod
     {
         return new PaymobMethod($config);
     }
@@ -116,9 +117,20 @@ class PaymentManager
      * @param  array  $config
      * @return \Shabayek\Payment\Drivers\MastercardMethod
      */
-    private function createMastercardProvider(array $config)
+    private function createMastercardProvider(array $config): MastercardMethod
     {
         return new MastercardMethod($config);
+    }
+
+    /**
+     * Create paytabs method instance.
+     *
+     * @param  array  $config
+     * @return \Shabayek\Payment\Drivers\PaytabsMethod
+     */
+    public function createPaytabsProvider(array $config): PaytabsMethod
+    {
+        return new PaytabsMethod($config);
     }
 
     /**
