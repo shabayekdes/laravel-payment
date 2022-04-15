@@ -3,14 +3,14 @@
 namespace Shabayek\Payment\Drivers;
 
 use Illuminate\Http\Request;
-use InvalidArgumentException;
-use Shabayek\Payment\Enums\Gateway;
 use Illuminate\Support\Facades\Http;
+use InvalidArgumentException;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
+use Shabayek\Payment\Enums\Gateway;
 
 /**
  * PaytabsMethod class.
- * @package Shabayek\Payment\Drivers
+ *
  * @author Esmail Shabayek <esmail.shabayek@gmail.com>
  */
 class PaytabsMethod extends AbstractMethod implements PaymentMethodContract
@@ -85,32 +85,34 @@ class PaytabsMethod extends AbstractMethod implements PaymentMethodContract
 
         return $redirectUrl;
     }
+
     /**
      * Payment query api call.
      *
-     * @param string|int $payment_order_id
+     * @param  string|int  $payment_order_id
      * @return bool
      */
     private function paymentQuery($payment_order_id)
     {
         $requestBody = [
-            "profile_id" => $this->profile_id,
-            "tran_ref" => $payment_order_id,
+            'profile_id' => $this->profile_id,
+            'tran_ref' => $payment_order_id,
         ];
 
         $response = Http::withHeaders([
-            'authorization' => $this->server_key
-        ])->post($this->base_url . 'payment/query', $requestBody);
+            'authorization' => $this->server_key,
+        ])->post($this->base_url.'payment/query', $requestBody);
 
         $result = $response->json();
 
         if ($response->ok() && $response) {
             return data_get($result, 'payment_result.response_status') == Gateway::PAYTABS_RESPONSE_SUCCESS;
         }
-        $this->setErrors('Paytabs method error ' . $this->getErrors($result['code'] ?? null));
+        $this->setErrors('Paytabs method error '.$this->getErrors($result['code'] ?? null));
 
         return false;
     }
+
     /**
      * Handle payment body request.
      *
