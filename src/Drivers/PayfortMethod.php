@@ -3,7 +3,6 @@
 namespace Shabayek\Payment\Drivers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 
 /**
