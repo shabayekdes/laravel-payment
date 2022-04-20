@@ -8,15 +8,42 @@ return [
     |--------------------------------------------------------------------------
     |
     | This option controls the default payment "provider" that will be used on
-    | requests.
-    |
+    | requests. By default, we will use the "cod" payment driver which does
     |
     */
 
     'default' => env('PAYMENT_DEFAULT_DRIVER', 'cod'),
 
-    'currency' => env('GATEWAY_CURRENCY', 'EGP'),
-    'country' => env('GATEWAY_COUNTRY', 'EG'),
+    /*
+    |--------------------------------------------------------------------------
+    | Payment Environment
+    |--------------------------------------------------------------------------
+    |
+    | This option controls the default payment language that will be used
+    |
+    */
+    'test_env' => env('PAYMENT_TEST_ENV', true),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Payment Currency
+    |--------------------------------------------------------------------------
+    |
+    | This option controls the default payment currency that will be used
+    |
+    */
+
+    'currency' => env('PAYMENT_CURRENCY', 'EGP'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Payment Country
+    |--------------------------------------------------------------------------
+    |
+    | This option controls the default payment country that will be used
+    |
+    */
+    'country' => env('PAYMENT_COUNTRY', 'EG'),
 
     /*
     |--------------------------------------------------------------------------
@@ -95,6 +122,24 @@ return [
                 'callback_url' => env('PAYTABS_CALLBACK_URL'),
                 'server_key'   => env('PAYTABS_SERVER_KEY'),
                 'profile_id'   => env('PAYTABS_PROFILE_ID'),
+            ],
+        ],
+        /**
+         * Credit / Debit card Paytabs.
+         */
+        5 => [
+            'provider'       => 'payfort',
+            'gateway'        => 'visa-payfort',
+            'is_active'      => true,
+            'is_online'      => true,
+            'is_installment' => false,
+            'name'           => 'Credit / Debit card Payfort',
+            'logo'           => 'images/credit_payment.png',
+            'credentials'    => [
+                'command'             => env('PAYFORT_COMMAND', 'PURCHASE'),    // PURCHASE, AUTHORIZATION
+                'sha_type'            => env('PAYFORT_SHA_TYPE', 'SHA-256'),
+                'access_code'         => env('PAYFORT_ACCESS_CODE'),
+                'merchant_identifier' => env('PAYFORT_MERCHANT_IDENTIFIER'),
             ],
         ],
     ],
