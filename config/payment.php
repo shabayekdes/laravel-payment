@@ -98,7 +98,7 @@ return [
             ],
         ],
         /**
-         * UPG Meza
+         * UPG Meza.
          */
         8 => [
             'provider'       => 'upg',
