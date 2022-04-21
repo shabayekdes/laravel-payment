@@ -8,6 +8,7 @@ use Shabayek\Payment\Contracts\PaymentMethodContract;
 class UpgMethod extends AbstractMethod implements PaymentMethodContract
 {
     private $lightbox_js = 'https://upgstaging.egyptianbanks.com:3006/js/Lightbox.js';
+
     /**
      * Purchase with payment method and get redirect url.
      *
@@ -27,20 +28,20 @@ class UpgMethod extends AbstractMethod implements PaymentMethodContract
     {
         $totalAmount = $this->amount;
         $transaction_id = $this->transaction_id;
-        $dateTime = date("YmdHis");
+        $dateTime = date('YmdHis');
         $string = "Amount={$totalAmount}&DateTimeLocalTrxn={$dateTime}&MerchantId={$this->merchant_id}&MerchantReference={$transaction_id}&TerminalId={$this->terminal_id}";
-        $secureHash = hash_hmac("sha256", $string, hex2bin($this->secure_key));
+        $secureHash = hash_hmac('sha256', $string, hex2bin($this->secure_key));
         $secureHash = strtoupper($secureHash);
 
-        return view("payment::upg", [
+        return view('payment::upg', [
             'lightbox_js' => $this->lightbox_js,
-            "mID" => $this->merchant_id,
-            "tID" => $this->terminal_id,
-            "secureHash" => $secureHash,
-            "amount" => $totalAmount,
-            "order_id" => $transaction_id,
-            "trxDateTime" => $dateTime,
-            "returnUrl" => $this->return_url
+            'mID' => $this->merchant_id,
+            'tID' => $this->terminal_id,
+            'secureHash' => $secureHash,
+            'amount' => $totalAmount,
+            'order_id' => $transaction_id,
+            'trxDateTime' => $dateTime,
+            'returnUrl' => $this->return_url,
         ]);
     }
 
