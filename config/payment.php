@@ -43,7 +43,19 @@ return [
     | This option controls the default payment country that will be used
     |
     */
+
     'country' => env('PAYMENT_COUNTRY', 'EG'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Payment Language
+    |--------------------------------------------------------------------------
+    |
+    | This option controls the payment language
+    |
+    */
+
+    'language' => env('PAYMENT_LANGUAGE', 'en'),
 
     /*
     |--------------------------------------------------------------------------
@@ -136,8 +148,11 @@ return [
             'name'           => 'Credit / Debit card Payfort',
             'logo'           => 'images/credit_payment.png',
             'credentials'    => [
-                'command'             => env('PAYFORT_COMMAND', 'PURCHASE'),    // PURCHASE, AUTHORIZATION
+                'command'             => env('PAYFORT_COMMAND', 'PURCHASE'),                       // PURCHASE, AUTHORIZATION
                 'sha_type'            => env('PAYFORT_SHA_TYPE', 'SHA-256'),
+                'sha_request'         => env('PAYFORT_SHA_REQUEST', 'SHA_REQUEST_PASSPHRASE'),
+                'sha_response'        => env('PAYFORT_SHA_RESPONSE', 'SHA_RESPONSE_PASSPHRASE'),
+                'return_url'          => env('PAYFORT_RETURN_URL'),
                 'access_code'         => env('PAYFORT_ACCESS_CODE'),
                 'merchant_identifier' => env('PAYFORT_MERCHANT_IDENTIFIER'),
             ],
