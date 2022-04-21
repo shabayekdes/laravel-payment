@@ -16,7 +16,7 @@ return [
     'default' => env('PAYMENT_DEFAULT_DRIVER', 'cod'),
 
     'currency' => env('GATEWAY_CURRENCY', 'EGP'),
-    'country' => env('GATEWAY_COUNTRY', 'EG'),
+    'country'  => env('GATEWAY_COUNTRY', 'EG'),
 
     /*
     |--------------------------------------------------------------------------
@@ -97,6 +97,25 @@ return [
                 'profile_id'   => env('PAYTABS_PROFILE_ID'),
             ],
         ],
+        /**
+         * UPG Meza
+         */
+        8 => [
+            'provider'       => 'upg',
+            'gateway'        => 'meeza-upg',
+            'is_active'      => false,
+            'is_online'      => true,
+            'is_installment' => false,
+            'name'           => 'Meeza',
+            'logo'           => 'images/credit_payment.png',
+            'credentials'    => [
+                'secure_key'  => env('UPG_MEEZA_SECURE_KEY'),
+                'merchant_id' => env('UPG_MEEZA_MERCHANT_ID'),
+                'terminal_id' => env('UPG_MEEZA_TERMINAL_ID'),
+                'return_url'  => env('UPG_MEEZA_RETURN_URL'),
+            ],
+        ],
+
     ],
 
 ];
