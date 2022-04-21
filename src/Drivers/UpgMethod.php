@@ -3,8 +3,8 @@
 namespace Shabayek\Payment\Drivers;
 
 use Exception;
-use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 
 /**
@@ -71,7 +71,7 @@ class UpgMethod extends AbstractMethod implements PaymentMethodContract
             'ProviderSchemeName',
             'SystemReference',
             'success',
-            'data'
+            'data',
         ]);
 
         $responseData['MerchantId'] = $this->mID;
@@ -81,9 +81,9 @@ class UpgMethod extends AbstractMethod implements PaymentMethodContract
         foreach ($responseData as $key => $value) {
             $string[] = "{$key}={$value}";
         }
-        $string = implode("&", $string);
+        $string = implode('&', $string);
 
-        $generatedHash = hash_hmac("sha256", $string, hex2bin($this->secureKey));
+        $generatedHash = hash_hmac('sha256', $string, hex2bin($this->secureKey));
         $generatedHash = strtoupper($generatedHash);
 
         $isSuccess = $generatedHash == $request->get('SecureHash') && $request->get('success') == 0;
@@ -95,7 +95,7 @@ class UpgMethod extends AbstractMethod implements PaymentMethodContract
 
         return [
             'success' => $isSuccess,
-            'message' => $isSuccess ? 'Payment completed successfully' : "Transaction did not completed",,
+            'message' => $isSuccess ? 'Payment completed successfully' : 'Transaction did not completed', ,
             'data'    => $isSuccess ? $data : [],
         ];
     }
@@ -108,6 +108,6 @@ class UpgMethod extends AbstractMethod implements PaymentMethodContract
      */
     public function verify(int $payment_order_id): array
     {
-        throw new Exception("Not implemented yet.");
+        throw new Exception('Not implemented yet.');
     }
 }
