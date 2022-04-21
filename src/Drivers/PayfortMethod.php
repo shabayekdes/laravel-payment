@@ -38,7 +38,6 @@ class PayfortMethod extends AbstractMethod implements PaymentMethodContract
             'merchant_identifier' => $this->merchant_id,
             'merchant_reference' => $this->transaction_id,
 
-
             'amount'              => $this->amount,
 
             'currency'            => config('paymob.currency'),
@@ -98,8 +97,9 @@ class PayfortMethod extends AbstractMethod implements PaymentMethodContract
 
     /**
      * Calculate signature.
-     * @param array $arrData
-     * @param string $signType
+     *
+     * @param  array  $arrData
+     * @param  string  $signType
      * @return string
      */
     private function calculateSignature($arrData, $signType = 'request')
@@ -111,33 +111,36 @@ class PayfortMethod extends AbstractMethod implements PaymentMethodContract
         }
 
         if ($signType == 'request') {
-            $shaString = $this->sha_request . $shaString . $this->sha_request;
+            $shaString = $this->sha_request.$shaString.$this->sha_request;
         } else {
-            $shaString = $this->sha_response . $shaString . $this->sha_response;
+            $shaString = $this->sha_response.$shaString.$this->sha_response;
         }
 
         return hash($this->sha_type, $shaString);
     }
+
     /**
-     * Convert Amount with decimal points
-     * @param float $amount
-     * @param string  $currencyCode
+     * Convert Amount with decimal points.
+     *
+     * @param  float  $amount
+     * @param  string  $currencyCode
      * @return float
      */
     private function convertFortAmount($amount, $currencyCode)
     {
         $decimalPoints = $this->getCurrencyDecimalPoints($currencyCode);
+
         return round($amount, $decimalPoints) * (pow(10, $decimalPoints));
     }
+
     /**
-     *
-     * @param string $currency
-     * @param integer
+     * @param  string  $currency
+     * @param int
      */
     public function getCurrencyDecimalPoints($currency)
     {
-        $decimalPoint  = 2;
-        $arrCurrencies = array(
+        $decimalPoint = 2;
+        $arrCurrencies = [
             'JOD' => 3,
             'KWD' => 3,
             'OMR' => 3,
@@ -145,10 +148,11 @@ class PayfortMethod extends AbstractMethod implements PaymentMethodContract
             'BHD' => 3,
             'LYD' => 3,
             'IQD' => 3,
-        );
+        ];
         if (isset($arrCurrencies[$currency])) {
             $decimalPoint = $arrCurrencies[$currency];
         }
+
         return $decimalPoint;
     }
 }
