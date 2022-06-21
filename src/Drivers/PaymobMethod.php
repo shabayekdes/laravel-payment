@@ -8,19 +8,27 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
+use Shabayek\Payment\Contracts\PurchaseContract;
 use Shabayek\Payment\Enums\Gateway;
 
 /**
- * PaymobMethod class.
+ * Paymob Method class.
  */
-class PaymobMethod extends AbstractMethod implements PaymentMethodContract
+class PaymobMethod extends AbstractMethod implements PurchaseContract
 {
     private $url = 'https://accept.paymobsolutions.com/api/';
+
+    private $iframe_id;
+    private $api_key;
+    private $merchant_id;
+    private $integration_id;
+    private $hmac_hash;
 
     /**
      * Purchase with payment method and get redirect url.
      *
      * @return string|null
+     * @throws Exception
      */
     public function purchase()
     {
@@ -38,8 +46,9 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
     /**
      * Pay with payment method.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
+     * @throws Exception
      */
     public function pay(Request $request): array
     {
@@ -77,17 +86,6 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
             'message' => $message,
             'data'    => $isSuccess ? $callback : [],
         ];
-    }
-
-    /**
-     * Payment checkout view.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $transaction
-     * @return void
-     */
-    public function checkoutForm(Model $transaction)
-    {
-        throw new Exception('Not implemented yet');
     }
 
     /**
@@ -140,20 +138,23 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
         }
 
         $this->setErrors('Authentication failed in paymob Api key not found');
+        return null;
     }
 
     /**
      * Order registration API.
      *
-     * @param  string  $token
-     * @return object
+     * @param string $token
+     * @return array
+     *
+     * @throws Exception
      */
     private function orderCreation($token)
     {
         $postData = [
             'auth_token'        => $token,
             'delivery_needed'   => false,
-            'merchant_order_id' => $this->transaction_id.'-'.rand(10000, 99999),
+            'merchant_order_id' => $this->transaction_id.'-'.random_int(10000, 99999),
             'merchant_id'       => $this->merchant_id,
             'amount_cents'      => $this->amount * 100,
             'currency'          => config('paymob.currency'),
@@ -174,6 +175,7 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
         }
 
         $this->setErrors('Order not created success in paymob');
+        return [];
     }
 
     /**
@@ -215,17 +217,18 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
         }
 
         $this->setErrors('Payment key request not created success in paymob');
+        return null;
     }
 
     /**
      * Record processes callback - POST request.
      *
-     * @param  array  $requestData
+     * @param array $requestData
      * @return array
      *
-     * @throws Exception
+     * @throws \RuntimeException
      */
-    private function processesCallback($requestData): array
+    private function processesCallback(array $requestData): array
     {
         $hmacKeys = [
             'amount_cents',
@@ -251,7 +254,7 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
         ];
         $hmac = $this->calculateHmac($requestData, $hmacKeys);
         if ($hmac != $requestData['hmac']) {
-            throw new Exception('HMAC is not valid');
+            throw new \RuntimeException('HMAC is not valid');
         }
 
         $transaction_status = $requestData['obj']['success'] ?? false;
@@ -266,10 +269,12 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
     /**
      * Record response callback - GET request.
      *
-     * @param  array  $requestData
+     * @param array $requestData
      * @return array
+     *
+     * @throws \RuntimeException
      */
-    private function responseCallBack($requestData)
+    private function responseCallBack(array $requestData)
     {
         $hmacKeys = [
             'amount_cents',
@@ -295,7 +300,7 @@ class PaymobMethod extends AbstractMethod implements PaymentMethodContract
         ];
         $hmac = $this->calculateHmac($requestData, $hmacKeys);
         if ($hmac != $requestData['hmac']) {
-            throw new Exception('HMAC is not valid');
+            throw new \RuntimeException('HMAC is not valid');
         }
 
         $transaction_status = $requestData['success'];

@@ -5,6 +5,7 @@ namespace Shabayek\Payment\Drivers;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Shabayek\Payment\Contracts\CheckoutFormContract;
 use Shabayek\Payment\Contracts\PaymentMethodContract;
 use Shabayek\Payment\Enums\Gateway;
 
@@ -13,22 +14,19 @@ use Shabayek\Payment\Enums\Gateway;
  *
  * @author Esmail Shabayek <esmail.shabayek@gmail.com>
  */
-class MastercardMethod extends AbstractMethod implements PaymentMethodContract
+class MastercardMethod extends AbstractMethod implements CheckoutFormContract
 {
-    /**
-     * Purchase with payment method and get redirect url.
-     *
-     * @return string|null
-     */
-    public function purchase()
-    {
-        //
-    }
+    private $base_url;
+    private $username;
+    private $password;
+    private $merchant_id;
+    private $checkout_js;
+    private $callback_url;
 
     /**
      * Payment checkout view.
      *
-     * @return void
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|null
      */
     public function checkoutForm()
     {
@@ -67,12 +65,13 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
                     'callback_url'   => $this->callback_url,
                     'session_id'     => $session_id,
                 ]);
-            } else {
-                throw new Exception(json_encode($result));
             }
+
+            throw new Exception(json_encode($result));
         } catch (Exception $e) {
             $this->setErrors('create session in mastercard failed # '.$e->getMessage());
         }
+        return null;
     }
 
     /**
@@ -103,17 +102,16 @@ class MastercardMethod extends AbstractMethod implements PaymentMethodContract
     /**
      * Verify if payment status from gateway.
      *
-     * @param  int  $payment_order_id
+     * @param int $payment_order_id
      * @return array
+     *
+     * @throws Exception
      */
     public function verify(int $payment_order_id): array
     {
         // write logic here
+        throw new \Exception('Not implement');
 
-        return [
-            'success' => true,
-            'message' => 'Verify payment status successfully',
-            'data' => [],
-        ];
+        return [];
     }
 }
