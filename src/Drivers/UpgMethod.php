@@ -97,7 +97,7 @@ class UpgMethod extends AbstractMethod implements CheckoutFormContract
     /**
      * Verify if payment status from gateway.
      *
-     * @param int $payment_order_id
+     * @param  int  $payment_order_id
      * @return array
      *
      * @throws \RuntimeException
