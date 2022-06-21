@@ -2,41 +2,35 @@
 
 namespace Shabayek\Payment\Drivers;
 
-use Exception;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Shabayek\Payment\Contracts\PaymentMethodContract;
+use Shabayek\Payment\Contracts\CheckoutFormContract;
 
 /**
  * UpgMethod class.
  *
  * @author Esmail Shabayek <esmail.shabayek@gmail.com>
  */
-class UpgMethod extends AbstractMethod implements PaymentMethodContract
+class UpgMethod extends AbstractMethod implements CheckoutFormContract
 {
-    private $lightbox_js = 'https://upgstaging.egyptianbanks.com:3006/js/Lightbox.js';
+    protected $lightbox_js = 'https://upgstaging.egyptianbanks.com:3006/js/Lightbox.js';
 
-    /**
-     * Purchase with payment method and get redirect url.
-     *
-     * @return string|null
-     */
-    public function purchase()
-    {
-        return null;
-    }
+    protected $secure_key;
+    protected $merchant_id;
+    protected $terminal_id;
+    protected $return_url;
 
     /**
      * Payment checkout view.
      *
-     * @return void
+     * @return Factory|View|null
      */
     public function checkoutForm()
     {
-        $totalAmount = $this->amount;
-        $transaction_id = $this->transaction_id;
         $dateTime = date('YmdHis');
-        $string = "Amount={$totalAmount}&DateTimeLocalTrxn={$dateTime}&MerchantId={$this->merchant_id}&MerchantReference={$transaction_id}&TerminalId={$this->terminal_id}";
+        $string = "Amount=$this->amount&DateTimeLocalTrxn=$dateTime&MerchantId=$this->merchant_id&MerchantReference=$this->transaction_id&TerminalId=$this->terminal_id";
         $secureHash = hash_hmac('sha256', $string, hex2bin($this->secure_key));
         $secureHash = strtoupper($secureHash);
 
@@ -45,8 +39,8 @@ class UpgMethod extends AbstractMethod implements PaymentMethodContract
             'mID' => $this->merchant_id,
             'tID' => $this->terminal_id,
             'secureHash' => $secureHash,
-            'amount' => $totalAmount,
-            'order_id' => $transaction_id,
+            'amount' => $this->amount,
+            'order_id' => $this->transaction_id,
             'trxDateTime' => $dateTime,
             'returnUrl' => $this->return_url,
         ]);
@@ -60,7 +54,7 @@ class UpgMethod extends AbstractMethod implements PaymentMethodContract
      */
     public function pay(Request $request): array
     {
-        $responseData = Arr::except(request()->all(), [
+        $responseData = Arr::except($request->all(), [
             'payment_method',
             'transaction_id',
             'token',
@@ -74,16 +68,16 @@ class UpgMethod extends AbstractMethod implements PaymentMethodContract
             'data',
         ]);
 
-        $responseData['MerchantId'] = $this->mID;
-        $responseData['TerminalId'] = $this->tID;
+        $responseData['MerchantId'] = $this->merchant_id;
+        $responseData['TerminalId'] = $this->terminal_id;
         ksort($responseData);
         $string = [];
         foreach ($responseData as $key => $value) {
-            $string[] = "{$key}={$value}";
+            $string[] = "$key=$value";
         }
         $string = implode('&', $string);
 
-        $generatedHash = hash_hmac('sha256', $string, hex2bin($this->secureKey));
+        $generatedHash = hash_hmac('sha256', $string, hex2bin($this->secure_key));
         $generatedHash = strtoupper($generatedHash);
 
         $isSuccess = $generatedHash == $request->get('SecureHash') && $request->get('success') == 0;
@@ -95,7 +89,7 @@ class UpgMethod extends AbstractMethod implements PaymentMethodContract
 
         return [
             'success' => $isSuccess,
-            'message' => $isSuccess ? 'Payment completed successfully' : 'Transaction did not completed', ,
+            'message' => $isSuccess ? 'Payment completed successfully' : 'Transaction did not completed',
             'data'    => $isSuccess ? $data : [],
         ];
     }
@@ -103,11 +97,13 @@ class UpgMethod extends AbstractMethod implements PaymentMethodContract
     /**
      * Verify if payment status from gateway.
      *
-     * @param  int  $payment_order_id
+     * @param int $payment_order_id
      * @return array
+     *
+     * @throws \RuntimeException
      */
     public function verify(int $payment_order_id): array
     {
-        throw new Exception('Not implemented yet.');
+        throw new \RuntimeException('Not implemented yet.');
     }
 }
