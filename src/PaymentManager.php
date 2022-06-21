@@ -32,6 +32,13 @@ class PaymentManager
     protected $providers = [];
 
     /**
+     * The registered custom driver creators.
+     *
+     * @var array
+     */
+    protected $customCreators = [];
+
+    /**
      * Create a new payment manager instance.
      *
      * @param  \Illuminate\Foundation\Application  $app
@@ -46,6 +53,9 @@ class PaymentManager
      * Get a payment store instance by name, wrapped in a repository.
      *
      * @param  int  $id
+     * @return mixed|string
+     *
+     * @throws \Shabayek\Payment\Exceptions\NotFoundGatewayException
      */
     public function via(int $id)
     {
@@ -55,8 +65,10 @@ class PaymentManager
     /**
      * Get the payment connection configuration.
      *
-     * @param  $name
+     * @param  int  $id
      * @return string
+     *
+     * @throws \Shabayek\Payment\Exceptions\NotFoundGatewayException
      */
     protected function get($id)
     {
@@ -81,13 +93,42 @@ class PaymentManager
             throw new NotFoundGatewayException("Payment gateway with [{$gateway['name']}] is not defined.");
         }
 
+        if (isset($this->customCreators[$provider])) {
+            return $this->callCustomCreator($provider, $gateway);
+        }
+
         $providerMethod = 'create'.ucfirst($provider).'Provider';
 
         if (method_exists($this, $providerMethod)) {
             return $this->{$providerMethod}($gateway);
-        } else {
-            throw new NotFoundGatewayException("Gateway [{$provider}] is not supported.");
         }
+        throw new NotFoundGatewayException("Gateway [{$provider}] is not supported.");
+    }
+
+    /**
+     * Call a custom driver creator.
+     *
+     * @param  string  $driver
+     * @param $gateway
+     * @return mixed
+     */
+    protected function callCustomCreator(string $driver, $gateway)
+    {
+        return new $this->customCreators[$driver]($gateway);
+    }
+
+    /**
+     * Register a custom driver creator Closure.
+     *
+     * @param  string  $driver
+     * @param  string  $provider
+     * @return $this
+     */
+    public function extend(string $driver, string $provider): self
+    {
+        $this->customCreators[$driver] = $provider;
+
+        return $this;
     }
 
     /**
@@ -96,7 +137,7 @@ class PaymentManager
      * @param  array  $config
      * @return \Shabayek\Payment\Drivers\CodMethod
      */
-    private function createCodProvider($config): CodMethod
+    private function createCodProvider(array $config): CodMethod
     {
         return new CodMethod($config);
     }
@@ -107,7 +148,7 @@ class PaymentManager
      * @param  array  $config
      * @return \Shabayek\Payment\Drivers\PaymobMethod
      */
-    private function createPaymobProvider($config): PaymobMethod
+    private function createPaymobProvider(array $config): PaymobMethod
     {
         return new PaymobMethod($config);
     }
@@ -148,7 +189,6 @@ class PaymentManager
     /**
      * Get the payment connection configuration.
      *
-     * @param  $name
      * @return string
      */
     protected function getProvider()
@@ -159,12 +199,12 @@ class PaymentManager
     /**
      * Get the payment method from database.
      *
-     * @param  mixed  $id
+     * @param  int  $id
      * @return array
      *
      * @throws \Shabayek\Payment\Exceptions\NotFoundGatewayException
      */
-    private function getMethod($id)
+    private function getMethod($id): array
     {
         $method = PaymentMethod::with('credentials')->find($id);
 

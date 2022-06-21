@@ -5,16 +5,21 @@ namespace Shabayek\Payment\Drivers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
-use Shabayek\Payment\Contracts\PaymentMethodContract;
+use Shabayek\Payment\Contracts\PurchaseContract;
 use Shabayek\Payment\Enums\Gateway;
 
 /**
- * PaytabsMethod class.
+ * Paytabs Method class.
  *
  * @author Esmail Shabayek <esmail.shabayek@gmail.com>
  */
-class PaytabsMethod extends AbstractMethod implements PaymentMethodContract
+class PaytabsMethod extends AbstractMethod implements PurchaseContract
 {
+    protected $base_url;
+    protected $server_key;
+    protected $profile_id;
+    protected $callback_url;
+
     /**
      * Purchase with payment method and get redirect url.
      *
@@ -34,7 +39,7 @@ class PaytabsMethod extends AbstractMethod implements PaymentMethodContract
     public function pay(Request $request): array
     {
         $response_status = $request->input('payment_result.response_status') ?? $request->input('respStatus');
-        $transaction_status = in_array($response_status, [Gateway::PAYTABS_RESPONSE_SUCCESS]);
+        $transaction_status = $response_status === Gateway::PAYTABS_RESPONSE_SUCCESS;
 
         return [
             'success' => $transaction_status,
