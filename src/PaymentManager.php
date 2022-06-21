@@ -51,7 +51,7 @@ class PaymentManager
     /**
      * Get a payment store instance by name, wrapped in a repository.
      *
-     * @param int $id
+     * @param  int  $id
      * @return mixed|string
      *
      * @throws \Shabayek\Payment\Exceptions\NotFoundGatewayException
@@ -64,7 +64,7 @@ class PaymentManager
     /**
      * Get the payment connection configuration.
      *
-     * @param int $id
+     * @param  int  $id
      * @return string
      *
      * @throws \Shabayek\Payment\Exceptions\NotFoundGatewayException
@@ -96,7 +96,7 @@ class PaymentManager
             return $this->callCustomCreator($provider, $gateway);
         }
 
-        $providerMethod = 'create' . ucfirst($provider) . 'Provider';
+        $providerMethod = 'create'.ucfirst($provider).'Provider';
 
         if (method_exists($this, $providerMethod)) {
             return $this->{$providerMethod}($gateway);
@@ -107,7 +107,7 @@ class PaymentManager
     /**
      * Call a custom driver creator.
      *
-     * @param string $driver
+     * @param  string  $driver
      * @param $gateway
      * @return mixed
      */
@@ -119,8 +119,8 @@ class PaymentManager
     /**
      * Register a custom driver creator Closure.
      *
-     * @param string $driver
-     * @param string $provider
+     * @param  string  $driver
+     * @param  string  $provider
      * @return $this
      */
     public function extend(string $driver, string $provider): self
@@ -129,10 +129,11 @@ class PaymentManager
 
         return $this;
     }
+
     /**
      * Create cod method instance.
      *
-     * @param array $config
+     * @param  array  $config
      * @return \Shabayek\Payment\Drivers\CodMethod
      */
     private function createCodProvider(array $config): CodMethod
@@ -143,7 +144,7 @@ class PaymentManager
     /**
      * Create paymob method instance.
      *
-     * @param array $config
+     * @param  array  $config
      * @return \Shabayek\Payment\Drivers\PaymobMethod
      */
     private function createPaymobProvider(array $config): PaymobMethod
