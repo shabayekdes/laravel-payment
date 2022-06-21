@@ -168,6 +168,57 @@ $payment_order_id = 111; // payment order id
 $payment_status = Payment::via($method_id)->verify($payment_order_id);
 ```
 
+### Adding Custom Gateway Drivers
+
+#### To create our custom gateway driver, we first choose the method gateway there is two way for method
+
+- One for iframe Url that it will return external url from gateway we need to implement the Shabayek\Payment\Contracts\PurchaseContract contract. 
+So, a new gateway method implementation might look something like this:
+
+```php
+namespace Shabayek\Sms\Contracts;
+
+class PurchaseGateway extends AbstractMethod implements PurchaseContract
+{
+    public function purchase() { }
+    
+    public function verify(int $payment_order_id): array { }
+
+    public function pay(Request $request): array { }
+}
+```
+
+- Second it will return view blade included checkout form
+
+```php
+namespace Shabayek\Sms\Contracts;
+
+class CheckFormGateway extends AbstractMethod implements CheckoutFormContract
+{
+    public function purchase() { }
+    
+    public function verify(int $payment_order_id): array { }
+
+    public function pay(Request $request): array { }
+}
+```
+
+- you should extend **AbstractMethod** to set credential. it has useful methods like:
+
+```php
+$this->getCustomerDetails(); // for customer details
+$this->getBillingDetails(); // for billing customer details
+```
+
+- and other methods for public use
+
+```php
+Payment::via($payment_id)->transaction($transaction_id);
+Payment::via($payment_id)->customer($userModel);
+Payment::via($payment_id)->items($itemsArray);
+Payment::via($payment_id)->addItem($product_id, $product_name, $product_price, $product_quantity = 1, $product_description = null);
+```
+
 ## Change log
 
 Please see [CHANGELOG](https://github.com/shabayekdes/laravel-payment/blob/main/CHANGELOG.md) for more information on what has been changed recently.
