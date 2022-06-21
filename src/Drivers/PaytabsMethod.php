@@ -16,10 +16,10 @@ use Shabayek\Payment\Enums\Gateway;
  */
 class PaytabsMethod extends AbstractMethod implements PurchaseContract
 {
-    private $base_url;
-    private $server_key;
-    private $profile_id;
-    private $callback_url;
+    protected $base_url;
+    protected $server_key;
+    protected $profile_id;
+    protected $callback_url;
 
     /**
      * Purchase with payment method and get redirect url.

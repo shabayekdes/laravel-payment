@@ -16,12 +16,12 @@ use Shabayek\Payment\Enums\Gateway;
  */
 class MastercardMethod extends AbstractMethod implements CheckoutFormContract
 {
-    private $base_url;
-    private $username;
-    private $password;
-    private $merchant_id;
-    private $checkout_js;
-    private $callback_url;
+    protected $base_url;
+    protected $username;
+    protected $password;
+    protected $merchant_id;
+    protected $checkout_js;
+    protected $callback_url;
 
     /**
      * Payment checkout view.

@@ -16,13 +16,13 @@ use Shabayek\Payment\Enums\Gateway;
  */
 class PaymobMethod extends AbstractMethod implements PurchaseContract
 {
-    private $url = 'https://accept.paymobsolutions.com/api/';
+    protected $url = 'https://accept.paymobsolutions.com/api/';
 
-    private $iframe_id;
-    private $api_key;
-    private $merchant_id;
-    private $integration_id;
-    private $hmac_hash;
+    protected $iframe_id;
+    protected $api_key;
+    protected $merchant_id;
+    protected $integration_id;
+    protected $hmac_hash;
 
     /**
      * Purchase with payment method and get redirect url.
