@@ -3,11 +3,9 @@
 namespace Shabayek\Payment\Drivers;
 
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
-use Shabayek\Payment\Contracts\PaymentMethodContract;
 use Shabayek\Payment\Contracts\PurchaseContract;
 use Shabayek\Payment\Enums\Gateway;
 
@@ -28,6 +26,7 @@ class PaymobMethod extends AbstractMethod implements PurchaseContract
      * Purchase with payment method and get redirect url.
      *
      * @return string|null
+     *
      * @throws Exception
      */
     public function purchase()
@@ -46,8 +45,9 @@ class PaymobMethod extends AbstractMethod implements PurchaseContract
     /**
      * Pay with payment method.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return array
+     *
      * @throws Exception
      */
     public function pay(Request $request): array
@@ -138,13 +138,14 @@ class PaymobMethod extends AbstractMethod implements PurchaseContract
         }
 
         $this->setErrors('Authentication failed in paymob Api key not found');
+
         return null;
     }
 
     /**
      * Order registration API.
      *
-     * @param string $token
+     * @param  string  $token
      * @return array
      *
      * @throws Exception
@@ -175,6 +176,7 @@ class PaymobMethod extends AbstractMethod implements PurchaseContract
         }
 
         $this->setErrors('Order not created success in paymob');
+
         return [];
     }
 
@@ -217,13 +219,14 @@ class PaymobMethod extends AbstractMethod implements PurchaseContract
         }
 
         $this->setErrors('Payment key request not created success in paymob');
+
         return null;
     }
 
     /**
      * Record processes callback - POST request.
      *
-     * @param array $requestData
+     * @param  array  $requestData
      * @return array
      *
      * @throws \RuntimeException
@@ -269,7 +272,7 @@ class PaymobMethod extends AbstractMethod implements PurchaseContract
     /**
      * Record response callback - GET request.
      *
-     * @param array $requestData
+     * @param  array  $requestData
      * @return array
      *
      * @throws \RuntimeException

@@ -6,7 +6,6 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Shabayek\Payment\Contracts\CheckoutFormContract;
-use Shabayek\Payment\Contracts\PaymentMethodContract;
 use Shabayek\Payment\Enums\Gateway;
 
 /**
@@ -71,6 +70,7 @@ class MastercardMethod extends AbstractMethod implements CheckoutFormContract
         } catch (Exception $e) {
             $this->setErrors('create session in mastercard failed # '.$e->getMessage());
         }
+
         return null;
     }
 
@@ -102,7 +102,7 @@ class MastercardMethod extends AbstractMethod implements CheckoutFormContract
     /**
      * Verify if payment status from gateway.
      *
-     * @param int $payment_order_id
+     * @param  int  $payment_order_id
      * @return array
      *
      * @throws Exception

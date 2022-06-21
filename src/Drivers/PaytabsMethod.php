@@ -5,7 +5,6 @@ namespace Shabayek\Payment\Drivers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
-use Shabayek\Payment\Contracts\PaymentMethodContract;
 use Shabayek\Payment\Contracts\PurchaseContract;
 use Shabayek\Payment\Enums\Gateway;
 
