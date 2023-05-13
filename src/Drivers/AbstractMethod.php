@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Shabayek\Payment\Contracts\AddressContract;
 use Shabayek\Payment\Contracts\CustomerContract;
+use Shabayek\Payment\Dto\ItemInvoice;
 
 /**
  * Method abstract class.
@@ -178,13 +179,11 @@ abstract class AbstractMethod
      */
     public function addItem($id, $name, $price, $quantity = 1, $description = null)
     {
-        $this->items[] = [
-            'id' => $id,
-            'name' => $name,
-            'price' => $price,
-            'quantity' => $quantity,
-            'description' => $description,
-        ];
+        $item = new ItemInvoice($id, $name, $price, $quantity, $description);
+
+
+
+        $this->items[] = $item;
 
         $this->amount += $price;
 
