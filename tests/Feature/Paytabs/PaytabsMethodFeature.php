@@ -39,6 +39,7 @@ class PaytabsMethodFeature extends TestCase
 
     /**
      * @test
+     *
      * @expectedException  exception
      */
     public function it_can_pay_with_paytabs_method_successfully()

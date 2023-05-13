@@ -181,8 +181,6 @@ abstract class AbstractMethod
     {
         $item = new ItemInvoice($id, $name, $price, $quantity, $description);
 
-
-
         $this->items[] = $item;
 
         $this->amount += $price;

@@ -51,6 +51,7 @@ class MastercardMethodFeature extends TestCase
 
     /**
      * @test
+     *
      * @expectedException  exception
      */
     public function it_can_mastercard_set_error_if_not_created_session()

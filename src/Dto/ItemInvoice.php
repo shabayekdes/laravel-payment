@@ -35,11 +35,12 @@ class ItemInvoice
     }
 
     /**
-     * @param mixed $id
+     * @param  mixed  $id
      */
     public function setId($id): ItemInvoice
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -52,11 +53,12 @@ class ItemInvoice
     }
 
     /**
-     * @param mixed $name
+     * @param  mixed  $name
      */
     public function setName($name): ItemInvoice
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -69,11 +71,12 @@ class ItemInvoice
     }
 
     /**
-     * @param mixed $price
+     * @param  mixed  $price
      */
     public function setPrice($price): ItemInvoice
     {
         $this->price = $price;
+
         return $this;
     }
 
@@ -86,11 +89,12 @@ class ItemInvoice
     }
 
     /**
-     * @param mixed $quantity
+     * @param  mixed  $quantity
      */
     public function setQuantity($quantity): ItemInvoice
     {
         $this->quantity = $quantity;
+
         return $this;
     }
 
@@ -103,12 +107,12 @@ class ItemInvoice
     }
 
     /**
-     * @param mixed $description
+     * @param  mixed  $description
      */
     public function setDescription($description): ItemInvoice
     {
         $this->description = $description;
+
         return $this;
     }
-
 }
